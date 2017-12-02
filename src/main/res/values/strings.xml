@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Measurements</string>
+
+    <!-- Strings related to login -->
+    <string name="login_text">Логин</string>
+    <string name="password_text">Пароль</string>
+</resources>
