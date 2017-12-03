@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.addd.measurements.MainActivity
-import com.addd.measurements.MainActivity13
 import com.addd.measurements.MeasurementsAPI
 import com.addd.measurements.R
 import com.google.gson.Gson
@@ -24,8 +23,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var password: String
     private lateinit var answerHttp: String
 
-    private val SERVER_ADDRESS: String = "http://188.225.46.31/api/"
 
+    private val SERVER_ADDRESS = "http://188.225.46.31/api/"
     private val APP_TOKEN = "myToken"
     private val APP_PREFERENCES_NAME = "token"
 
@@ -43,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
         val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
         if (mSettings.contains(APP_PREFERENCES_NAME)) {
             startActivity(Intent(applicationContext, MainActivity::class.java))
+            finish()
         }
 
         btnLogin.setOnClickListener { goLogin() }
@@ -65,13 +65,13 @@ class LoginActivity : AppCompatActivity() {
                     } else {
                         val map = gson.fromJson(response.body().toString(), HashMap::class.java)
                         answerHttp = map["token"].toString()
-                        textViewTest.text = answerHttp
 
                         val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
                         val editor: SharedPreferences.Editor = mSettings.edit()
                         editor.putString(APP_PREFERENCES_NAME, answerHttp)
                         editor.apply()
                         startActivity(Intent(applicationContext, MainActivity::class.java))
+                        finish()
                     }
                 }
 
