@@ -4,4 +4,14 @@
     <!-- Strings related to login -->
     <string name="login_text">Логин</string>
     <string name="password_text">Пароль</string>
+    <string name="empty_list">Список пуст</string>
+    <string name="today">Сегодня</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="date">Дата</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
