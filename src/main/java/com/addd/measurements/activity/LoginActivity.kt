@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.addd.measurements.MainActivity
 import com.addd.measurements.MeasurementsAPI
 import com.addd.measurements.R
 import com.google.gson.Gson
