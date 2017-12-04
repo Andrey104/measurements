@@ -43,10 +43,9 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textUserName"
+        android:id="@+id/textUserNameDrawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Кто-то очень крутой"
         android:textSize="24dp" />
 
 </LinearLayout>

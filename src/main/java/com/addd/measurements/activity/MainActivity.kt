@@ -13,19 +13,30 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.addd.measurements.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.MyObjectsFragment
 import com.addd.measurements.fragments.ProblemsFragment
+import com.addd.measurements.modelAPI.User
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private val APP_TOKEN = "myToken"
+    private lateinit var  APP_TOKEN : String
+    private lateinit var APP_PREFERENCES_NAME : String
+    private val serviceAPI = MeasurementsAPI.Factory.create()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        APP_TOKEN = getString(R.string.my_token)
+        APP_PREFERENCES_NAME = getString(R.string.token)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -42,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fragmentClass = MeasurementsFragment::class.java
         startFragment(fragmentClass)
 
-
+        informationUser()
     }
 
     override fun onBackPressed() {
@@ -153,5 +164,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
 
+    }
+
+    private fun informationUser() {
+        val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
+        if (mSettings.contains(APP_PREFERENCES_NAME)) {
+            val token: String = "Token " + mSettings.getString(APP_PREFERENCES_NAME, "")
+            val call = serviceAPI.userInfo(token)
+
+            call.enqueue(object : Callback<User> {
+                override fun onResponse(call: Call<User>?, response: Response<User>?) {
+                    if (response!!.body() != null) {
+                        textUserNameDrawer.text = response!!.body().firstName + " " + response!!.body().lastName
+                    }
+                }
+
+                override fun onFailure(call: Call<User>?, t: Throwable?) {
+                    Toast.makeText(applicationContext, "Что-то пошло не так =(", Toast.LENGTH_LONG)
+                }
+            })
+        }
     }
 }

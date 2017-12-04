@@ -1,7 +1,12 @@
 package com.addd.measurements
 
+import com.addd.measurements.modelAPI.Authorization
+import com.addd.measurements.modelAPI.User
 import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+
 
 /**
  * Created by addd on 02.12.2017.
@@ -9,5 +14,20 @@ import retrofit2.http.*
 interface MeasurementsAPI {
     @FormUrlEncoded
     @POST("login/")
-    fun performPostCall(@Field("username") login: String,@Field("password") password : String): Call<Any>
+    fun performPostCall(@Field("username") login: String, @Field("password") password: String): Call<Authorization>
+
+    @GET("user_info")
+    fun userInfo(@Header("Authorization") authorization: String): Call<User>
+
+    companion object Factory {
+
+        fun create(): MeasurementsAPI {
+            val retrofit = Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl("http://188.225.46.31/api/")
+                    .build()
+
+            return retrofit.create(MeasurementsAPI::class.java)
+        }
+    }
 }
