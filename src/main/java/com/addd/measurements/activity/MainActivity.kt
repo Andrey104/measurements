@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_TOKEN = getString(R.string.my_token)
+        APP_TOKEN = getString(R.string.my_settings)
         APP_PREFERENCES_NAME = getString(R.string.token)
 
         super.onCreate(savedInstanceState)

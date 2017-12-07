@@ -1,6 +1,7 @@
 package com.addd.measurements
 
 import com.addd.measurements.modelAPI.Authorization
+import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.User
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -18,6 +19,9 @@ interface MeasurementsAPI {
 
     @GET("user_info")
     fun userInfo(@Header("Authorization") authorization: String): Call<User>
+
+    @GET("measurements")
+    fun getMeasurements(@Header("Authorization") authorization: String, @Query("date") date : String): Call<List<Measurement>>
 
     companion object Factory {
 

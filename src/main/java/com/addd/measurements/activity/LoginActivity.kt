@@ -16,18 +16,18 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var  APP_TOKEN : String
-    private lateinit var APP_PREFERENCES_NAME : String
+    private lateinit var APP_PREFERENCES: String
+    private lateinit var APP_TOKEN: String
 
     private val serviceAPI = MeasurementsAPI.Factory.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_TOKEN = getString(R.string.my_token)
-        APP_PREFERENCES_NAME = getString(R.string.token)
+        APP_PREFERENCES = getString(R.string.my_settings)
+        APP_TOKEN = getString(R.string.token)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
-        if (mSettings.contains(APP_PREFERENCES_NAME)) {
+        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        if (mSettings.contains(APP_TOKEN)) {
             startActivity(Intent(applicationContext, MainActivity::class.java))
             finish()
         }
@@ -50,9 +50,9 @@ class LoginActivity : AppCompatActivity() {
                     if (response!!.body() == null) {
                         Toast.makeText(applicationContext, "Неправильный логин или пароль", Toast.LENGTH_SHORT).show()
                     } else {
-                        val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
+                        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
                         val editor: SharedPreferences.Editor = mSettings.edit()
-                        editor.putString(APP_PREFERENCES_NAME, response.body().token)
+                        editor.putString(APP_TOKEN, response.body().token)
                         editor.apply()
                         startActivity(Intent(applicationContext, MainActivity::class.java))
                         finish()
