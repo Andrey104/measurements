@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         APP_TOKEN = getString(R.string.my_settings)
         APP_PREFERENCES_NAME = getString(R.string.token)
+        title = "Замеры"
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

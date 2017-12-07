@@ -126,12 +126,9 @@ class MeasurementsFragment : Fragment() {
             date = "$year-${monthOfYear + 1}-$day"
             getMeasurements()
         }
-        val datePikerDialog: DatePickerDialog = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val calendar = Calendar.getInstance()
-            DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-        } else {
-            TODO("VERSION.SDK_INT < N")
-        }
+        val calendar = Calendar.getInstance()
+        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
         datePikerDialog.show()
     }
 
