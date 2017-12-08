@@ -9,7 +9,15 @@
         android:icon="@drawable/ic_today_white_24dp"
         android:title="@string/tomorrow" />
     <item
-        android:id="@+id/date"
+    android:id="@+id/date"
+    android:icon="@drawable/ic_today_white_24dp"
+    android:title="@string/date" />
+    <item
+        android:id="@+id/date1"
+        android:icon="@drawable/ic_today_white_24dp"
+        android:title="@string/date" />
+    <item
+        android:id="@+id/date2"
         android:icon="@drawable/ic_today_white_24dp"
         android:title="@string/date" />
 </menu>

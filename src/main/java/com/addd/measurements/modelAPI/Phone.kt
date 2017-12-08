@@ -5,22 +5,20 @@ import com.google.gson.annotations.SerializedName
 
 
 
-
-
 /**
- * Created by addd on 07.12.2017.
+ * Created by addd on 08.12.2017.
  */
-class Client {
+class Phone {
     @SerializedName("id")
     @Expose
     val id: Int? = null
-    @SerializedName("fio")
+    @SerializedName("client")
     @Expose
-    val fio: String? = null
-    @SerializedName("email")
+    val client: Int? = null
+    @SerializedName("number")
     @Expose
-    val email: Any? = null
-    @SerializedName("phones")
+    val number: String? = null
+    @SerializedName("comment")
     @Expose
-    val phones: List<Phone>? = null
+    val comment: Any? = null
 }

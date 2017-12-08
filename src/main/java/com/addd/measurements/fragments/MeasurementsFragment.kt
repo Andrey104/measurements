@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -30,11 +29,13 @@ import java.util.*
  * Created by addd on 03.12.2017.
  */
 class MeasurementsFragment : Fragment() {
+    private lateinit var listMeasurements : List<Measurement>
     private lateinit var APP_PREFERENCES: String
     private lateinit var APP_TOKEN: String
     private val APP_LIST = "listMeasurements"
     private val serviceAPI = MeasurementsAPI.Factory.create()
     private lateinit var date: String
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         APP_PREFERENCES = getString(R.string.my_settings)
         APP_TOKEN = getString(R.string.token)
@@ -70,18 +71,20 @@ class MeasurementsFragment : Fragment() {
         call.enqueue(object : Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
-                    recyclerList.adapter = DataAdapter(response.body())
+                    listMeasurements = response.body()
+                    recyclerList.adapter = DataAdapter(listMeasurements)
                     recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
                     val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // какой-то хуевый разделитель
                     recyclerList.addItemDecoration(dividerItemDecoration)
 
-                    saveMeasurementsList(context, response.body())
+                    saveMeasurementsList(context, listMeasurements)
 
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                recyclerList.adapter = DataAdapter(loadSharedPreferencesList(context))
+                listMeasurements = loadSharedPreferencesList(context)
+                recyclerList.adapter = DataAdapter(listMeasurements)
                 recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
                 val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // разделитель
                 recyclerList.addItemDecoration(dividerItemDecoration)

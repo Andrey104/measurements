@@ -1,5 +1,6 @@
 package com.addd.measurements.adapters
 
+import android.content.Intent
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
@@ -7,13 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Measurement
 import rx.subjects.PublishSubject
 import java.util.*
-import android.support.v4.content.ContextCompat.startActivity
-import android.content.Intent
-import android.widget.Toast
 
 
 /**
@@ -98,7 +97,14 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder> {
         }
 
         viewHolder.itemView.setOnClickListener({ v ->
-            Toast.makeText(v.context, viewHolder.deal.text, Toast.LENGTH_SHORT).show()
+            val intent = Intent(v.context, OneMeasurementActivity::class.java)
+            var id : String = viewHolder.deal.text.toString()
+            while (id.startsWith("0")) {
+                id = id.substring(1)
+            }
+            intent.putExtra("id", id)
+            v.context.startActivity(intent)
+//            Toast.makeText(v.context, id, Toast.LENGTH_SHORT).show()
         })
 
 

@@ -18,4 +18,5 @@
     <string name="my_settings">mySettings</string>
     <string name="token">token</string>
     <string name="measurements">Замеры</string>
+    <string name="title_activity_one_measurement">OneMeasurementActivity</string>
 </resources>

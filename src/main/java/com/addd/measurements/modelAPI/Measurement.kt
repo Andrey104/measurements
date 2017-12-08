@@ -42,28 +42,28 @@ class Measurement {
     @SerializedName("deal")
     @Expose
     val deal: Int? = null
-    @SerializedName("color")
-    @Expose
-    val color: Int? = null
-    @SerializedName("deal_comment")
-    @Expose
-    val dealComment: Any? = null
     @SerializedName("pictures")
     @Expose
     val pictures: List<Any>? = null
-    @SerializedName("company")
+    @SerializedName("color")
     @Expose
-    val company: Company? = null
-    @SerializedName("clients")
-    @Expose
-    val clients: List<Client>? = null
-    @SerializedName("address")
-    @Expose
-    val address: String? = null
-    @SerializedName("actions")
-    @Expose
-    val actions: List<Any>? = null
+    val color: Int? = null
     @SerializedName("worker_name")
     @Expose
     val workerName: Any? = null
+    @SerializedName("deal_comment")
+    @Expose
+    val dealComment: Any? = null
+    @SerializedName("address")
+    @Expose
+    val address: String? = null
+    @SerializedName("clients")
+    @Expose
+    val clients: List<Clients>? = null
+    @SerializedName("actions")
+    @Expose
+    val actions: List<Any>? = null
+    @SerializedName("company")
+    @Expose
+    val company: Company? = null
 }

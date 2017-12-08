@@ -21,7 +21,10 @@ interface MeasurementsAPI {
     fun userInfo(@Header("Authorization") authorization: String): Call<User>
 
     @GET("measurements")
-    fun getMeasurements(@Header("Authorization") authorization: String, @Query("date") date : String): Call<List<Measurement>>
+    fun getMeasurements(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
+
+    @GET("measurements/{id}")
+    fun getOneMeasurement(@Header("Authorization") authorization: String, @Path("id") id : String) : Call<Measurement>
 
     companion object Factory {
 
