@@ -34,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener { goLogin() }
     }
 
+    //логиним юзера и сохраняем в SharedPreferences Token
     private fun goLogin() {
         if (editLogin.length() == 0 || editPassword.length() == 0) {
             Toast.makeText(applicationContext, "Пустое поле Логин или Пароль", Toast.LENGTH_SHORT).show()

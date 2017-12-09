@@ -8,10 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.R
+import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.modelAPI.Measurement
-import rx.subjects.PublishSubject
 import java.util.*
 
 
@@ -111,9 +110,6 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
-        super.onAttachedToRecyclerView(recyclerView)
-    }
 
     override fun getItemCount(): Int {
         return mNotesList.size
@@ -124,7 +120,6 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder> {
      */
 
     class ViewHolder : RecyclerView.ViewHolder {
-        private val onClickSubject: PublishSubject<String> = PublishSubject.create()
 
         var symbol: TextView
         var deal: TextView

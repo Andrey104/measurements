@@ -36,6 +36,7 @@ class OneMeasurementActivity : AppCompatActivity() {
         getOneMeasurement()
     }
 
+    //берем один замер по id
     private fun getOneMeasurement() {
         val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         var token = ""
