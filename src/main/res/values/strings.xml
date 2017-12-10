@@ -20,4 +20,5 @@
     <string name="measurements">Замеры</string>
     <string name="title_activity_one_measurement">OneMeasurementActivity</string>
     <string name="user_info">userInfo</string>
+    <string name="load">Идет загрузка..</string>
 </resources>

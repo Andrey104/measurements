@@ -23,9 +23,7 @@ import com.addd.measurements.modelAPI.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.nav_header_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -190,7 +188,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 override fun onFailure(call: Call<User>?, t: Throwable?) {
-                    userInfo = loadSharedPreferencesList(applicationContext)
+                    userInfo = loadSharedPreferencesUser(applicationContext)
                     val navigationView: NavigationView = findViewById(R.id.nav_view)
                     val navHeader = navigationView.getHeaderView(0)
                     val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
@@ -209,7 +207,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         prefsEditor.commit()
     }
 
-    private fun loadSharedPreferencesList(context: Context): User {
+    private fun loadSharedPreferencesUser(context: Context): User {
         var user: User
         val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         val gson = Gson()

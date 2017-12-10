@@ -3,10 +3,12 @@ package com.addd.measurements.fragments
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -29,7 +31,7 @@ import java.util.*
  * Created by addd on 03.12.2017.
  */
 class MeasurementsFragment : Fragment() {
-    private lateinit var listMeasurements : List<Measurement>
+    private lateinit var listMeasurements: List<Measurement>
     private lateinit var APP_PREFERENCES: String
     private lateinit var APP_TOKEN: String
     private val APP_LIST = "listMeasurements"
@@ -67,6 +69,14 @@ class MeasurementsFragment : Fragment() {
         if (mSettings.contains(APP_TOKEN)) {
             token = "Token " + mSettings.getString(APP_TOKEN, "")
         }
+
+        val builder = AlertDialog.Builder(context)
+        val viewAlert = layoutInflater.inflate(R.layout.load_dialog, null)
+        builder.setView(viewAlert)
+                .setCancelable(false)
+        val alert = builder.create()
+        alert.show()
+
         val call = serviceAPI.getMeasurements(token, date)
         call.enqueue(object : Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
@@ -78,7 +88,7 @@ class MeasurementsFragment : Fragment() {
                     recyclerList.addItemDecoration(dividerItemDecoration)
 
                     saveMeasurementsList(context, listMeasurements)
-
+                    alert.dismiss()
                 }
             }
 
@@ -88,6 +98,7 @@ class MeasurementsFragment : Fragment() {
                 recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
                 val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // разделитель
                 recyclerList.addItemDecoration(dividerItemDecoration)
+                alert.dismiss()
             }
         })
     }
