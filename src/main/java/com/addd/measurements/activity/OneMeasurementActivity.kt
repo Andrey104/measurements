@@ -33,7 +33,8 @@ class OneMeasurementActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        getOneMeasurement()
+        Toast.makeText(applicationContext, intent.getStringExtra("symbol"), Toast.LENGTH_SHORT).show()
+//        getOneMeasurement()
     }
 
     //берем один замер по id

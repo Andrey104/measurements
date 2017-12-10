@@ -74,8 +74,8 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
         viewHolder.symbol.text = measurement.company!!.symbol
 
-        if (viewHolder.symbol.length() == 2) {
-            viewHolder.symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22F)
+        if (viewHolder.symbol.text.length == 1) {
+            viewHolder.symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30F)
         }
         when (measurement.company!!.id) {
             1 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -102,6 +102,7 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder> {
                 id = id.substring(1)
             }
             intent.putExtra("id", id)
+            intent.putExtra("symbol", viewHolder.symbol.text.length.toString())
             v.context.startActivity(intent)
 //            Toast.makeText(v.context, id, Toast.LENGTH_SHORT).show()
         })
