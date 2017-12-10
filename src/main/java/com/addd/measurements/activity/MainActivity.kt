@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import com.addd.measurements.MeasurementsAPI
 import com.addd.measurements.R
@@ -19,7 +20,10 @@ import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.MyObjectsFragment
 import com.addd.measurements.fragments.ProblemsFragment
 import com.addd.measurements.modelAPI.User
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import retrofit2.Call
@@ -28,20 +32,22 @@ import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private lateinit var  APP_TOKEN : String
-    private lateinit var APP_PREFERENCES_NAME : String
+    private lateinit var APP_PREFERENCES: String
+    private lateinit var APP_USER_INFO: String
+    private lateinit var APP_TOKEN: String
+    private var userInfo: User = User()
     private val serviceAPI = MeasurementsAPI.Factory.create()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_TOKEN = getString(R.string.my_settings)
-        APP_PREFERENCES_NAME = getString(R.string.token)
+        APP_PREFERENCES = getString(R.string.my_settings)
+        APP_TOKEN = getString(R.string.token)
+        APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -92,7 +98,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var fragmentClass: Class<*>?
-
         when (item.itemId) {
             R.id.nav_measurements -> {
                 fragmentClass = MeasurementsFragment::class.java
@@ -124,7 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .setCancelable(false)
                 .setPositiveButton("Да",
                         { dialog, id ->
-                            val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
+                            val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
                             val editor = mSettings.edit()
                             editor.clear()
                             editor.apply()
@@ -164,26 +169,58 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
-
     }
 
     private fun informationUser() {
-        val mSettings: SharedPreferences = getSharedPreferences(APP_TOKEN, Context.MODE_PRIVATE)
-        if (mSettings.contains(APP_PREFERENCES_NAME)) {
-            val token: String = "Token " + mSettings.getString(APP_PREFERENCES_NAME, "")
+        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        if (mSettings.contains(APP_TOKEN)) {
+            val token: String = "Token " + mSettings.getString(APP_TOKEN, "")
             val call = serviceAPI.userInfo(token)
 
             call.enqueue(object : Callback<User> {
                 override fun onResponse(call: Call<User>?, response: Response<User>?) {
                     if (response!!.body() != null) {
-                        textUserNameDrawer.text = response!!.body().firstName + " " + response!!.body().lastName
+                        userInfo = response.body()
+                        saveUserInfo(applicationContext, userInfo)
+                        val navigationView: NavigationView = findViewById(R.id.nav_view)
+                        val navHeader = navigationView.getHeaderView(0)
+                        val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
+                        textName.text = "${userInfo.firstName} ${userInfo.lastName}"
                     }
                 }
 
                 override fun onFailure(call: Call<User>?, t: Throwable?) {
-                    Toast.makeText(applicationContext, "Что-то пошло не так =(", Toast.LENGTH_LONG)
+                    userInfo = loadSharedPreferencesList(applicationContext)
+                    val navigationView: NavigationView = findViewById(R.id.nav_view)
+                    val navHeader = navigationView.getHeaderView(0)
+                    val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
+                    textName.text = "${userInfo.firstName} ${userInfo.lastName}"
                 }
             })
         }
+    }
+
+    private fun saveUserInfo(context: Context, user: User) {
+        val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val prefsEditor = mPrefs.edit()
+        val gson = Gson()
+        val json = gson.toJson(user)
+        prefsEditor.putString(APP_USER_INFO, json)
+        prefsEditor.commit()
+    }
+
+    private fun loadSharedPreferencesList(context: Context): User {
+        var user: User
+        val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = mPrefs.getString(APP_USER_INFO, "")
+        user = if (json!!.isEmpty()) {
+            User()
+        } else {
+            val type = object : TypeToken<User>() {
+            }.type
+            gson.fromJson(json, type)
+        }
+        return user
     }
 }
