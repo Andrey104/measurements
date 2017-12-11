@@ -3,10 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+
+    <item
+        android:id="@+id/uncheckableMes"
+        android:title="Замеры">
+        <menu>
+            <item
+                android:id="@+id/nav_current"
+                android:title="Текущие" />
+            <item
+                android:id="@+id/nav_rejected"
+                android:title="Отклоненные" />
+            <item
+                android:id="@+id/nav_closed"
+                android:title="Закрытые" />
+
+        </menu>
+
+    </item>
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_measurements"
-            android:title="Замеры" />
         <item
             android:id="@+id/nav_myObjects"
             android:title="Мои объекты" />
@@ -17,5 +32,4 @@
             android:id="@+id/nav_exit"
             android:title="Выйти из аккаунта" />
     </group>
-
 </menu>

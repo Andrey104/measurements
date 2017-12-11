@@ -29,8 +29,8 @@ interface MeasurementsAPI {
     @GET("measurements")
     fun getMeasurementsOneStatus(@Header("Authorization") authorization: String, @Query("date") date: String, @Query("status") status: Int): Call<List<Measurement>>
 
-    @GET("measurements")
-    fun getMeasurementsOneStatus(@Header("Authorization") authorization: String, @Query("date") date: String, @Query("status") status: Int, @Query("status") status2: Int): Call<List<Measurement>>
+    @GET("measurements?status=0&status=1")
+    fun getMeasurementsTwoStatus(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
 
     companion object Factory {
 

@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import com.addd.measurements.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.adapters.DataAdapter
+import com.addd.measurements.middleware.MiddlewareImplementation
 import com.addd.measurements.modelAPI.Measurement
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -31,90 +32,55 @@ import java.util.*
 /**
  * Created by addd on 03.12.2017.
  */
-class MeasurementsFragment : Fragment() {
-    private lateinit var listMeasurements: List<Measurement>
-    private lateinit var APP_TOKEN: String
-    private val APP_LIST = "listMeasurements"
-    private val serviceAPI = MeasurementsAPI.Factory.create()
+class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
+    val middleware = MiddlewareImplementation()
     private lateinit var date: String
+    lateinit var alert : AlertDialog
+
+    override fun callingBack(listMeasurements: List<Measurement>) {
+        recyclerList.adapter = DataAdapter(listMeasurements)
+        recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
+        alert.dismiss()
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        APP_TOKEN = getString(R.string.token)
+        middleware.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.today -> {
-                    todayMeasurements()
+                    showDialog()
+                    middleware.getTodayNormalMeasurements(context)
                 }
                 R.id.tomorrow -> {
-                    tomorrowMeasurements()
+//                    tomorrowMeasurements()
                 }
                 R.id.date -> {
-                    dateMeasurements()
+//                    dateMeasurements()
                 }
             }
             true
         }
 
-        todayMeasurements()
+//        todayMeasurements()
         return view
     }
 
-    private fun getMeasurements() {
-        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
-
+    fun showDialog() {
         val builder = AlertDialog.Builder(context)
         val viewAlert = layoutInflater.inflate(R.layout.load_dialog, null)
         builder.setView(viewAlert)
                 .setCancelable(false)
-        val alert = builder.create()
+        alert = builder.create()
         alert.show()
-
-        val call = serviceAPI.getMeasurements(token, date)
-        call.enqueue(object : Callback<List<Measurement>> {
-            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
-                if (response!!.body() != null) {
-                    listMeasurements = response.body()
-                    recyclerList.adapter = DataAdapter(listMeasurements)
-                    recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
-                    val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // какой-то хуевый разделитель
-                    recyclerList.addItemDecoration(dividerItemDecoration)
-
-                    saveMeasurementsList(context, listMeasurements)
-                    alert.dismiss()
-                }
-            }
-
-            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context)
-                recyclerList.adapter = DataAdapter(listMeasurements)
-                recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
-                val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // разделитель
-                recyclerList.addItemDecoration(dividerItemDecoration)
-                alert.dismiss()
-            }
-        })
     }
 
-    private fun todayMeasurements() {
-        val calendar = Calendar.getInstance()
-        var day: String
-        day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
-            "0" + calendar.get(Calendar.DAY_OF_MONTH)
-        } else {
-            calendar.get(Calendar.DAY_OF_MONTH).toString()
-        }
 
 
-        date = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
-        getMeasurements()
-    }
+
 
     private fun tomorrowMeasurements() {
         var day: String
@@ -126,7 +92,7 @@ class MeasurementsFragment : Fragment() {
             calendar.get(Calendar.DAY_OF_MONTH).toString()
         }
         date = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
-        getMeasurements()
+//        getMeasurements()
     }
 
     private fun dateMeasurements() {
@@ -137,7 +103,7 @@ class MeasurementsFragment : Fragment() {
                 dayOfMonth.toString()
             }
             date = "$year-${monthOfYear + 1}-$day"
-            getMeasurements()
+//            getMeasurements()
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -145,27 +111,4 @@ class MeasurementsFragment : Fragment() {
         datePikerDialog.show()
     }
 
-    private fun saveMeasurementsList(context: Context, list: List<Measurement>) {
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val prefsEditor = mPrefs.edit()
-        val gson = Gson()
-        val json = gson.toJson(list)
-        prefsEditor.putString(APP_LIST, json)
-        prefsEditor.commit()
-    }
-
-    private fun loadSharedPreferencesList(context: Context): List<Measurement> {
-        var callLog: List<Measurement>
-        val mPrefs =PreferenceManager.getDefaultSharedPreferences(context)
-        val gson = Gson()
-        val json = mPrefs.getString(APP_LIST, "")
-        if (json!!.isEmpty()) {
-            callLog = ArrayList<Measurement>()
-        } else {
-            val type = object : TypeToken<List<Measurement>>() {
-            }.type
-            callLog = gson.fromJson(json, type)
-        }
-        return callLog
-    }
 }
