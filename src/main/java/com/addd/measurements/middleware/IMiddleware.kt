@@ -5,7 +5,7 @@ import com.addd.measurements.modelAPI.Measurement
 /**
  * Created by addd on 11.12.2017.
  */
-interface Middleware {
+interface IMiddleware {
     fun getTodayNormalMeasurements(): List<Measurement>
     fun getTodayEndMeasurements(): List<Measurement>
     fun getTodayRejectMeasurements(): List<Measurement>
