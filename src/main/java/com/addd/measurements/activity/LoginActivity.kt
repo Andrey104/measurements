@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.addd.measurements.MeasurementsAPI
@@ -16,17 +17,15 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var APP_PREFERENCES: String
     private lateinit var APP_TOKEN: String
 
     private val serviceAPI = MeasurementsAPI.Factory.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_PREFERENCES = getString(R.string.my_settings)
         APP_TOKEN = getString(R.string.token)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (mSettings.contains(APP_TOKEN)) {
             startActivity(Intent(applicationContext, MainActivity::class.java))
             finish()
@@ -51,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
                     if (response!!.body() == null) {
                         Toast.makeText(applicationContext, "Неправильный логин или пароль", Toast.LENGTH_SHORT).show()
                     } else {
-                        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+                        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
                         val editor: SharedPreferences.Editor = mSettings.edit()
                         editor.putString(APP_TOKEN, response.body().token)
                         editor.apply()

@@ -3,6 +3,7 @@ package com.addd.measurements.activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
@@ -16,12 +17,10 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class OneMeasurementActivity : AppCompatActivity() {
-    private lateinit var APP_PREFERENCES: String
     private lateinit var APP_TOKEN: String
     private val serviceAPI = MeasurementsAPI.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_PREFERENCES = getString(R.string.my_settings)
         APP_TOKEN = getString(R.string.token)
 
         super.onCreate(savedInstanceState)
@@ -39,7 +38,7 @@ class OneMeasurementActivity : AppCompatActivity() {
 
     //берем один замер по id
     private fun getOneMeasurement() {
-        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mSettings = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         var token = ""
         if (mSettings.contains(APP_TOKEN)) {
             token = "Token " + mSettings.getString(APP_TOKEN, "")
@@ -56,6 +55,7 @@ class OneMeasurementActivity : AppCompatActivity() {
 
         })
     }
+
 
 
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -30,7 +31,6 @@ import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private lateinit var APP_PREFERENCES: String
     private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
     private var userInfo: User = User()
@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_PREFERENCES = getString(R.string.my_settings)
         APP_TOKEN = getString(R.string.token)
         APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
@@ -127,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .setCancelable(false)
                 .setPositiveButton("Да",
                         { dialog, id ->
-                            val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+                            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
                             val editor = mSettings.edit()
                             editor.clear()
                             editor.apply()
@@ -170,7 +169,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun informationUser() {
-        val mSettings: SharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (mSettings.contains(APP_TOKEN)) {
             val token: String = "Token " + mSettings.getString(APP_TOKEN, "")
             val call = serviceAPI.userInfo(token)
@@ -199,7 +198,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun saveUserInfo(context: Context, user: User) {
-        val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val prefsEditor = mPrefs.edit()
         val gson = Gson()
         val json = gson.toJson(user)
@@ -209,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun loadSharedPreferencesUser(context: Context): User {
         var user: User
-        val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val gson = Gson()
         val json = mPrefs.getString(APP_USER_INFO, "")
         user = if (json!!.isEmpty()) {

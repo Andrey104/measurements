@@ -2,22 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/today"
-        android:icon="@drawable/ic_today_white_24dp"
+        android:icon="@drawable/today_calendar"
         android:title="@string/today" />
     <item
         android:id="@+id/tomorrow"
-        android:icon="@drawable/ic_today_white_24dp"
+        android:icon="@drawable/tomorrow_calendar"
         android:title="@string/tomorrow" />
     <item
     android:id="@+id/date"
     android:icon="@drawable/ic_today_white_24dp"
     android:title="@string/date" />
-    <item
-        android:id="@+id/date1"
-        android:icon="@drawable/ic_today_white_24dp"
-        android:title="@string/date" />
-    <item
-        android:id="@+id/date2"
-        android:icon="@drawable/ic_today_white_24dp"
-        android:title="@string/date" />
 </menu>
