@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -32,14 +33,12 @@ import java.util.*
  */
 class MeasurementsFragment : Fragment() {
     private lateinit var listMeasurements: List<Measurement>
-    private lateinit var APP_PREFERENCES: String
     private lateinit var APP_TOKEN: String
     private val APP_LIST = "listMeasurements"
     private val serviceAPI = MeasurementsAPI.Factory.create()
     private lateinit var date: String
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        APP_PREFERENCES = getString(R.string.my_settings)
         APP_TOKEN = getString(R.string.token)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
 
@@ -64,7 +63,7 @@ class MeasurementsFragment : Fragment() {
     }
 
     private fun getMeasurements() {
-        val mSettings: SharedPreferences = activity.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         var token = ""
         if (mSettings.contains(APP_TOKEN)) {
             token = "Token " + mSettings.getString(APP_TOKEN, "")
@@ -147,7 +146,7 @@ class MeasurementsFragment : Fragment() {
     }
 
     private fun saveMeasurementsList(context: Context, list: List<Measurement>) {
-        val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val prefsEditor = mPrefs.edit()
         val gson = Gson()
         val json = gson.toJson(list)
@@ -157,7 +156,7 @@ class MeasurementsFragment : Fragment() {
 
     private fun loadSharedPreferencesList(context: Context): List<Measurement> {
         var callLog: List<Measurement>
-        val mPrefs = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         val gson = Gson()
         val json = mPrefs.getString(APP_LIST, "")
         if (json!!.isEmpty()) {
