@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
+        val menuItem = nav_view.menu.findItem(R.id.nav_current)
+        menuItem.isChecked = true
 
         var fragmentClass: Class<*>?
         fragmentClass = MeasurementsFragment::class.java
@@ -94,7 +96,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var fragmentClass: Class<*>?
-
+        val menuItem = nav_view.menu.findItem(R.id.nav_current)
+        menuItem.isChecked = false
         when (item.itemId) {
             R.id.nav_current -> {
                 bundle.putInt("check", 0)

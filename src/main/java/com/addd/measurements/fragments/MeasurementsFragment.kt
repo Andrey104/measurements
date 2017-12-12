@@ -37,13 +37,28 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         if (bundle != null) {
             when (bundle.getInt("check")) {
                 0 -> onClickCurrent(bottomNavigationView)
+
                 1 -> onClickRejected(bottomNavigationView)
+
                 2 -> onClickClosed(bottomNavigationView)
+
             }
         }
 
+        if (bundle != null) {
+            showDialog()
+            when (bundle.getInt("check")) {
+                0 -> middleware.getTodayCurrentMeasurements(context)
+                1 -> middleware.getTodayRejectMeasurements(context)
+                2 -> middleware.getTodayClosedMeasurements(context)
+            }
+        }
 
         return view
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 
     private fun onClickCurrent(bottomNavigationView: BottomNavigationView) {
@@ -155,7 +170,6 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
 
         datePikerDialog.show()
     }
-
 
 
     private fun showDialog() {
