@@ -2,30 +2,20 @@ package com.addd.measurements.fragments
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.content.Context
-import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.addd.measurements.MeasurementsAPI
+import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.middleware.MiddlewareImplementation
 import com.addd.measurements.modelAPI.Measurement
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.measurements_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 
@@ -35,9 +25,14 @@ import java.util.*
 class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
     val middleware = MiddlewareImplementation()
     private lateinit var date: String
-    lateinit var alert : AlertDialog
+    lateinit var alert: AlertDialog
 
-    override fun callingBack(listMeasurements: List<Measurement>) {
+    override fun callingBack(listMeasurements: List<Measurement>, result: Int) {
+        if (result == 0) {
+            Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
+        }
         recyclerList.adapter = DataAdapter(listMeasurements)
         recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
         alert.dismiss()
@@ -47,8 +42,23 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         middleware.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
+        val bundle = this.arguments
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
+        if (bundle != null) {
+            when (bundle.getInt("check")) {
+                0 -> onClickCurrent(bottomNavigationView)
+                1 -> onClickRejected(bottomNavigationView)
+                2 -> onClickClosed(bottomNavigationView)
+            }
+        }
+
+
+//        todayMeasurements()
+        return view
+    }
+
+    private fun onClickCurrent(bottomNavigationView: BottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.today -> {
@@ -64,9 +74,40 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             }
             true
         }
+    }
 
-//        todayMeasurements()
-        return view
+    private fun onClickRejected(bottomNavigationView: BottomNavigationView) {
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.today -> {
+                    Toast.makeText(context, "rejected", Toast.LENGTH_SHORT).show()
+                }
+                R.id.tomorrow -> {
+                    Toast.makeText(context, "rejected", Toast.LENGTH_SHORT).show()
+                }
+                R.id.date -> {
+                    Toast.makeText(context, "rejected", Toast.LENGTH_SHORT).show()
+                }
+            }
+            true
+        }
+    }
+
+    private fun onClickClosed(bottomNavigationView: BottomNavigationView) {
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.today -> {
+                    Toast.makeText(context, "closed", Toast.LENGTH_SHORT).show()
+                }
+                R.id.tomorrow -> {
+                    Toast.makeText(context, "closed", Toast.LENGTH_SHORT).show()
+                }
+                R.id.date -> {
+                    Toast.makeText(context, "closed", Toast.LENGTH_SHORT).show()
+                }
+            }
+            true
+        }
     }
 
     fun showDialog() {
@@ -77,9 +118,6 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         alert = builder.create()
         alert.show()
     }
-
-
-
 
 
     private fun tomorrowMeasurements() {
