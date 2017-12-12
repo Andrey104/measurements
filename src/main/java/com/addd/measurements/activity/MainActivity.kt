@@ -1,6 +1,5 @@
 package com.addd.measurements.activity
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -31,6 +30,7 @@ import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    private val bundle = Bundle()
     private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
     private var userInfo: User = User()
@@ -45,17 +45,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
         nav_view.setNavigationItemSelectedListener(this)
 
         var fragmentClass: Class<*>?
         fragmentClass = MeasurementsFragment::class.java
-        startFragment(fragmentClass)
+        bundle.putInt("check", 0)
+        startFragment(fragmentClass, bundle)
 
         informationUser()
     }
@@ -95,18 +94,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var fragmentClass: Class<*>?
+
         when (item.itemId) {
-            R.id.nav_measurements -> {
+            R.id.nav_current -> {
+                bundle.putInt("check", 0)
                 fragmentClass = MeasurementsFragment::class.java
-                changeFragment(fragmentClass, item)
+                changeFragment(fragmentClass, item, bundle)
+            }
+            R.id.nav_rejected -> {
+                bundle.putInt("check", 1)
+                fragmentClass = MeasurementsFragment::class.java
+                changeFragment(fragmentClass, item, bundle)
+            }
+            R.id.nav_closed -> {
+                bundle.putInt("check", 2)
+                fragmentClass = MeasurementsFragment::class.java
+                changeFragment(fragmentClass, item, bundle)
             }
             R.id.nav_myObjects -> {
                 fragmentClass = MyObjectsFragment::class.java
-                changeFragment(fragmentClass, item)
+                changeFragment(fragmentClass, item, null)
             }
             R.id.nav_problems -> {
                 fragmentClass = ProblemsFragment::class.java
-                changeFragment(fragmentClass, item)
+                changeFragment(fragmentClass, item, null)
             }
             R.id.nav_exit -> {
                 exitFromApp()
@@ -138,14 +149,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         alert.show()
     }
 
-    private fun changeFragment(fragmentClass: Class<*>?, item: MenuItem) {
+    private fun changeFragment(fragmentClass: Class<*>?, item: MenuItem, bundle: Bundle?) {
         var fragment: Fragment? = null
-
         try {
             fragment = fragmentClass!!.newInstance() as Fragment?
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        fragment!!.arguments = bundle
 
         // Вставляем фрагмент, заменяя текущий фрагмент
         val fragmentManager = supportFragmentManager
@@ -156,7 +167,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         title = item.title
     }
 
-    private fun startFragment(fragmentClass: Class<*>?) {
+    private fun startFragment(fragmentClass: Class<*>?, bundle: Bundle?) {
         var fragment: Fragment? = null
 
         try {
@@ -164,6 +175,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        fragment!!.arguments = bundle
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
@@ -178,7 +190,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 override fun onResponse(call: Call<User>?, response: Response<User>?) {
                     if (response!!.body() != null) {
                         userInfo = response.body()
-                        saveUserInfo(applicationContext, userInfo)
+                        saveUserInfo(userInfo)
                         val navigationView: NavigationView = findViewById(R.id.nav_view)
                         val navHeader = navigationView.getHeaderView(0)
                         val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
@@ -187,7 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 override fun onFailure(call: Call<User>?, t: Throwable?) {
-                    userInfo = loadSharedPreferencesUser(applicationContext)
+                    userInfo = loadSharedPreferencesUser()
                     val navigationView: NavigationView = findViewById(R.id.nav_view)
                     val navHeader = navigationView.getHeaderView(0)
                     val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
@@ -197,7 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun saveUserInfo(context: Context, user: User) {
+    private fun saveUserInfo(user: User) {
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val prefsEditor = mPrefs.edit()
         val gson = Gson()
@@ -206,7 +218,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         prefsEditor.commit()
     }
 
-    private fun loadSharedPreferencesUser(context: Context): User {
+    private fun loadSharedPreferencesUser(): User {
         var user: User
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val gson = Gson()

@@ -2,134 +2,110 @@ package com.addd.measurements.fragments
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.content.Context
-import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.addd.measurements.MeasurementsAPI
+import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.DataAdapter
+import com.addd.measurements.middleware.MiddlewareImplementation
 import com.addd.measurements.modelAPI.Measurement
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.measurements_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 
 /**
  * Created by addd on 03.12.2017.
  */
-class MeasurementsFragment : Fragment() {
-    private lateinit var listMeasurements: List<Measurement>
-    private lateinit var APP_TOKEN: String
-    private val APP_LIST = "listMeasurements"
-    private val serviceAPI = MeasurementsAPI.Factory.create()
+
+class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
+    val middleware = MiddlewareImplementation()
     private lateinit var date: String
+    lateinit var alert: AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        APP_TOKEN = getString(R.string.token)
+        middleware.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
+        val bundle = this.arguments
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
+        if (bundle != null) {
+            when (bundle.getInt("check")) {
+                0 -> onClickCurrent(bottomNavigationView)
+                1 -> onClickRejected(bottomNavigationView)
+                2 -> onClickClosed(bottomNavigationView)
+            }
+        }
+
+
+        return view
+    }
+
+    private fun onClickCurrent(bottomNavigationView: BottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.today -> {
-                    todayMeasurements()
+                    showDialog()
+                    middleware.getTodayCurrentMeasurements(context)
                 }
                 R.id.tomorrow -> {
-                    tomorrowMeasurements()
+                    showDialog()
+                    middleware.getTomorrowCurrentMeasurements(context)
                 }
                 R.id.date -> {
-                    dateMeasurements()
+                    dateCurrentMeasurements()
                 }
             }
             true
         }
-
-        todayMeasurements()
-        return view
     }
 
-    private fun getMeasurements() {
-        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
 
-        val builder = AlertDialog.Builder(context)
-        val viewAlert = layoutInflater.inflate(R.layout.load_dialog, null)
-        builder.setView(viewAlert)
-                .setCancelable(false)
-        val alert = builder.create()
-        alert.show()
-
-        val call = serviceAPI.getMeasurements(token, date)
-        call.enqueue(object : Callback<List<Measurement>> {
-            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
-                if (response!!.body() != null) {
-                    listMeasurements = response.body()
-                    recyclerList.adapter = DataAdapter(listMeasurements)
-                    recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
-                    val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // какой-то хуевый разделитель
-                    recyclerList.addItemDecoration(dividerItemDecoration)
-
-                    saveMeasurementsList(context, listMeasurements)
-                    alert.dismiss()
+    private fun onClickRejected(bottomNavigationView: BottomNavigationView) {
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.today -> {
+                    showDialog()
+                    middleware.getTodayRejectMeasurements(context)
+                }
+                R.id.tomorrow -> {
+                    showDialog()
+                    middleware.getTomorrowRejectMeasurements(context)
+                }
+                R.id.date -> {
+                    dateRejectMeasurements()
                 }
             }
+            true
+        }
+    }
 
-            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context)
-                recyclerList.adapter = DataAdapter(listMeasurements)
-                recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
-                val dividerItemDecoration = DividerItemDecoration(recyclerList.context, LinearLayoutManager(activity.applicationContext).orientation) // разделитель
-                recyclerList.addItemDecoration(dividerItemDecoration)
-                alert.dismiss()
+    private fun onClickClosed(bottomNavigationView: BottomNavigationView) {
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.today -> {
+                    showDialog()
+                    middleware.getTodayClosedMeasurements(context)
+                }
+                R.id.tomorrow -> {
+                    showDialog()
+                    middleware.getTomorrowClosedMeasurements(context)
+                }
+                R.id.date -> {
+                    dateClosedMeasurements()
+                }
             }
-        })
-    }
-
-    private fun todayMeasurements() {
-        val calendar = Calendar.getInstance()
-        var day: String
-        day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
-            "0" + calendar.get(Calendar.DAY_OF_MONTH)
-        } else {
-            calendar.get(Calendar.DAY_OF_MONTH).toString()
+            true
         }
-
-
-        date = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
-        getMeasurements()
     }
 
-    private fun tomorrowMeasurements() {
-        var day: String
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_MONTH, 1)
-        day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
-            "0" + calendar.get(Calendar.DAY_OF_MONTH)
-        } else {
-            calendar.get(Calendar.DAY_OF_MONTH).toString()
-        }
-        date = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
-        getMeasurements()
-    }
 
-    private fun dateMeasurements() {
+    private fun dateCurrentMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             var day: String = if (dayOfMonth < 10) {
                 "0" + dayOfMonth
@@ -137,7 +113,8 @@ class MeasurementsFragment : Fragment() {
                 dayOfMonth.toString()
             }
             date = "$year-${monthOfYear + 1}-$day"
-            getMeasurements()
+            showDialog()
+            middleware.getDateCurrentMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -145,27 +122,69 @@ class MeasurementsFragment : Fragment() {
         datePikerDialog.show()
     }
 
-    private fun saveMeasurementsList(context: Context, list: List<Measurement>) {
-        val mPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val prefsEditor = mPrefs.edit()
-        val gson = Gson()
-        val json = gson.toJson(list)
-        prefsEditor.putString(APP_LIST, json)
-        prefsEditor.commit()
+    private fun dateRejectMeasurements() {
+        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            var day: String = if (dayOfMonth < 10) {
+                "0" + dayOfMonth
+            } else {
+                dayOfMonth.toString()
+            }
+            date = "$year-${monthOfYear + 1}-$day"
+            showDialog()
+            middleware.getDateRejectMeasurements(context, date)
+        }
+        val calendar = Calendar.getInstance()
+        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        datePikerDialog.show()
     }
 
-    private fun loadSharedPreferencesList(context: Context): List<Measurement> {
-        var callLog: List<Measurement>
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val gson = Gson()
-        val json = mPrefs.getString(APP_LIST, "")
-        if (json!!.isEmpty()) {
-            callLog = ArrayList<Measurement>()
-        } else {
-            val type = object : TypeToken<List<Measurement>>() {
-            }.type
-            callLog = gson.fromJson(json, type)
+    private fun dateClosedMeasurements() {
+        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            var day: String = if (dayOfMonth < 10) {
+                "0" + dayOfMonth
+            } else {
+                dayOfMonth.toString()
+            }
+            date = "$year-${monthOfYear + 1}-$day"
+            showDialog()
+            middleware.getDateClosedMeasurements(context, date)
         }
-        return callLog
+        val calendar = Calendar.getInstance()
+        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        datePikerDialog.show()
     }
+
+
+
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(context)
+        val viewAlert = layoutInflater.inflate(R.layout.load_dialog, null)
+        builder.setView(viewAlert)
+                .setCancelable(false)
+        alert = builder.create()
+        alert.show()
+    }
+
+    override fun callingBack(listMeasurements: List<Measurement>, result: Int) {
+        if (listMeasurements.isEmpty()) {
+            if (result == 1) {
+                Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "По данному запросу нет данных", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            if (result == 0) {
+                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
+            } else {
+
+                Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
+            }
+        }
+        recyclerList.adapter = DataAdapter(listMeasurements)
+        recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
+        alert.dismiss()
+    }
+
 }
