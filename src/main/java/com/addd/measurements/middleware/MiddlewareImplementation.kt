@@ -3,30 +3,27 @@ package com.addd.measurements.middleware
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import com.addd.measurements.MeasurementsAPI
-import com.addd.measurements.R
-import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.measurements_fragment.*
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * Created by addd on 11.12.2017.
  */
 class MiddlewareImplementation : IMiddleware {
     private var APP_TOKEN: String = "token"
-    private val APP_LIST_TODAY_NORMAL = "listTodayNormal"
-    private val APP_LIST = "listMeasurements"
+    private val APP_LIST_TODAY_CURRENT = "listTodayCurrent"
+    private val APP_LIST_TOMORROW_CURRENT = "listTomorrowCurrent"
+    private val APP_LIST_TODAY_CLOSED = "listTodayClosed"
+    private val APP_LIST_TOMORROW_CLOSED = "listTomorrowClosed"
+    private val APP_LIST_TODAY_REJECTED = "listTodayRejected"
+    private val APP_LIST_TOMORROW_REJECTED = "listTomorrowRejected"
     private lateinit var date: String
+    private lateinit var token: String
     private val serviceAPI = MeasurementsAPI.Factory.create()
     lateinit var callback: Callback
     private lateinit var listMeasurements: List<Measurement>
@@ -43,9 +40,10 @@ class MiddlewareImplementation : IMiddleware {
         return "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
     }
 
-    private fun getTomorrowDate() : String {
-        val calendar = Calendar.getInstance()
+    private fun getTomorrowDate(): String {
         var day: String
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
         day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
             "0" + calendar.get(Calendar.DAY_OF_MONTH)
         } else {
@@ -54,13 +52,10 @@ class MiddlewareImplementation : IMiddleware {
         return "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
     }
 
-    override fun getTodayNormalMeasurements(context: Context) {
+
+    override fun getTodayCurrentMeasurements(context: Context) {
         date = getTodayDate()
-        mSettings = PreferenceManager.getDefaultSharedPreferences(context)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
+        token = getToken(context)
 
 
         val call = serviceAPI.getMeasurements(token, date)
@@ -68,82 +63,180 @@ class MiddlewareImplementation : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    saveMeasurementsList(context, listMeasurements,APP_LIST_TODAY_NORMAL)
+                    saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CURRENT)
                     callback.callingBack(listMeasurements, 0)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context,APP_LIST_TODAY_NORMAL)
+                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CURRENT)
                 callback.callingBack(listMeasurements, 1)
             }
         })
     }
 
-    override fun getTomorrowNormalMeasurements(context: Context) {
-        val calendar = Calendar.getInstance()
-        var day: String
-        day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
-            "0" + calendar.get(Calendar.DAY_OF_MONTH)
-        } else {
-            calendar.get(Calendar.DAY_OF_MONTH).toString()
-        }
-        date = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
-
-
-        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
-
+    override fun getTomorrowCurrentMeasurements(context: Context) {
+        date = getTomorrowDate()
+        token = getToken(context)
 
         val call = serviceAPI.getMeasurements(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    saveMeasurementsList(context, listMeasurements,APP_LIST_TODAY_NORMAL)
+                    saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CURRENT)
                     callback.callingBack(listMeasurements, 0)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context,APP_LIST_TODAY_NORMAL)
+                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CURRENT)
                 callback.callingBack(listMeasurements, 1)
             }
         })
     }
 
+    override fun getDateCurrentMeasurements(context: Context, date: String) {
+        token = getToken(context)
 
-    override fun getTodayEndMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                callback.callingBack(emptyList<Measurement>(), 1)
+            }
+        })
     }
 
     override fun getTodayRejectMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        date = getTodayDate()
+        token = getToken(context)
 
 
-    override fun getTomorrowEndMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_REJECTED)
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_REJECTED)
+                callback.callingBack(listMeasurements, 1)
+            }
+        })
+
     }
 
     override fun getTomorrowRejectMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        date = getTomorrowDate()
+        token = getToken(context)
+
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_REJECTED)
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_REJECTED)
+                callback.callingBack(listMeasurements, 1)
+            }
+        })
     }
 
-    override fun getDateNormalMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getDateRejectMeasurements(context: Context, date: String) {
+        token = getToken(context)
+
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                callback.callingBack(emptyList<Measurement>(), 1)
+            }
+        })
     }
 
-    override fun getDateEndMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getTodayClosedMeasurements(context: Context) {
+        date = getTodayDate()
+        token = getToken(context)
+
+
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CLOSED)
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CLOSED)
+                callback.callingBack(listMeasurements, 1)
+            }
+        })
     }
 
-    override fun getDateRejectMeasurements(context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getTomorrowClosedMeasurements(context: Context) {
+        date = getTomorrowDate()
+        token = getToken(context)
+
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CLOSED)
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CLOSED)
+                callback.callingBack(listMeasurements, 1)
+            }
+        })
     }
+
+    override fun getDateClosedMeasurements(context: Context, date: String) {
+        token = getToken(context)
+
+        val call = serviceAPI.getMeasurements(token, date)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                if (response!!.body() != null) {
+                    listMeasurements = response.body()
+                    callback.callingBack(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                callback.callingBack(emptyList<Measurement>(), 1)
+            }
+        })
+    }
+
 
     interface Callback {
         fun callingBack(listMeasurements: List<Measurement>, result: Int)
@@ -153,7 +246,7 @@ class MiddlewareImplementation : IMiddleware {
         this.callback = callback
     }
 
-    private fun saveMeasurementsList(context: Context, list: List<Measurement>, name:String) {
+    private fun saveMeasurementsList(context: Context, list: List<Measurement>, name: String) {
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         val prefsEditor = mPrefs.edit()
         val gson = Gson()
@@ -164,9 +257,9 @@ class MiddlewareImplementation : IMiddleware {
 
     private fun loadSharedPreferencesList(context: Context, name: String): List<Measurement> {
         var callLog: List<Measurement>
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val mSettings = PreferenceManager.getDefaultSharedPreferences(context)
         val gson = Gson()
-        val json = mPrefs.getString(name, "")
+        val json = mSettings.getString(name, "")
         if (json!!.isEmpty()) {
             callLog = ArrayList<Measurement>()
         } else {
@@ -175,5 +268,14 @@ class MiddlewareImplementation : IMiddleware {
             callLog = gson.fromJson(json, type)
         }
         return callLog
+    }
+
+    private fun getToken(context: Context): String {
+        mSettings = PreferenceManager.getDefaultSharedPreferences(context)
+        var token = ""
+        if (mSettings.contains(APP_TOKEN)) {
+            token = "Token " + mSettings.getString(APP_TOKEN, "")
+        }
+        return token
     }
 }

@@ -27,18 +27,6 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
     private lateinit var date: String
     lateinit var alert: AlertDialog
 
-    override fun callingBack(listMeasurements: List<Measurement>, result: Int) {
-        if (result == 0) {
-            Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
-        }
-        recyclerList.adapter = DataAdapter(listMeasurements)
-        recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
-        alert.dismiss()
-    }
-
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         middleware.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
@@ -54,7 +42,6 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         }
 
 
-//        todayMeasurements()
         return view
     }
 
@@ -63,13 +50,14 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    middleware.getTodayNormalMeasurements(context)
+                    middleware.getTodayCurrentMeasurements(context)
                 }
                 R.id.tomorrow -> {
-//                    tomorrowMeasurements()
+                    showDialog()
+                    middleware.getTomorrowCurrentMeasurements(context)
                 }
                 R.id.date -> {
-//                    dateMeasurements()
+                    dateCurrentMeasurements()
                 }
             }
             true
@@ -80,13 +68,15 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.today -> {
-                    Toast.makeText(context, "rejected", Toast.LENGTH_SHORT).show()
+                    showDialog()
+                    middleware.getTodayRejectMeasurements(context)
                 }
                 R.id.tomorrow -> {
-                    Toast.makeText(context, "rejected", Toast.LENGTH_SHORT).show()
+                    showDialog()
+                    middleware.getTomorrowRejectMeasurements(context)
                 }
                 R.id.date -> {
-                    Toast.makeText(context, "rejected", Toast.LENGTH_SHORT).show()
+                    dateRejectMeasurements()
                 }
             }
             true
@@ -97,20 +87,75 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.today -> {
-                    Toast.makeText(context, "closed", Toast.LENGTH_SHORT).show()
+                    showDialog()
+                    middleware.getTodayClosedMeasurements(context)
                 }
                 R.id.tomorrow -> {
-                    Toast.makeText(context, "closed", Toast.LENGTH_SHORT).show()
+                    showDialog()
+                    middleware.getTomorrowClosedMeasurements(context)
                 }
                 R.id.date -> {
-                    Toast.makeText(context, "closed", Toast.LENGTH_SHORT).show()
+                    dateClosedMeasurements()
                 }
             }
             true
         }
     }
 
-    fun showDialog() {
+
+    private fun dateCurrentMeasurements() {
+        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            var day: String = if (dayOfMonth < 10) {
+                "0" + dayOfMonth
+            } else {
+                dayOfMonth.toString()
+            }
+            date = "$year-${monthOfYear + 1}-$day"
+            showDialog()
+            middleware.getDateCurrentMeasurements(context, date)
+        }
+        val calendar = Calendar.getInstance()
+        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        datePikerDialog.show()
+    }
+
+    private fun dateRejectMeasurements() {
+        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            var day: String = if (dayOfMonth < 10) {
+                "0" + dayOfMonth
+            } else {
+                dayOfMonth.toString()
+            }
+            date = "$year-${monthOfYear + 1}-$day"
+            showDialog()
+            middleware.getDateRejectMeasurements(context, date)
+        }
+        val calendar = Calendar.getInstance()
+        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        datePikerDialog.show()
+    }
+
+    private fun dateClosedMeasurements() {
+        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            var day: String = if (dayOfMonth < 10) {
+                "0" + dayOfMonth
+            } else {
+                dayOfMonth.toString()
+            }
+            date = "$year-${monthOfYear + 1}-$day"
+            showDialog()
+            middleware.getDateClosedMeasurements(context, date)
+        }
+        val calendar = Calendar.getInstance()
+        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        datePikerDialog.show()
+    }
+
+
+    private fun showDialog() {
         val builder = AlertDialog.Builder(context)
         val viewAlert = layoutInflater.inflate(R.layout.load_dialog, null)
         builder.setView(viewAlert)
@@ -119,34 +164,24 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         alert.show()
     }
 
-
-    private fun tomorrowMeasurements() {
-        var day: String
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_MONTH, 1)
-        day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
-            "0" + calendar.get(Calendar.DAY_OF_MONTH)
-        } else {
-            calendar.get(Calendar.DAY_OF_MONTH).toString()
-        }
-        date = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
-//        getMeasurements()
-    }
-
-    private fun dateMeasurements() {
-        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            var day: String = if (dayOfMonth < 10) {
-                "0" + dayOfMonth
+    override fun callingBack(listMeasurements: List<Measurement>, result: Int) {
+        if (listMeasurements.isEmpty()) {
+            if (result == 1) {
+                Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()
             } else {
-                dayOfMonth.toString()
+                Toast.makeText(context, "По данному запросу нет данных", Toast.LENGTH_SHORT).show()
             }
-            date = "$year-${monthOfYear + 1}-$day"
-//            getMeasurements()
-        }
-        val calendar = Calendar.getInstance()
-        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        } else {
+            if (result == 0) {
+                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
+            } else {
 
-        datePikerDialog.show()
+                Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
+            }
+        }
+        recyclerList.adapter = DataAdapter(listMeasurements)
+        recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
+        alert.dismiss()
     }
 
 }
