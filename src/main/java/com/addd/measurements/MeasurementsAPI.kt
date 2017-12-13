@@ -27,13 +27,13 @@ interface MeasurementsAPI {
     fun getOneMeasurement(@Header("Authorization") authorization: String, @Path("id") id: String): Call<Measurement>
 
     @GET("measurements/current")
-    fun getCurrentMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<Measurement>
+    fun getCurrentMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
 
     @GET("measurements/rejected")
-    fun getRejectedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<Measurement>
+    fun getRejectedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
 
     @GET("measurements/closed")
-    fun getClosedMeasurement(@Header("Authorization") authorization: String,@Query("date") date: String): Call<Measurement>
+    fun getClosedMeasurement(@Header("Authorization") authorization: String,@Query("date") date: String): Call<List<Measurement>>
 
     companion object Factory {
 

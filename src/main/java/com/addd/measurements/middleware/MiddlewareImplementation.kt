@@ -58,7 +58,7 @@ class MiddlewareImplementation : IMiddleware {
         token = getToken(context)
 
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getCurrentMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -79,7 +79,7 @@ class MiddlewareImplementation : IMiddleware {
         date = getTomorrowDate()
         token = getToken(context)
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getCurrentMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -99,7 +99,7 @@ class MiddlewareImplementation : IMiddleware {
     override fun getDateCurrentMeasurements(context: Context, date: String) {
         token = getToken(context)
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getCurrentMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -119,7 +119,7 @@ class MiddlewareImplementation : IMiddleware {
         token = getToken(context)
 
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getRejectedMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -141,7 +141,7 @@ class MiddlewareImplementation : IMiddleware {
         date = getTomorrowDate()
         token = getToken(context)
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getRejectedMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -161,7 +161,7 @@ class MiddlewareImplementation : IMiddleware {
     override fun getDateRejectMeasurements(context: Context, date: String) {
         token = getToken(context)
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getRejectedMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -181,7 +181,7 @@ class MiddlewareImplementation : IMiddleware {
         token = getToken(context)
 
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getClosedMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -202,7 +202,7 @@ class MiddlewareImplementation : IMiddleware {
         date = getTomorrowDate()
         token = getToken(context)
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getClosedMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
@@ -222,7 +222,7 @@ class MiddlewareImplementation : IMiddleware {
     override fun getDateClosedMeasurements(context: Context, date: String) {
         token = getToken(context)
 
-        val call = serviceAPI.getMeasurements(token, date)
+        val call = serviceAPI.getClosedMeasurement(token, date)
         call.enqueue(object : retrofit2.Callback<List<Measurement>> {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
