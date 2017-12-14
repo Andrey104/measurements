@@ -177,7 +177,7 @@ class OneMeasurementActivity : AppCompatActivity() {
         var popupMenu = PopupMenu(this, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         try {
-            val classPopupMenu = Class.forName(popupMenu.javaClass.getName())
+            val classPopupMenu = Class.forName(popupMenu.javaClass.name)
             val mPopup = classPopupMenu.getDeclaredField("mPopup")
             mPopup.isAccessible = true
             val menuPopupHelper = mPopup.get(popupMenu)

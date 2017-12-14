@@ -36,10 +36,13 @@ class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
         val arrayList: ArrayList<String> = ArrayList()
         if (client!!.client!!.phones != null) {
             val linearLayout = holder.itemView.findViewById<LinearLayout>(R.id.linearLayoutPhone)
-            var textView: TextView
+
+            var textViewNumber: TextView
+            var textViewComment: TextView
             for (phone in client!!.client!!.phones!!) {
-                textView = TextView(holder.itemView.context)
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16F)
+                textViewNumber = TextView(holder.itemView.context)
+                textViewComment = TextView(holder.itemView.context)
+                textViewNumber.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16F)
                 val phoneNumber = StringBuffer(phone.number.toString())
                 phoneNumber.insert(8, '-')
                 phoneNumber.insert(6, '-')
@@ -47,8 +50,12 @@ class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
                 phoneNumber.insert(0, '(')
                 phoneNumber.insert(0, '8')
 
-                textView.text = phoneNumber.toString()
-                linearLayout.addView(textView)
+                textViewNumber.text = phoneNumber.toString()
+                linearLayout.addView(textViewNumber)
+                if (phone.comment != null) {
+                    textViewComment.text = phone.comment.toString()
+                    linearLayout.addView(textViewComment)
+                }
                 arrayList.add(phoneNumber.toString())
             }
         }
@@ -59,7 +66,7 @@ class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
                     intent.data = Uri.parse("tel:${arrayList[0]}")
                     v.context.startActivity(intent)
                 } else {
-                    val builder = AlertDialog.Builder(v.context);
+                    val builder = AlertDialog.Builder(v.context)
                     builder.setTitle("Выберите номер")
                     var strings = Array(arrayList.size, init = { index -> arrayList[index] })
                     builder.setItems(strings, { dialog, which ->
