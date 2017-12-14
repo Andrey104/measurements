@@ -22,4 +22,8 @@
     <string name="user_info">userInfo</string>
     <string name="load">Идет загрузка..</string>
     <string name="title_activity_measurement">MeasurementActivity</string>
+    <string name="complete">Завершить</string>
+    <string name="shift">Перенести</string>
+    <string name="reject">Отклонить</string>
+    <string name="problem">Проблема</string>
 </resources>

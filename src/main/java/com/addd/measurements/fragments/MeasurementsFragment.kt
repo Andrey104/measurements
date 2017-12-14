@@ -17,6 +17,9 @@ import com.addd.measurements.middleware.MiddlewareImplementation
 import com.addd.measurements.modelAPI.Measurement
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
+import android.support.v7.widget.DividerItemDecoration
+
+
 
 
 /**
@@ -197,7 +200,10 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             }
         }
         recyclerList.adapter = DataAdapter(listMeasurements)
-        recyclerList.layoutManager = LinearLayoutManager(activity.applicationContext)
+        val layoutManager = LinearLayoutManager(activity.applicationContext)
+        recyclerList.layoutManager = layoutManager
+        val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
+        recyclerList.addItemDecoration(dividerItemDecoration)
         alert.dismiss()
     }
 

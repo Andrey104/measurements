@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.addd.measurements.R
 import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.modelAPI.Measurement
+import com.google.gson.Gson
 import java.util.*
 
 
@@ -97,16 +98,20 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
         viewHolder.itemView.setOnClickListener({ v ->
             val intent = Intent(v.context, OneMeasurementActivity::class.java)
-            var id : String = viewHolder.deal.text.toString()
-            while (id.startsWith("0")) {
-                id = id.substring(1)
+            var id: String = viewHolder.deal.text.toString()
+            for (meas in mNotesList) {
+                if (meas.deal == id.toInt()) {
+                    val gson = Gson()
+                    val json = gson.toJson(meas)
+                    intent.putExtra("measurement", json)
+                    break
+                }
             }
+
             intent.putExtra("id", id)
             intent.putExtra("symbol", viewHolder.symbol.text.length.toString())
             v.context.startActivity(intent)
-//            Toast.makeText(v.context, id, Toast.LENGTH_SHORT).show()
         })
-
 
 
     }
