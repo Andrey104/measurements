@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -17,9 +18,6 @@ import com.addd.measurements.middleware.MiddlewareImplementation
 import com.addd.measurements.modelAPI.Measurement
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
-import android.support.v7.widget.DividerItemDecoration
-
-
 
 
 /**
@@ -60,9 +58,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         return view
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
+
 
     private fun onClickCurrent(bottomNavigationView: BottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -184,7 +180,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         alert.show()
     }
 
-    override fun callingBack(listMeasurements: List<Measurement>, result: Int) {
+    override fun callingBack(listMeasurements: List<Measurement>, result: Int, date: String) {
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
                 Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()

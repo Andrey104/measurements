@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     android:gravity="top"
     android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="@string/measurements"
+        app:titleTextColor="@color/white"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
