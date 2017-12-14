@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.DataAdapter
+import com.addd.measurements.changemenu.ChangeManager
 import com.addd.measurements.middleware.MiddlewareImplementation
 import com.addd.measurements.modelAPI.Measurement
 import kotlinx.android.synthetic.main.measurements_fragment.*
@@ -200,6 +201,10 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         recyclerList.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
         recyclerList.addItemDecoration(dividerItemDecoration)
+
+        val changeManager = ChangeManager.instance
+        changeManager.notifyOnChange(date, listMeasurements) //callback в активити для изменения title
+
         alert.dismiss()
     }
 

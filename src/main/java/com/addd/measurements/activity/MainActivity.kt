@@ -16,9 +16,12 @@ import android.widget.TextView
 import android.widget.Toast
 import com.addd.measurements.MeasurementsAPI
 import com.addd.measurements.R
+import com.addd.measurements.changemenu.ChangeManager
+import com.addd.measurements.changemenu.OnChangeListener
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.MyObjectsFragment
 import com.addd.measurements.fragments.ProblemsFragment
+import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -27,6 +30,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.view.View
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         APP_TOKEN = getString(R.string.token)
         APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
+        menuChanger()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -59,6 +64,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startFragment(fragmentClass, bundle)
 
         informationUser()
+    }
+
+    private fun menuChanger() {
+        val changeManager = ChangeManager.instance
+
+        changeManager.setListener(object : OnChangeListener {
+            override fun onChange(date: String, list: List<Measurement>) {
+                var my = 0
+                var wrong = 0
+                for (measurement in list) {
+                    if (measurement.color == 1) {
+                        wrong++
+                    }
+                    if (measurement.color == 2) {
+                        my++
+                    }
+                }
+                val toolbarTitle = findViewById<View>(R.id.toolbar_title) as TextView
+                title = ""
+                toolbarTitle.text = "$date В:${list.size} Н:$wrong M:$my"
+
+            }
+        })
     }
 
     override fun onBackPressed() {
