@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -26,6 +27,8 @@ import retrofit2.Response
 
 
 class OneMeasurementActivity : AppCompatActivity() {
+    lateinit var measurement: Measurement
+    private lateinit var alert : AlertDialog
     private lateinit var APP_TOKEN: String
     private val serviceAPI = MeasurementsAPI.create()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,21 +57,25 @@ class OneMeasurementActivity : AppCompatActivity() {
         if (mSettings.contains(APP_TOKEN)) {
             token = "Token " + mSettings.getString(APP_TOKEN, "")
         }
-        val call = serviceAPI.getOneMeasurement(token, intent.getStringExtra("id"))
+        val call = serviceAPI.getOneMeasurement(token, measurement.id.toString())
         call.enqueue(object : Callback<Measurement> {
             override fun onResponse(call: Call<Measurement>?, response: Response<Measurement>?) {
-                var phoneStr = response!!.body().clients!![0].client!!.phones!![0].number.toString()
-                Toast.makeText(applicationContext, phoneStr, Toast.LENGTH_SHORT).show()
+                if (response!!.body() != null) {
+                    measurement = response!!.body()
+                }
+                displayMeasurement(measurement)
+                alert.dismiss()
             }
 
             override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
+                Toast.makeText(applicationContext, "При обновлении данных произошла ошибка", Toast.LENGTH_SHORT).show()
+                alert.dismiss()
             }
 
         })
     }
 
     private fun getSavedMeasurement(): Measurement {
-        var measurement: Measurement
         val gson = Gson()
         val json = intent.getStringExtra("measurement")
         if (json!!.isEmpty()) {
@@ -174,6 +181,13 @@ class OneMeasurementActivity : AppCompatActivity() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == 200) {
+            showDialog()
+            getOneMeasurement()
+        }
+    }
+
     private fun showPopupMenu(view: View) {
         var popupMenu = PopupMenu(this, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
@@ -197,7 +211,9 @@ class OneMeasurementActivity : AppCompatActivity() {
                     true
                 }
                 R.id.shift -> {
-                    startActivity(Intent(applicationContext, TransferActivity::class.java))
+                    val intent = Intent(applicationContext, TransferActivity::class.java)
+                    intent.putExtra("id", measurement.id.toString())
+                    startActivityForResult(intent, 0)
                     true
                 }
                 R.id.reject -> {
@@ -216,5 +232,14 @@ class OneMeasurementActivity : AppCompatActivity() {
             }
         }
         popupMenu.show()
+    }
+
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(this)
+        val viewAlert = layoutInflater.inflate(R.layout.update_dialog, null)
+        builder.setView(viewAlert)
+                .setCancelable(false)
+        alert = builder.create()
+        alert.show()
     }
 }

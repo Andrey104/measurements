@@ -2,6 +2,7 @@ package com.addd.measurements
 
 import com.addd.measurements.modelAPI.Authorization
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.modelAPI.Transfer
 import com.addd.measurements.modelAPI.User
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -33,11 +34,13 @@ interface MeasurementsAPI {
     fun getRejectedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
 
     @GET("measurements/closed")
-    fun getClosedMeasurement(@Header("Authorization") authorization: String,@Query("date") date: String): Call<List<Measurement>>
+    fun getClosedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
 
-    @FormUrlEncoded
-    @POST("measurement/{id}/transfer")
-    fun transferMeasurement(@Field("new_date") newDate: String, @Field("cause") cause: String,@Field("comment") comment: String): Call<Authorization>
+    @POST("measurements/{id}/transfer/")
+    fun transferMeasurement(@Header("Authorization") authorization: String, @Body transfer: Transfer, @Path("id") id: String): Call<Void>
+
+    @POST("measurements/{id}/take/")
+    fun becomeResponsible(@Header("Authorization") authorization: String, @Path("id") id: Int?): Call<Void>
     companion object Factory {
 
         fun create(): MeasurementsAPI {

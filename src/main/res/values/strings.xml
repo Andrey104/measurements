@@ -34,4 +34,5 @@
     <string name="comment">Комментарий:</string>
     <string name="date_transfer">Дата переноса</string>
     <string name="cancel">Отмена</string>
+    <string name="update_data">Обновление данных</string>
 </resources>
