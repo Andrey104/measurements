@@ -32,16 +32,25 @@ class MiddlewareImplementation : IMiddleware {
     private fun getTodayDate(): String {
         val calendar = Calendar.getInstance()
         var day: String
+        var realMonth: String
         day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
             "0" + calendar.get(Calendar.DAY_OF_MONTH)
         } else {
             calendar.get(Calendar.DAY_OF_MONTH).toString()
         }
-        return "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
+        val monthNumber = calendar.get(Calendar.MONTH) + 1
+        if (monthNumber < 10) {
+            realMonth = "0$monthNumber"
+        } else {
+            realMonth = "$monthNumber"
+        }
+
+        return "${calendar.get(Calendar.YEAR)}-$realMonth-$day"
     }
 
     private fun getTomorrowDate(): String {
         var day: String
+        var realMonth: String
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_MONTH, 1)
         day = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) {
@@ -49,7 +58,13 @@ class MiddlewareImplementation : IMiddleware {
         } else {
             calendar.get(Calendar.DAY_OF_MONTH).toString()
         }
-        return "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-$day"
+        val monthNumber = calendar.get(Calendar.MONTH) + 1
+        if (monthNumber < 10) {
+            realMonth = "0$monthNumber"
+        } else {
+            realMonth = "$monthNumber"
+        }
+        return "${calendar.get(Calendar.YEAR)}-$realMonth-$day"
     }
 
 

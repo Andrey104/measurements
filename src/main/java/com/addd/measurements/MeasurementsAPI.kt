@@ -35,6 +35,9 @@ interface MeasurementsAPI {
     @GET("measurements/closed")
     fun getClosedMeasurement(@Header("Authorization") authorization: String,@Query("date") date: String): Call<List<Measurement>>
 
+    @FormUrlEncoded
+    @POST("measurement/{id}/transfer")
+    fun transferMeasurement(@Field("new_date") newDate: String, @Field("cause") cause: String,@Field("comment") comment: String): Call<Authorization>
     companion object Factory {
 
         fun create(): MeasurementsAPI {

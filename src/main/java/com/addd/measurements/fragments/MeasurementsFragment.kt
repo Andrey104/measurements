@@ -127,7 +127,12 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             } else {
                 dayOfMonth.toString()
             }
-            date = "$year-${monthOfYear + 1}-$day"
+            val realmonth = monthOfYear+1
+            if (realmonth < 10) {
+                date = "$year-0$realmonth-$day"
+            } else {
+                date = "$year-$realmonth-$day"
+            }
             showDialog()
             middleware.getDateCurrentMeasurements(context, date)
         }
@@ -144,7 +149,12 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             } else {
                 dayOfMonth.toString()
             }
-            date = "$year-${monthOfYear + 1}-$day"
+            val realmonth = monthOfYear+1
+            if (realmonth < 10) {
+                date = "$year-0$realmonth-$day"
+            } else {
+                date = "$year-$realmonth-$day"
+            }
             showDialog()
             middleware.getDateRejectMeasurements(context, date)
         }
@@ -161,7 +171,12 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             } else {
                 dayOfMonth.toString()
             }
-            date = "$year-${monthOfYear + 1}-$day"
+            val realmonth = monthOfYear+1
+            if (realmonth < 10) {
+                date = "$year-0$realmonth-$day"
+            } else {
+                date = "$year-$realmonth-$day"
+            }
             showDialog()
             middleware.getDateClosedMeasurements(context, date)
         }

@@ -1,5 +1,6 @@
 package com.addd.measurements.activity
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -196,9 +197,7 @@ class OneMeasurementActivity : AppCompatActivity() {
                     true
                 }
                 R.id.shift -> {
-                    Toast.makeText(applicationContext,
-                            "Вы выбрали PopupMenu 2",
-                            Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(applicationContext, TransferActivity::class.java))
                     true
                 }
                 R.id.reject -> {

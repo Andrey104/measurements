@@ -26,4 +26,12 @@
     <string name="shift">Перенести</string>
     <string name="reject">Отклонить</string>
     <string name="problem">Проблема</string>
+    <string name="transfer_measurement">Перенос замера</string>
+    <string name="select_date">Выберите дату</string>
+    <string name="cause">Причина:</string>
+    <string name="client">Клиент</string>
+    <string name="gauger">Замерщик</string>
+    <string name="comment">Комментарий:</string>
+    <string name="date_transfer">Дата переноса</string>
+    <string name="cancel">Отмена</string>
 </resources>

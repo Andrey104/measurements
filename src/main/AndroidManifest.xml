@@ -29,14 +29,12 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.OneMeasurementActivity"
             android:label="@string/title_activity_one_measurement"
-            android:screenOrientation="portrait"
-           />
-
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.TransferActivity"></activity>
     </application>
 
 </manifest>
