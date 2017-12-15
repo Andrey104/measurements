@@ -34,7 +34,6 @@ class TransferActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transfer)
         id = intent.getStringExtra("id")
-        Toast.makeText(this, id, Toast.LENGTH_SHORT).show()
         dateButton.setOnClickListener { datePick() }
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doTransferRequest() }

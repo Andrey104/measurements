@@ -14,7 +14,7 @@ import java.util.*
 /**
  * Created by addd on 11.12.2017.
  */
-class MiddlewareImplementation : IMiddleware {
+object MiddlewareImplementation : IMiddleware {
     private var APP_TOKEN: String = "token"
     private val APP_LIST_TODAY_CURRENT = "listTodayCurrent"
     private val APP_LIST_TOMORROW_CURRENT = "listTomorrowCurrent"
@@ -25,7 +25,7 @@ class MiddlewareImplementation : IMiddleware {
     private lateinit var date: String
     private lateinit var token: String
     private val serviceAPI = MeasurementsAPI.Factory.create()
-    lateinit var callback: Callback
+     var callback: Callback?=null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -79,13 +79,13 @@ class MiddlewareImplementation : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CURRENT)
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CURRENT)
-                callback.callingBack(listMeasurements, 1,date)
+                callback?.callingBack(listMeasurements, 1,date)
             }
         })
     }
@@ -100,13 +100,13 @@ class MiddlewareImplementation : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CURRENT)
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CURRENT)
-                callback.callingBack(listMeasurements, 1,date)
+                callback?.callingBack(listMeasurements, 1,date)
             }
         })
     }
@@ -119,12 +119,12 @@ class MiddlewareImplementation : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                callback.callingBack(emptyList<Measurement>(), 1,date)
+                callback?.callingBack(emptyList<Measurement>(), 1,date)
             }
         })
     }
@@ -140,13 +140,13 @@ class MiddlewareImplementation : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_REJECTED)
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_REJECTED)
-                callback.callingBack(listMeasurements, 1,date)
+                callback?.callingBack(listMeasurements, 1,date)
             }
         })
 
@@ -162,13 +162,13 @@ class MiddlewareImplementation : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_REJECTED)
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_REJECTED)
-                callback.callingBack(listMeasurements, 1,date)
+                callback?.callingBack(listMeasurements, 1,date)
             }
         })
     }
@@ -181,12 +181,12 @@ class MiddlewareImplementation : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                callback.callingBack(emptyList<Measurement>(), 1,date)
+                callback?.callingBack(emptyList<Measurement>(), 1,date)
             }
         })
     }
@@ -202,13 +202,13 @@ class MiddlewareImplementation : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CLOSED)
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CLOSED)
-                callback.callingBack(listMeasurements, 1,date)
+                callback?.callingBack(listMeasurements, 1,date)
             }
         })
     }
@@ -223,13 +223,13 @@ class MiddlewareImplementation : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CLOSED)
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CLOSED)
-                callback.callingBack(listMeasurements, 1,date)
+                callback?.callingBack(listMeasurements, 1,date)
             }
         })
     }
@@ -242,12 +242,12 @@ class MiddlewareImplementation : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    callback.callingBack(listMeasurements, 0,date)
+                    callback?.callingBack(listMeasurements, 0,date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                callback.callingBack(emptyList<Measurement>(), 1,date)
+                callback?.callingBack(emptyList<Measurement>(), 1,date)
             }
         })
     }
@@ -257,7 +257,7 @@ class MiddlewareImplementation : IMiddleware {
         fun callingBack(listMeasurements: List<Measurement>, result: Int, date: String)
     }
 
-    fun registerCallBack(callback: Callback) {
+    fun registerCallBack(callback: Callback?) {
         this.callback = callback
     }
 

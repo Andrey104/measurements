@@ -26,12 +26,15 @@ import java.util.*
  */
 
 class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
-    val middleware = MiddlewareImplementation()
     private lateinit var date: String
     lateinit var alert: AlertDialog
+    override fun onStop() {
+        super.onStop()
+        MiddlewareImplementation.registerCallBack(null)
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        middleware.registerCallBack(this)
+        MiddlewareImplementation.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
         val bundle = this.arguments
 
@@ -50,9 +53,9 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         if (bundle != null) {
             showDialog()
             when (bundle.getInt("check")) {
-                0 -> middleware.getTodayCurrentMeasurements(context)
-                1 -> middleware.getTodayRejectMeasurements(context)
-                2 -> middleware.getTodayClosedMeasurements(context)
+                0 -> MiddlewareImplementation.getTodayCurrentMeasurements(context)
+                1 -> MiddlewareImplementation.getTodayRejectMeasurements(context)
+                2 -> MiddlewareImplementation.getTodayClosedMeasurements(context)
             }
         }
 
@@ -66,11 +69,11 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    middleware.getTodayCurrentMeasurements(context)
+                    MiddlewareImplementation.getTodayCurrentMeasurements(context)
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    middleware.getTomorrowCurrentMeasurements(context)
+                    MiddlewareImplementation.getTomorrowCurrentMeasurements(context)
                 }
                 R.id.date -> {
                     dateCurrentMeasurements()
@@ -86,11 +89,11 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    middleware.getTodayRejectMeasurements(context)
+                    MiddlewareImplementation.getTodayRejectMeasurements(context)
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    middleware.getTomorrowRejectMeasurements(context)
+                    MiddlewareImplementation.getTomorrowRejectMeasurements(context)
                 }
                 R.id.date -> {
                     dateRejectMeasurements()
@@ -105,11 +108,11 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    middleware.getTodayClosedMeasurements(context)
+                    MiddlewareImplementation.getTodayClosedMeasurements(context)
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    middleware.getTomorrowClosedMeasurements(context)
+                    MiddlewareImplementation.getTomorrowClosedMeasurements(context)
                 }
                 R.id.date -> {
                     dateClosedMeasurements()
@@ -134,7 +137,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
                 date = "$year-$realmonth-$day"
             }
             showDialog()
-            middleware.getDateCurrentMeasurements(context, date)
+            MiddlewareImplementation.getDateCurrentMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -156,7 +159,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
                 date = "$year-$realmonth-$day"
             }
             showDialog()
-            middleware.getDateRejectMeasurements(context, date)
+            MiddlewareImplementation.getDateRejectMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -178,7 +181,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
                 date = "$year-$realmonth-$day"
             }
             showDialog()
-            middleware.getDateClosedMeasurements(context, date)
+            MiddlewareImplementation.getDateClosedMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
