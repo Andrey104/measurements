@@ -37,4 +37,5 @@
     <string name="another_company">Выбрали другую компанию</string>
     <string name="wrong_gauger">Ошибка замерищика</string>
     <string name="wrong_manager">Ошибка менеджера</string>
+    <string name="search">Поиск</string>
 </resources>
