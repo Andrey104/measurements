@@ -34,7 +34,8 @@
             android:name=".activity.OneMeasurementActivity"
             android:label="@string/title_activity_one_measurement"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.TransferActivity"></activity>
+        <activity android:name=".activity.TransferActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

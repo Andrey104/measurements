@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
-import com.addd.measurements.MeasurementsAPI
+import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Transfer
 import kotlinx.android.synthetic.main.activity_transfer.*

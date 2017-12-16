@@ -13,7 +13,7 @@ import android.view.Menu
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
-import com.addd.measurements.MeasurementsAPI
+import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.adapters.ClientAdapter
 import com.addd.measurements.modelAPI.Measurement

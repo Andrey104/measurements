@@ -1,4 +1,4 @@
-package com.addd.measurements
+package com.addd.measurements.network
 
 import com.addd.measurements.modelAPI.Authorization
 import com.addd.measurements.modelAPI.Measurement

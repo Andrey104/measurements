@@ -3,7 +3,7 @@ package com.addd.measurements.middleware
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.addd.measurements.MeasurementsAPI
+import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.modelAPI.Measurement
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -14,7 +14,7 @@ import java.util.*
 /**
  * Created by addd on 11.12.2017.
  */
-object MiddlewareImplementation : IMiddleware {
+object NetworkController : IMiddleware {
     private var APP_TOKEN: String = "token"
     private val APP_LIST_TODAY_CURRENT = "listTodayCurrent"
     private val APP_LIST_TOMORROW_CURRENT = "listTomorrowCurrent"
@@ -25,7 +25,7 @@ object MiddlewareImplementation : IMiddleware {
     private lateinit var date: String
     private lateinit var token: String
     private val serviceAPI = MeasurementsAPI.Factory.create()
-     var callback: Callback?=null
+    var callback: Callback?=null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 

@@ -15,7 +15,7 @@ import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.changemenu.ChangeManager
-import com.addd.measurements.middleware.MiddlewareImplementation
+import com.addd.measurements.middleware.NetworkController
 import com.addd.measurements.modelAPI.Measurement
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
@@ -25,16 +25,16 @@ import java.util.*
  * Created by addd on 03.12.2017.
  */
 
-class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
+class MeasurementsFragment : Fragment(), NetworkController.Callback {
     private lateinit var date: String
     lateinit var alert: AlertDialog
     override fun onStop() {
         super.onStop()
-        MiddlewareImplementation.registerCallBack(null)
+        NetworkController.registerCallBack(null)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        MiddlewareImplementation.registerCallBack(this)
+        NetworkController.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
         val bundle = this.arguments
 
@@ -53,9 +53,9 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
         if (bundle != null) {
             showDialog()
             when (bundle.getInt("check")) {
-                0 -> MiddlewareImplementation.getTodayCurrentMeasurements(context)
-                1 -> MiddlewareImplementation.getTodayRejectMeasurements(context)
-                2 -> MiddlewareImplementation.getTodayClosedMeasurements(context)
+                0 -> NetworkController.getTodayCurrentMeasurements(context)
+                1 -> NetworkController.getTodayRejectMeasurements(context)
+                2 -> NetworkController.getTodayClosedMeasurements(context)
             }
         }
 
@@ -69,11 +69,11 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    MiddlewareImplementation.getTodayCurrentMeasurements(context)
+                    NetworkController.getTodayCurrentMeasurements(context)
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    MiddlewareImplementation.getTomorrowCurrentMeasurements(context)
+                    NetworkController.getTomorrowCurrentMeasurements(context)
                 }
                 R.id.date -> {
                     dateCurrentMeasurements()
@@ -89,11 +89,11 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    MiddlewareImplementation.getTodayRejectMeasurements(context)
+                    NetworkController.getTodayRejectMeasurements(context)
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    MiddlewareImplementation.getTomorrowRejectMeasurements(context)
+                    NetworkController.getTomorrowRejectMeasurements(context)
                 }
                 R.id.date -> {
                     dateRejectMeasurements()
@@ -108,11 +108,11 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    MiddlewareImplementation.getTodayClosedMeasurements(context)
+                    NetworkController.getTodayClosedMeasurements(context)
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    MiddlewareImplementation.getTomorrowClosedMeasurements(context)
+                    NetworkController.getTomorrowClosedMeasurements(context)
                 }
                 R.id.date -> {
                     dateClosedMeasurements()
@@ -137,7 +137,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
                 date = "$year-$realmonth-$day"
             }
             showDialog()
-            MiddlewareImplementation.getDateCurrentMeasurements(context, date)
+            NetworkController.getDateCurrentMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -159,7 +159,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
                 date = "$year-$realmonth-$day"
             }
             showDialog()
-            MiddlewareImplementation.getDateRejectMeasurements(context, date)
+            NetworkController.getDateRejectMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -181,7 +181,7 @@ class MeasurementsFragment : Fragment(), MiddlewareImplementation.Callback {
                 date = "$year-$realmonth-$day"
             }
             showDialog()
-            MiddlewareImplementation.getDateClosedMeasurements(context, date)
+            NetworkController.getDateClosedMeasurements(context, date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))

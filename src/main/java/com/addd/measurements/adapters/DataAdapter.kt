@@ -1,7 +1,6 @@
 package com.addd.measurements.adapters
 
 import android.app.AlertDialog
-import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -17,10 +16,9 @@ import com.addd.measurements.modelAPI.Measurement
 import com.google.gson.Gson
 import java.util.*
 import android.widget.Toast
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.addd.measurements.MeasurementsAPI
+import com.addd.measurements.network.MeasurementsAPI
 import retrofit2.Call
 import retrofit2.Response
 

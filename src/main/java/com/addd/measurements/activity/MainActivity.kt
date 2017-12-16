@@ -14,7 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import com.addd.measurements.MeasurementsAPI
+import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.changemenu.ChangeManager
 import com.addd.measurements.changemenu.OnChangeListener
