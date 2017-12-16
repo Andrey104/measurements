@@ -215,7 +215,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             }
         } else {
             if (result == 0) {
-                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
             }

@@ -189,9 +189,9 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                     true
                 }
                 R.id.reject -> {
-                    Toast.makeText(applicationContext,
-                            "Вы выбрали PopupMenu 3",
-                            Toast.LENGTH_SHORT).show()
+                    val intent = Intent(applicationContext, RejectActivity::class.java)
+                    intent.putExtra("id", measurement.id.toString())
+                    startActivityForResult(intent, 0)
                     true
                 }
                 R.id.problem -> {

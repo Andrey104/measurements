@@ -34,4 +34,7 @@
     <string name="comment">Комментарий:</string>
     <string name="date_transfer">Дата переноса</string>
     <string name="cancel">Отмена</string>
+    <string name="another_company">Выбрали другую компанию</string>
+    <string name="wrong_gauger">Ошибка замерищика</string>
+    <string name="wrong_manager">Ошибка менеджера</string>
 </resources>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context="com.addd.measurements.activity.RejectActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:textSize="18dp"
+        android:text="@string/cause" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:id="@+id/radioGroupReject"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp">
+
+        <RadioButton
+            android:id="@+id/radioButtonAnother"
+            android:onClick="onRadioButtonClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/another_company" />
+
+        <RadioButton
+            android:id="@+id/radioButtonWrongGauger"
+            android:layout_width="wrap_content"
+            android:onClick="onRadioButtonClick"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/wrong_gauger" />
+
+        <RadioButton
+            android:id="@+id/radioButtonWrongManager"
+            android:layout_width="wrap_content"
+            android:onClick="onRadioButtonClick"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/wrong_manager" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/editComment"
+        android:layout_width="match_parent"
+        android:layout_height="239dp"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:hint="Введите комментарий"
+        android:inputType="textMultiLine" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/buttonOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ОК" />
+    </LinearLayout>
+</LinearLayout>

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.addd.measurements.middleware.IMiddleware
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.modelAPI.Reject
 import com.addd.measurements.modelAPI.Transfer
 import com.addd.measurements.modelAPI.User
 import com.google.gson.Gson
@@ -36,6 +37,7 @@ object NetworkController : IMiddleware {
     var updateOneMeasurement: CallbackUpdateOneMeasurement? = null
     var transferMeasurement: TransferMeasurementCallback? = null
     var responsible: ResponsibleCallback? = null
+    var reject: RejectCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -401,6 +403,22 @@ object NetworkController : IMiddleware {
             }
         }
     }
+
+    fun rejectMeasurement(context: Context, reject : Reject, id: String) {
+        token = getToken(context)
+
+        val call = serviceAPI.rejectMeasurement(token, reject, id)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                responsible?.result(response!!.code())
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                responsible?.result(500)
+
+            }
+        })
+    }
 //----------------------------------внутренние функции класса------------------------------------------
 
     private fun saveMeasurementsList(context: Context, list: List<Measurement>, name: String) {
@@ -528,5 +546,13 @@ object NetworkController : IMiddleware {
 
     fun registerResponsibleCallback(callback: ResponsibleCallback?) {
         NetworkController.responsible = callback
+    }
+
+    interface RejectCallback {
+        fun result(code: Int)
+    }
+
+    fun registerRejectCallback(callback: RejectCallback?) {
+        NetworkController.reject = callback
     }
 }

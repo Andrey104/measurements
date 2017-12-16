@@ -1,6 +1,7 @@
 package com.addd.measurements.network
 
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.modelAPI.Reject
 import com.addd.measurements.modelAPI.Transfer
 import com.addd.measurements.modelAPI.User
 import retrofit2.Call
@@ -34,6 +35,8 @@ interface MeasurementsAPI {
     @POST("measurements/{id}/take/")
     fun becomeResponsible(@Header("Authorization") authorization: String, @Path("id") id: Int?): Call<Void>
 
+    @POST("measurements/{id}/reject/")
+    fun rejectMeasurement(@Header("Authorization") authorization: String, @Body reject: Reject, @Path("id") id: String?): Call<Void>
 
 
 
