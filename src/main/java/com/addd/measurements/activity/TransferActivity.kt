@@ -1,36 +1,42 @@
 package com.addd.measurements.activity
 
 import android.app.DatePickerDialog
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
-import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Transfer
+import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.activity_transfer.*
-import retrofit2.Call
-import retrofit2.Response
 import java.util.*
 
 
-class TransferActivity : AppCompatActivity() {
+class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurementCallback {
+    override fun result(code: Int) {
+        if (code == 200) {
+            alert.dismiss()
+            setResult(200)
+            Toast.makeText(applicationContext, "Замер перенесен на $userDate", Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            alert.dismiss()
+            Toast.makeText(applicationContext, "При переносе произошла ошибка", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private lateinit var id: String
     lateinit var alert: AlertDialog
     private var date: String? = null
     private var userDate: String? = null
-    private var APP_TOKEN: String = "token"
-    private lateinit var mSettings: SharedPreferences
     private var cause: Int? = null
-    private val serviceAPI = MeasurementsAPI.Factory.create()
     private val months = arrayOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
             "декабря")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        NetworkController.registerTransferMeasurementCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transfer)
         id = intent.getStringExtra("id")
@@ -52,28 +58,12 @@ class TransferActivity : AppCompatActivity() {
             return false
         }
 
-val comment = editComment.text.toString()
-        val transfer = Transfer(date, cause,if(comment.isEmpty()) null else comment)
-        val token = getToken()
-        val call = serviceAPI.transferMeasurement(token, transfer, id)
+        val comment = editComment.text.toString()
+        val transfer = Transfer(date, cause, if (comment.isEmpty()) null else comment)
         showDialog()
-        call.enqueue(object : retrofit2.Callback<Void> {
-            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-                response?.let {
-                    if (it.code() == 200) {
-                    alert.dismiss()
-                        setResult(200)
-                        Toast.makeText(applicationContext, "Замер перенесен на $userDate", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                }
 
-            }
+        NetworkController.doTransferMeasurement(transfer, id)
 
-            override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                    alert.dismiss()
-            }
-        })
         return true
     }
 
@@ -105,15 +95,6 @@ val comment = editComment.text.toString()
         val datePikerDialog = DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
 
         datePikerDialog.show()
-    }
-
-    private fun getToken(): String {
-        mSettings = PreferenceManager.getDefaultSharedPreferences(this)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
-        return token
     }
 
     private fun showDialog() {

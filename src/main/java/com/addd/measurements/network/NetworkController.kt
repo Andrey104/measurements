@@ -3,16 +3,14 @@ package com.addd.measurements.network
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.design.widget.NavigationView
-import android.widget.TextView
-import com.addd.measurements.R
+import android.widget.Toast
 import com.addd.measurements.middleware.IMiddleware
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.modelAPI.Transfer
 import com.addd.measurements.modelAPI.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
@@ -31,8 +29,10 @@ object NetworkController : IMiddleware {
     private lateinit var date: String
     private lateinit var token: String
     private val serviceAPI = MeasurementsAPI.Factory.create()
-    var callback: Callback? = null
+    var callbackListMeasurements: CallbackListMeasurements? = null
     var userCallback: UserInfoCallback? = null
+    var updateOneMeasurement: CallbackUpdateOneMeasurement? = null
+    var transferMeasurement: TransferMeasurementCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -74,7 +74,7 @@ object NetworkController : IMiddleware {
         return "${calendar.get(Calendar.YEAR)}-$realMonth-$day"
     }
 
-
+    //------------------------------запросы------------------------------------------
     override fun getTodayCurrentMeasurements(context: Context) {
         date = getTodayDate()
         token = getToken(context)
@@ -86,13 +86,13 @@ object NetworkController : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CURRENT)
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CURRENT)
-                callback?.result(listMeasurements, 1, date)
+                callbackListMeasurements?.result(listMeasurements, 1, date)
             }
         })
     }
@@ -107,13 +107,13 @@ object NetworkController : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CURRENT)
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CURRENT)
-                callback?.result(listMeasurements, 1, date)
+                callbackListMeasurements?.result(listMeasurements, 1, date)
             }
         })
     }
@@ -126,12 +126,12 @@ object NetworkController : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                callback?.result(emptyList<Measurement>(), 1, date)
+                callbackListMeasurements?.result(emptyList<Measurement>(), 1, date)
             }
         })
     }
@@ -147,13 +147,13 @@ object NetworkController : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_REJECTED)
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_REJECTED)
-                callback?.result(listMeasurements, 1, date)
+                callbackListMeasurements?.result(listMeasurements, 1, date)
             }
         })
 
@@ -169,13 +169,13 @@ object NetworkController : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_REJECTED)
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_REJECTED)
-                callback?.result(listMeasurements, 1, date)
+                callbackListMeasurements?.result(listMeasurements, 1, date)
             }
         })
     }
@@ -188,12 +188,12 @@ object NetworkController : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                callback?.result(emptyList<Measurement>(), 1, date)
+                callbackListMeasurements?.result(emptyList<Measurement>(), 1, date)
             }
         })
     }
@@ -209,13 +209,13 @@ object NetworkController : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CLOSED)
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CLOSED)
-                callback?.result(listMeasurements, 1, date)
+                callbackListMeasurements?.result(listMeasurements, 1, date)
             }
         })
     }
@@ -230,13 +230,13 @@ object NetworkController : IMiddleware {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
                     saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CLOSED)
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
                 listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CLOSED)
-                callback?.result(listMeasurements, 1, date)
+                callbackListMeasurements?.result(listMeasurements, 1, date)
             }
         })
     }
@@ -249,32 +249,54 @@ object NetworkController : IMiddleware {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 if (response!!.body() != null) {
                     listMeasurements = response.body()
-                    callback?.result(listMeasurements, 0, date)
+                    callbackListMeasurements?.result(listMeasurements, 0, date)
                 }
             }
 
             override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
-                callback?.result(emptyList<Measurement>(), 1, date)
+                callbackListMeasurements?.result(emptyList<Measurement>(), 1, date)
             }
         })
     }
 
+    fun getOneMeasurement(context: Context, id: String) {
+        token = getToken(context)
+        val call = serviceAPI.getOneMeasurement(token, id)
+        call.enqueue(object : retrofit2.Callback<Measurement> {
+            override fun onResponse(call: Call<Measurement>?, response: Response<Measurement>?) {
+                var measurement: Measurement? = null
+                response?.body().let {
+                    if (response?.code() == 200) {
+                        measurement = response.body()
+                    }
+                    updateOneMeasurement?.result(response!!.code(), measurement)
+                }
+            }
 
-    interface Callback {
-        fun result(listMeasurements: List<Measurement>, result: Int, date: String)
+            override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
+                updateOneMeasurement?.result(500, null)
+            }
+
+        })
     }
 
-    fun registerCallBack(callback: Callback?) {
-        NetworkController.callback = callback
+    fun doTransferMeasurement(transfer: Transfer, id: String) {
+        val call = serviceAPI.transferMeasurement(token, transfer, id)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                response?.let {
+                    transferMeasurement?.result(response.code())
+                }
+
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                transferMeasurement?.result(500)
+            }
+        })
     }
 
-    interface UserInfoCallback {
-        fun result(user: User)
-    }
-
-    fun registerUserInfoCallBack(callback: UserInfoCallback?) {
-        NetworkController.userCallback = callback
-    }
+//----------------------------------внутренние функции класса------------------------------------------
 
     private fun saveMeasurementsList(context: Context, list: List<Measurement>, name: String) {
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -359,4 +381,40 @@ object NetworkController : IMiddleware {
         }
         return user
     }
+
+
+//---------------------------------------callbacks-------------------------------------------------------
+
+    interface CallbackListMeasurements {
+        fun result(listMeasurements: List<Measurement>, result: Int, date: String)
+    }
+
+    fun registerCallBack(callbackListMeasurements: CallbackListMeasurements?) {
+        NetworkController.callbackListMeasurements = callbackListMeasurements
+    }
+
+    interface UserInfoCallback {
+        fun result(user: User)
+    }
+
+    fun registerUserInfoCallBack(callback: UserInfoCallback?) {
+        NetworkController.userCallback = callback
+    }
+
+    interface CallbackUpdateOneMeasurement {
+        fun result(int: Int, measurement: Measurement?)
+    }
+
+    fun registerUpdateOneMeasurementCallback(callback: CallbackUpdateOneMeasurement?) {
+        NetworkController.updateOneMeasurement = callback
+    }
+
+    interface TransferMeasurementCallback {
+        fun result(code: Int)
+    }
+
+    fun registerTransferMeasurementCallback(callback: TransferMeasurementCallback) {
+        NetworkController.transferMeasurement = callback
+    }
+
 }

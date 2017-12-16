@@ -3,7 +3,6 @@ package com.addd.measurements.activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
@@ -13,27 +12,21 @@ import android.view.Menu
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
-import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.R
 import com.addd.measurements.adapters.ClientAdapter
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.network.NetworkController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_measurement.*
 import kotlinx.android.synthetic.main.content_one_measurement.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
-class OneMeasurementActivity : AppCompatActivity() {
+class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement {
     lateinit var measurement: Measurement
-    private lateinit var alert : AlertDialog
-    private lateinit var APP_TOKEN: String
-    private val serviceAPI = MeasurementsAPI.create()
+    private lateinit var alert: AlertDialog
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_TOKEN = getString(R.string.token)
-
+        NetworkController.registerUpdateOneMeasurementCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_measurement)
         setSupportActionBar(toolbar)
@@ -50,30 +43,6 @@ class OneMeasurementActivity : AppCompatActivity() {
         return true
     }
 
-    //берем один замер по id
-    private fun getOneMeasurement() {
-        val mSettings = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
-        val call = serviceAPI.getOneMeasurement(token, measurement.id.toString())
-        call.enqueue(object : Callback<Measurement> {
-            override fun onResponse(call: Call<Measurement>?, response: Response<Measurement>?) {
-                if (response!!.body() != null) {
-                    measurement = response!!.body()
-                }
-                displayMeasurement(measurement)
-                alert.dismiss()
-            }
-
-            override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
-                Toast.makeText(applicationContext, "При обновлении данных произошла ошибка", Toast.LENGTH_SHORT).show()
-                alert.dismiss()
-            }
-
-        })
-    }
 
     private fun getSavedMeasurement(): Measurement {
         val gson = Gson()
@@ -184,13 +153,14 @@ class OneMeasurementActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
             showDialog()
-            getOneMeasurement()
+            NetworkController.getOneMeasurement(this, measurement.id.toString())
         }
     }
 
     private fun showPopupMenu(view: View) {
         var popupMenu = PopupMenu(this, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+        //для отображения иконок
         try {
             val classPopupMenu = Class.forName(popupMenu.javaClass.name)
             val mPopup = classPopupMenu.getDeclaredField("mPopup")
@@ -202,6 +172,7 @@ class OneMeasurementActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.complete -> {
@@ -241,5 +212,14 @@ class OneMeasurementActivity : AppCompatActivity() {
                 .setCancelable(false)
         alert = builder.create()
         alert.show()
+    }
+
+    override fun result(int: Int, measurement: Measurement?) {
+        if (measurement != null) {
+            displayMeasurement(measurement)
+        } else {
+            Toast.makeText(applicationContext, "При обновлении данных произошла ошибка", Toast.LENGTH_SHORT).show()
+        }
+        alert.dismiss()
     }
 }

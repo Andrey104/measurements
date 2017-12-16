@@ -25,7 +25,7 @@ import java.util.*
  * Created by addd on 03.12.2017.
  */
 
-class MeasurementsFragment : Fragment(), NetworkController.Callback {
+class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements {
     private lateinit var date: String
     lateinit var alert: AlertDialog
     override fun onStop() {

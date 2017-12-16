@@ -192,4 +192,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             textName.text = "${user.firstName} ${user.lastName}"
         }
     }
+
+    override fun onDestroy() {
+        NetworkController.registerUserInfoCallBack(null)
+        super.onDestroy()
+    }
 }
