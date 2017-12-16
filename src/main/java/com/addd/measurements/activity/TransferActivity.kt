@@ -15,18 +15,6 @@ import java.util.*
 
 
 class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurementCallback {
-    override fun result(code: Int) {
-        if (code == 200) {
-            alert.dismiss()
-            setResult(200)
-            Toast.makeText(applicationContext, "Замер перенесен на $userDate", Toast.LENGTH_SHORT).show()
-            finish()
-        } else {
-            alert.dismiss()
-            Toast.makeText(applicationContext, "При переносе произошла ошибка", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private lateinit var id: String
     lateinit var alert: AlertDialog
     private var date: String? = null
@@ -104,5 +92,22 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
                 .setCancelable(false)
         alert = builder.create()
         alert.show()
+    }
+
+    override fun result(code: Int) {
+        if (code == 200) {
+            alert.dismiss()
+            setResult(200)
+            Toast.makeText(applicationContext, "Замер перенесен на $userDate", Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            alert.dismiss()
+            Toast.makeText(applicationContext, "При переносе произошла ошибка", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        NetworkController.registerTransferMeasurementCallback(null)
     }
 }

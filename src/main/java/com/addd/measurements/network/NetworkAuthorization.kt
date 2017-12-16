@@ -1,14 +1,9 @@
 package com.addd.measurements.network
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat.startActivity
-import android.widget.Toast
-import com.addd.measurements.activity.MainActivity
 import com.addd.measurements.modelAPI.Authorization
-import com.addd.measurements.network.AuthorizationAPI
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -44,12 +44,13 @@ class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
                 textViewComment = TextView(holder.itemView.context)
                 textViewNumber.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16F)
                 val phoneNumber = StringBuffer(phone.number.toString())
-                phoneNumber.insert(8, '-') // вылетела ошибка что-то сделать
-                phoneNumber.insert(6, '-')
-                phoneNumber.insert(3, ')')
-                phoneNumber.insert(0, '(')
-                phoneNumber.insert(0, '8')
-
+                if (phoneNumber.length == 10) {
+                    phoneNumber.insert(8, '-')
+                    phoneNumber.insert(6, '-')
+                    phoneNumber.insert(3, ')')
+                    phoneNumber.insert(0, '(')
+                    phoneNumber.insert(0, '8')
+                }
                 textViewNumber.text = phoneNumber.toString()
                 linearLayout.addView(textViewNumber)
                 if (phone.comment != null) {

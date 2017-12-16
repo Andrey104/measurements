@@ -3,7 +3,9 @@ package com.addd.measurements.adapters
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
+import android.preference.PreferenceManager
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -12,28 +14,26 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.R
 import com.addd.measurements.activity.OneMeasurementActivity
+import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.network.MeasurementsAPI
+import com.addd.measurements.network.NetworkController
 import com.google.gson.Gson
 import java.util.*
-import android.widget.Toast
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import com.addd.measurements.network.MeasurementsAPI
-import retrofit2.Call
-import retrofit2.Response
 
 
 /**
  * Created by addd on 07.12.2017.
  */
 
-class DataAdapter: RecyclerView.Adapter<DataAdapter.ViewHolder>{
+class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkController.ResponsibleCallback {
     private var mNotesList: List<Measurement> = ArrayList()
     private lateinit var mSettings: SharedPreferences
     private var APP_TOKEN: String = "token"
-    private val serviceAPI = MeasurementsAPI.Factory.create()
-    constructor(notesList: List<Measurement>) {
+    private var fragment : MeasurementsFragment? = null
+    constructor(notesList: List<Measurement>, fragment: MeasurementsFragment) {
         mNotesList = notesList
+        this.fragment = fragment
     }
 
     /**
@@ -41,6 +41,7 @@ class DataAdapter: RecyclerView.Adapter<DataAdapter.ViewHolder>{
      */
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         var v = LayoutInflater.from(viewGroup.context).inflate(R.layout.list_item_measurement, viewGroup, false)
+        NetworkController.registerResponsibleCallback(this)
         return ViewHolder(v)
     }
 
@@ -107,7 +108,7 @@ class DataAdapter: RecyclerView.Adapter<DataAdapter.ViewHolder>{
             }
         }
 
-        viewHolder.itemView.setOnClickListener{ v ->
+        viewHolder.itemView.setOnClickListener { v ->
             val intent = Intent(v.context, OneMeasurementActivity::class.java)
             var id: String = viewHolder.deal.text.toString()
             for (meas in mNotesList) {
@@ -121,32 +122,15 @@ class DataAdapter: RecyclerView.Adapter<DataAdapter.ViewHolder>{
 
             intent.putExtra("id", id)
             intent.putExtra("symbol", viewHolder.symbol.text.length.toString())
-            v.context.startActivity(intent)
+            fragment!!.startActivityForResult(intent, 0)
         }
-        viewHolder.itemView.setOnLongClickListener{
-           val ad = AlertDialog.Builder(it.context)
+        viewHolder.itemView.setOnLongClickListener {
+            val ad = AlertDialog.Builder(it.context)
             ad.setTitle("Стать ответственным?")  // заголовок
             ad.setPositiveButton("Да") { dialog, arg1 ->
-                val token = getToken(it.context)
-
-                val call = serviceAPI.becomeResponsible(token,id)
-                call.enqueue(object : retrofit2.Callback<Void> {
-                    override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-                        if (response!!.isSuccessful) {
-                            Toast.makeText(it.context,"Стал", Toast.LENGTH_SHORT).show()
-
-                        }
-                    }
-
-                    override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                        Toast.makeText(it.context,"Не получилось =(", Toast.LENGTH_SHORT).show()
-                    }
-                })
+                NetworkController.becomeResponsible(id!!)
             }
-            ad.setNegativeButton("Отмена") { dialog, arg1 ->
-                Toast.makeText(it.context, "Возможно вы правы", Toast.LENGTH_LONG)
-                        .show()
-            }
+            ad.setNegativeButton("Отмена") { dialog, arg1 -> }
 
             ad.setCancelable(true)
             ad.show()
@@ -181,6 +165,7 @@ class DataAdapter: RecyclerView.Adapter<DataAdapter.ViewHolder>{
         }
 
     }
+
     private fun getToken(context: Context): String {
         mSettings = PreferenceManager.getDefaultSharedPreferences(context)
         var token = ""
@@ -188,5 +173,13 @@ class DataAdapter: RecyclerView.Adapter<DataAdapter.ViewHolder>{
             token = "Token " + mSettings.getString(APP_TOKEN, "")
         }
         return token
+    }
+
+    override fun result(code: Int) {
+        if (code == 200) {
+            fragment?.updateList()
+        } else {
+
+        }
     }
 }

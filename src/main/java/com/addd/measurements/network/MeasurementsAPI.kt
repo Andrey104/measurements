@@ -1,6 +1,5 @@
 package com.addd.measurements.network
 
-import com.addd.measurements.modelAPI.Authorization
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.Transfer
 import com.addd.measurements.modelAPI.User
@@ -34,6 +33,10 @@ interface MeasurementsAPI {
 
     @POST("measurements/{id}/take/")
     fun becomeResponsible(@Header("Authorization") authorization: String, @Path("id") id: Int?): Call<Void>
+
+
+
+
     companion object Factory {
 
         fun create(): MeasurementsAPI {

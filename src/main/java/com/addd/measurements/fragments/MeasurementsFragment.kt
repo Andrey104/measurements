@@ -2,6 +2,7 @@ package com.addd.measurements.fragments
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -25,16 +26,11 @@ import java.util.*
  * Created by addd on 03.12.2017.
  */
 
-class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements {
+class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements{
     private lateinit var date: String
     lateinit var alert: AlertDialog
-    override fun onStop() {
-        super.onStop()
-        NetworkController.registerCallBack(null)
-    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        NetworkController.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
         val bundle = this.arguments
 
@@ -62,7 +58,10 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         return view
     }
 
-
+    override fun onResume() {
+        NetworkController.registerCallBack(this)
+        super.onResume()
+    }
 
     private fun onClickCurrent(bottomNavigationView: BottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -82,7 +81,6 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             true
         }
     }
-
 
     private fun onClickRejected(bottomNavigationView: BottomNavigationView) {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -130,7 +128,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             } else {
                 dayOfMonth.toString()
             }
-            val realmonth = monthOfYear+1
+            val realmonth = monthOfYear + 1
             if (realmonth < 10) {
                 date = "$year-0$realmonth-$day"
             } else {
@@ -152,7 +150,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             } else {
                 dayOfMonth.toString()
             }
-            val realmonth = monthOfYear+1
+            val realmonth = monthOfYear + 1
             if (realmonth < 10) {
                 date = "$year-0$realmonth-$day"
             } else {
@@ -174,7 +172,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             } else {
                 dayOfMonth.toString()
             }
-            val realmonth = monthOfYear+1
+            val realmonth = monthOfYear + 1
             if (realmonth < 10) {
                 date = "$year-0$realmonth-$day"
             } else {
@@ -189,6 +187,15 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         datePikerDialog.show()
     }
 
+    fun updateList() {
+        showDialog()
+        NetworkController.updateListInFragment(context)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == 200) {
+            updateList()
+        }
+    }
 
     private fun showDialog() {
         val builder = AlertDialog.Builder(context)
@@ -210,23 +217,25 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             if (result == 0) {
                 Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
-
                 Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
             }
         }
-        recyclerList.adapter = DataAdapter(listMeasurements)
+        recyclerList.adapter = DataAdapter(listMeasurements, this)
         val layoutManager = LinearLayoutManager(activity.applicationContext)
         recyclerList.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
         recyclerList.addItemDecoration(dividerItemDecoration)
 
 
-        onChange(date,listMeasurements)
+        onChange(date, listMeasurements)
         alert.dismiss()
     }
 
     private fun onChange(date: String, list: List<Measurement>) {
         val toolbar = (activity as AppCompatActivity).supportActionBar
+        if (list.isEmpty()) {
+        toolbar?.title = "$date"
+        }
         var my = 0
         var wrong = 0
         for (measurement in list) {
@@ -240,4 +249,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         toolbar?.title = "$date В:${list.size} Н:$wrong M:$my"
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        NetworkController.registerCallBack(null)
+    }
 }

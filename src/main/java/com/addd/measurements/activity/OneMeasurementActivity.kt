@@ -154,6 +154,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         if (resultCode == 200) {
             showDialog()
             NetworkController.getOneMeasurement(this, measurement.id.toString())
+            setResult(200)
         }
     }
 
@@ -221,5 +222,10 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             Toast.makeText(applicationContext, "При обновлении данных произошла ошибка", Toast.LENGTH_SHORT).show()
         }
         alert.dismiss()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        NetworkController.registerUpdateOneMeasurementCallback(null)
     }
 }
