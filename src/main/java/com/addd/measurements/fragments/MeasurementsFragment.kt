@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -14,9 +15,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.DataAdapter
-import com.addd.measurements.changemenu.ChangeManager
-import com.addd.measurements.middleware.NetworkController
 import com.addd.measurements.modelAPI.Measurement
+import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
 
@@ -199,7 +199,7 @@ class MeasurementsFragment : Fragment(), NetworkController.Callback {
         alert.show()
     }
 
-    override fun callingBack(listMeasurements: List<Measurement>, result: Int, date: String) {
+    override fun result(listMeasurements: List<Measurement>, result: Int, date: String) {
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
                 Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()
@@ -220,10 +220,24 @@ class MeasurementsFragment : Fragment(), NetworkController.Callback {
         val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
         recyclerList.addItemDecoration(dividerItemDecoration)
 
-        val changeManager = ChangeManager.instance
-        changeManager.notifyOnChange(date, listMeasurements) //callback в активити для изменения title
 
+        onChange(date,listMeasurements)
         alert.dismiss()
+    }
+
+    private fun onChange(date: String, list: List<Measurement>) {
+        val toolbar = (activity as AppCompatActivity).supportActionBar
+        var my = 0
+        var wrong = 0
+        for (measurement in list) {
+            if (measurement.color == 1) {
+                wrong++
+            }
+            if (measurement.color == 2) {
+                my++
+            }
+        }
+        toolbar?.title = "$date В:${list.size} Н:$wrong M:$my"
     }
 
 }

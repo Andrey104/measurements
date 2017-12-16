@@ -14,15 +14,8 @@ import retrofit2.http.*
  * Created by addd on 02.12.2017.
  */
 interface MeasurementsAPI {
-    @FormUrlEncoded
-    @POST("login/")
-    fun performPostCall(@Field("username") login: String, @Field("password") password: String): Call<Authorization>
-
-    @GET("user_info")
+      @GET("user_info")
     fun userInfo(@Header("Authorization") authorization: String): Call<User>
-
-    @GET("measurements")
-    fun getMeasurements(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
 
     @GET("measurements/{id}")
     fun getOneMeasurement(@Header("Authorization") authorization: String, @Path("id") id: String): Call<Measurement>

@@ -14,38 +14,27 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.R
-import com.addd.measurements.changemenu.ChangeManager
-import com.addd.measurements.changemenu.OnChangeListener
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.MyObjectsFragment
 import com.addd.measurements.fragments.ProblemsFragment
-import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.User
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import android.view.View
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
     private val bundle = Bundle()
     private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
-    private var userInfo: User = User()
-    private val serviceAPI = MeasurementsAPI.Factory.create()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         APP_TOKEN = getString(R.string.token)
         APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
-        menuChanger()
+        NetworkController.registerUserInfoCallBack(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -66,28 +55,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         informationUser()
     }
 
-    private fun menuChanger() {
-        val changeManager = ChangeManager.instance
-
-        changeManager.setListener(object : OnChangeListener {
-            override fun onChange(date: String, list: List<Measurement>) {
-                var my = 0
-                var wrong = 0
-                for (measurement in list) {
-                    if (measurement.color == 1) {
-                        wrong++
-                    }
-                    if (measurement.color == 2) {
-                        my++
-                    }
-                }
-                val toolbarTitle = findViewById<View>(R.id.toolbar_title) as TextView
-                title = ""
-                toolbarTitle.text = "$date В:${list.size} Н:$wrong M:$my"
-
-            }
-        })
-    }
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -212,55 +179,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun informationUser() {
-        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        if (mSettings.contains(APP_TOKEN)) {
-            val token: String = "Token " + mSettings.getString(APP_TOKEN, "")
-            val call = serviceAPI.userInfo(token)
-
-            call.enqueue(object : Callback<User> {
-                override fun onResponse(call: Call<User>?, response: Response<User>?) {
-                    if (response!!.body() != null) {
-                        userInfo = response.body()
-                        saveUserInfo(userInfo)
-                        val navigationView: NavigationView = findViewById(R.id.nav_view)
-                        val navHeader = navigationView.getHeaderView(0)
-                        val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
-                        textName.text = "${userInfo.firstName} ${userInfo.lastName}"
-                    }
-                }
-
-                override fun onFailure(call: Call<User>?, t: Throwable?) {
-                    userInfo = loadSharedPreferencesUser()
-                    val navigationView: NavigationView = findViewById(R.id.nav_view)
-                    val navHeader = navigationView.getHeaderView(0)
-                    val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
-                    textName.text = "${userInfo.firstName} ${userInfo.lastName}"
-                }
-            })
-        }
+        NetworkController.getInfoUser(this)
     }
 
-    private fun saveUserInfo(user: User) {
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val prefsEditor = mPrefs.edit()
-        val gson = Gson()
-        val json = gson.toJson(user)
-        prefsEditor.putString(APP_USER_INFO, json)
-        prefsEditor.commit()
-    }
-
-    private fun loadSharedPreferencesUser(): User {
-        var user: User
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val gson = Gson()
-        val json = mPrefs.getString(APP_USER_INFO, "")
-        user = if (json!!.isEmpty()) {
-            User()
+    override fun result(user: User) {
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        val navHeader = navigationView.getHeaderView(0)
+        val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
+        if (user.firstName!!.isEmpty() || user.lastName!!.isEmpty()) {
+            textName.text = ""
         } else {
-            val type = object : TypeToken<User>() {
-            }.type
-            gson.fromJson(json, type)
+            textName.text = "${user.firstName} ${user.lastName}"
         }
-        return user
     }
 }
