@@ -5,10 +5,7 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.widget.Toast
 import com.addd.measurements.middleware.IMiddleware
-import com.addd.measurements.modelAPI.Measurement
-import com.addd.measurements.modelAPI.Reject
-import com.addd.measurements.modelAPI.Transfer
-import com.addd.measurements.modelAPI.User
+import com.addd.measurements.modelAPI.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -39,6 +36,7 @@ object NetworkController : IMiddleware {
     var transferMeasurement: TransferMeasurementCallback? = null
     var responsible: ResponsibleCallback? = null
     var rejectCallback: RejectCallback? = null
+    var closeCallback: CloseCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -419,6 +417,21 @@ object NetworkController : IMiddleware {
             }
         })
     }
+
+    fun closeMeasurement(context: Context, close : Close, id: String) {
+        token = getToken(context)
+
+        val call = serviceAPI.closeMeasurement(token, close, id)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                closeCallback?.resultClose(response!!.code())
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                closeCallback?.resultClose(500)
+            }
+        })
+    }
 //----------------------------------внутренние функции класса------------------------------------------
 
     private fun saveMeasurementsList(context: Context, list: List<Measurement>, name: String) {
@@ -554,5 +567,13 @@ object NetworkController : IMiddleware {
 
     fun registerRejectCallback(callback: RejectCallback?) {
         NetworkController.rejectCallback = callback
+    }
+
+    interface CloseCallback {
+        fun resultClose(code: Int)
+    }
+
+    fun registerCloseCallback(callback: CloseCallback?) {
+        NetworkController.closeCallback = callback
     }
 }

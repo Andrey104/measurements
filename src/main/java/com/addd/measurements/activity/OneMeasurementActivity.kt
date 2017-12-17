@@ -177,9 +177,10 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.complete -> {
-                    Toast.makeText(applicationContext,
-                            "Вы выбрали PopupMenu 1",
-                            Toast.LENGTH_SHORT).show()
+                    val intent = Intent(applicationContext, CompleteActivity::class.java)
+                    intent.putExtra("id", measurement.id.toString())
+                    intent.putExtra("deal", measurement.deal.toString())
+                    startActivityForResult(intent, 0)
                     true
                 }
                 R.id.shift -> {
@@ -195,9 +196,10 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                     true
                 }
                 R.id.problem -> {
-                    Toast.makeText(applicationContext,
-                            "Вы выбрали PopupMenu 4",
-                            Toast.LENGTH_SHORT).show()
+                    val intent = Intent(applicationContext, ProblemActivity::class.java)
+                    intent.putExtra("id", measurement.id.toString())
+                    intent.putExtra("deal", measurement.deal.toString())
+                    startActivityForResult(intent, 0)
                     true
                 }
                 else -> false

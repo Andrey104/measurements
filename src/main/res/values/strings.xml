@@ -39,4 +39,8 @@
     <string name="wrong_manager">Ошибка менеджера</string>
     <string name="search">Поиск</string>
     <string name="reject_measurement">Отказ от замера</string>
+    <string name="complete_measurement">Завершение замера</string>
+    <string name="offer_concluded">Договор заключен</string>
+    <string name="sum">Сумма</string>
+    <string name="new_problem">Новая проблема</string>
 </resources>

@@ -37,7 +37,13 @@
         <activity
             android:name=".activity.TransferActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.RejectActivity"></activity>
+        <activity
+            android:name=".activity.RejectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CompleteActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.ProblemActivity"></activity>
     </application>
 
 </manifest>

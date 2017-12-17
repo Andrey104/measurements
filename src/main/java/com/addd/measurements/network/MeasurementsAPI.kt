@@ -1,9 +1,6 @@
 package com.addd.measurements.network
 
-import com.addd.measurements.modelAPI.Measurement
-import com.addd.measurements.modelAPI.Reject
-import com.addd.measurements.modelAPI.Transfer
-import com.addd.measurements.modelAPI.User
+import com.addd.measurements.modelAPI.*
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -38,6 +35,8 @@ interface MeasurementsAPI {
     @POST("measurements/{id}/reject/")
     fun rejectMeasurement(@Header("Authorization") authorization: String, @Body reject: Reject, @Path("id") id: String): Call<Void>
 
+    @POST("measurements/{id}/close/")
+    fun closeMeasurement(@Header("Authorization") authorization: String, @Body close: Close, @Path("id") id: String): Call<Void>
 
 
     companion object Factory {

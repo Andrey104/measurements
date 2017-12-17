@@ -34,7 +34,8 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
             return false
         }
         val comment = editComment.text.toString()
-        val reject = Reject(cause,comment)
+
+        val reject = Reject(cause,if(comment.isEmpty()) null else comment)
         NetworkController.rejectMeasurement(this, reject, id)
         return true
     }
@@ -53,5 +54,10 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
                 cause = 3
             }
         }
+    }
+
+    override fun onDestroy() {
+        NetworkController.registerRejectCallback(null)
+        super.onDestroy()
     }
 }
