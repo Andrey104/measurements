@@ -166,16 +166,8 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
 
     }
 
-    private fun getToken(context: Context): String {
-        mSettings = PreferenceManager.getDefaultSharedPreferences(context)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
-        return token
-    }
 
-    override fun result(code: Int) {
+    override fun resultResponsible(code: Int) {
         if (code == 200) {
             fragment?.updateList()
         } else {

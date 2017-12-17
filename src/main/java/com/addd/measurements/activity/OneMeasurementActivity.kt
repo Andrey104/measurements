@@ -215,7 +215,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         alert.show()
     }
 
-    override fun result(int: Int, measurement: Measurement?) {
+    override fun resultUpdate(int: Int, measurement: Measurement?) {
         if (measurement != null) {
             displayMeasurement(measurement)
         } else {

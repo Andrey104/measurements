@@ -94,7 +94,7 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         alert.show()
     }
 
-    override fun result(code: Int) {
+    override fun resultTransfer(code: Int) {
         if (code == 200) {
             alert.dismiss()
             setResult(200)

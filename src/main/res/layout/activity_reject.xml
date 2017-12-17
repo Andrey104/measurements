@@ -11,6 +11,8 @@
         android:id="@+id/toolbar"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         android:layout_width="match_parent"
+        app:title="@string/reject_measurement"
+        app:titleTextColor="@color/white"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary" />
 

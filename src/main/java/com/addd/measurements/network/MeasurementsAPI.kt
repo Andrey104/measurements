@@ -36,7 +36,7 @@ interface MeasurementsAPI {
     fun becomeResponsible(@Header("Authorization") authorization: String, @Path("id") id: Int?): Call<Void>
 
     @POST("measurements/{id}/reject/")
-    fun rejectMeasurement(@Header("Authorization") authorization: String, @Body reject: Reject, @Path("id") id: String?): Call<Void>
+    fun rejectMeasurement(@Header("Authorization") authorization: String, @Body reject: Reject, @Path("id") id: String): Call<Void>
 
 
 

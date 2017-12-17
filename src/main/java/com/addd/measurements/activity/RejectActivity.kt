@@ -11,7 +11,7 @@ import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.activity_reject.*
 
 class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
-    override fun result(code: Int) {
+    override fun resultReject(code: Int) {
         Toast.makeText(this,code.toString(),Toast.LENGTH_SHORT).show()
     }
 

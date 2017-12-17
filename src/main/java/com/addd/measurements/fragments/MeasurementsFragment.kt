@@ -206,7 +206,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         alert.show()
     }
 
-    override fun result(listMeasurements: List<Measurement>, result: Int, date: String) {
+    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String) {
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
                 Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()
