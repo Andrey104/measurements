@@ -26,7 +26,6 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     lateinit var measurement: Measurement
     private lateinit var alert: AlertDialog
     override fun onCreate(savedInstanceState: Bundle?) {
-        NetworkController.registerUpdateOneMeasurementCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_measurement)
         setSupportActionBar(toolbar)
@@ -226,6 +225,10 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         alert.dismiss()
     }
 
+    override fun onResume() {
+        NetworkController.registerUpdateOneMeasurementCallback(this)
+        super.onResume()
+    }
     override fun onDestroy() {
         super.onDestroy()
         NetworkController.registerUpdateOneMeasurementCallback(null)

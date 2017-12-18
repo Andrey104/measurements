@@ -24,7 +24,6 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
             "декабря")
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        NetworkController.registerTransferMeasurementCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transfer)
         id = intent.getStringExtra("id")
@@ -85,6 +84,10 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         datePikerDialog.show()
     }
 
+    override fun onResume() {
+        NetworkController.registerTransferMeasurementCallback(this)
+        super.onResume()
+    }
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
         val viewAlert = layoutInflater.inflate(R.layout.update_dialog, null)

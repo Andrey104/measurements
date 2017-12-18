@@ -26,11 +26,12 @@ import java.util.*
  * Created by addd on 03.12.2017.
  */
 
-class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements{
+class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements {
     private lateinit var date: String
     lateinit var alert: AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        NetworkController.registerCallBack(this)
         val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
         val bundle = this.arguments
 
@@ -191,6 +192,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         showDialog()
         NetworkController.updateListInFragment(context)
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
             updateList()
@@ -234,7 +236,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private fun onChange(date: String, list: List<Measurement>) {
         val toolbar = (activity as AppCompatActivity).supportActionBar
         if (list.isEmpty()) {
-        toolbar?.title = "$date"
+            toolbar?.title = "$date"
         }
         var my = 0
         var wrong = 0

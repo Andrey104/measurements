@@ -30,12 +30,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
 
-
+    override fun onResume() {
+        NetworkController.registerUserInfoCallBack(this)
+        super.onResume()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         APP_TOKEN = getString(R.string.token)
         APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
-        NetworkController.registerUserInfoCallBack(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

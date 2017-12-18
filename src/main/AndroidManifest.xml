@@ -43,7 +43,8 @@
         <activity
             android:name=".activity.CompleteActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ProblemActivity"></activity>
+        <activity android:name=".activity.ProblemActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

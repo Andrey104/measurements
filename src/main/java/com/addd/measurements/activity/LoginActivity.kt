@@ -15,7 +15,6 @@ class LoginActivity : AppCompatActivity(), NetworkAuthorization.MyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         APP_TOKEN = getString(R.string.token)
-        NetworkAuthorization.registerCallback(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -26,6 +25,11 @@ class LoginActivity : AppCompatActivity(), NetworkAuthorization.MyCallback {
         }
 
         btnLogin.setOnClickListener { goLogin() }
+    }
+
+    override fun onResume() {
+        NetworkAuthorization.registerCallback(this)
+        super.onResume()
     }
 
     private fun goLogin() {

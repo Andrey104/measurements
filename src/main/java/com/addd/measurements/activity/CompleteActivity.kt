@@ -3,6 +3,7 @@ package com.addd.measurements.activity
 import android.app.DatePickerDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Close
@@ -11,24 +12,19 @@ import kotlinx.android.synthetic.main.activity_complete.*
 import java.util.*
 
 class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
-    override fun resultClose(code: Int) {
-        if (code == 200) {
-            setResult(200)
-            Toast.makeText(applicationContext, "Замер завершен", Toast.LENGTH_SHORT).show()
-            finish()
-        } else {
-            Toast.makeText(applicationContext, "При завершении произошла ошибка", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private lateinit var id: String
     private lateinit var deal: String
+    private lateinit var alert : AlertDialog
     private var serverDate: String? = null
     private val months = arrayOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
             "декабря")
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onResume() {
         NetworkController.registerCloseCallback(this)
+        super.onResume()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete)
         id = intent.getStringExtra("id")
@@ -78,7 +74,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         val close = Close(editTextComment.text.toString(),
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
                 sum, checkBoxOffer.isChecked, serverDate)
-
+        showDialog()
         NetworkController.closeMeasurement(this, close, id)
         return true
     }
@@ -86,5 +82,25 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     override fun onDestroy() {
         NetworkController.registerCloseCallback(null)
         super.onDestroy()
+    }
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(this)
+        val viewAlert = layoutInflater.inflate(R.layout.update_dialog, null)
+        builder.setView(viewAlert)
+                .setCancelable(false)
+        alert = builder.create()
+        alert.show()
+    }
+
+    override fun resultClose(code: Int) {
+        if (code == 200) {
+            setResult(200)
+            Toast.makeText(applicationContext, "Замер завершен", Toast.LENGTH_SHORT).show()
+            alert.dismiss()
+            finish()
+        } else {
+            alert.dismiss()
+            Toast.makeText(applicationContext, "При завершении произошла ошибка", Toast.LENGTH_SHORT).show()
+        }
     }
 }
