@@ -18,13 +18,13 @@ interface MeasurementsAPI {
     fun getOneMeasurement(@Header("Authorization") authorization: String, @Path("id") id: String): Call<Measurement>
 
     @GET("measurements/current")
-    fun getCurrentMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
+    fun getCurrentMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<MyResult>
 
     @GET("measurements/rejected")
-    fun getRejectedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
+    fun getRejectedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<MyResult>
 
     @GET("measurements/closed")
-    fun getClosedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<List<Measurement>>
+    fun getClosedMeasurement(@Header("Authorization") authorization: String, @Query("date") date: String): Call<MyResult>
 
     @POST("measurements/{id}/transfer/")
     fun transferMeasurement(@Header("Authorization") authorization: String, @Body transfer: Transfer, @Path("id") id: String): Call<Void>

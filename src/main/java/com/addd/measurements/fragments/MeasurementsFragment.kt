@@ -208,7 +208,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         alert.show()
     }
 
-    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String) {
+    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements : Int?, notDistributed : Int?) {
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
                 Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()
@@ -222,6 +222,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                 Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
             }
         }
+        val toolbar = (activity as AppCompatActivity).supportActionBar
+        toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
+
         recyclerList.adapter = DataAdapter(listMeasurements, this)
         val layoutManager = LinearLayoutManager(activity.applicationContext)
         recyclerList.layoutManager = layoutManager
@@ -236,7 +239,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private fun onChange(date: String, list: List<Measurement>) {
         val toolbar = (activity as AppCompatActivity).supportActionBar
         if (list.isEmpty()) {
-            toolbar?.title = "$date"
+        toolbar?.title = "$date"
         }
         var my = 0
         var wrong = 0
