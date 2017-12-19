@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val bundle = Bundle()
     private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
+    private lateinit var check : String
 
     override fun onResume() {
         NetworkController.registerUserInfoCallBack(this)
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         APP_TOKEN = getString(R.string.token)
         APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
-
+        check = getString(R.string.check)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         var fragmentClass: Class<*>?
         fragmentClass = MeasurementsFragment::class.java
-        bundle.putInt("check", 0)
+        bundle.putInt(check, 0)
         startFragment(fragmentClass, bundle)
 
         informationUser()
@@ -64,12 +65,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle("Выход из приложения")
-                    .setMessage("Вы действительно хотите выйти из приложения?")
+            builder.setTitle(getString(R.string.exit_app))
+                    .setMessage(getString(R.string.realy_exit_app))
                     .setCancelable(false)
-                    .setPositiveButton("Да",
+                    .setPositiveButton(getString(R.string.yes),
                             { dialog, id -> finish() })
-                    .setNegativeButton("Нет", { dialog, id -> dialog.cancel() })
+                    .setNegativeButton(getString(R.string.no), { dialog, id -> dialog.cancel() })
             val alert = builder.create()
             alert.show()
         }
@@ -96,7 +97,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onMenuItemActionCollapse(item: MenuItem?) = true
         })
         return true
-        return true
     }
 
 
@@ -106,17 +106,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         menuItem.isChecked = false
         when (item.itemId) {
             R.id.nav_current -> {
-                bundle.putInt("check", 0)
+                bundle.putInt(check, 0)
                 fragmentClass = MeasurementsFragment::class.java
                 changeFragment(fragmentClass, item, bundle)
             }
             R.id.nav_rejected -> {
-                bundle.putInt("check", 1)
+                bundle.putInt(check, 1)
                 fragmentClass = MeasurementsFragment::class.java
                 changeFragment(fragmentClass, item, bundle)
             }
             R.id.nav_closed -> {
-                bundle.putInt("check", 2)
+                bundle.putInt(check, 2)
                 fragmentClass = MeasurementsFragment::class.java
                 changeFragment(fragmentClass, item, bundle)
             }
@@ -141,10 +141,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun exitFromApp() {
         val builder = AlertDialog.Builder(this@MainActivity)
-        builder.setTitle("Выход из аккаунта")
-                .setMessage("Вы действительно хотите выйти из аккаунта?")
+        builder.setTitle(getString(R.string.exit_account))
+                .setMessage(getString(R.string.realy_exit_account))
                 .setCancelable(false)
-                .setPositiveButton("Да",
+                .setPositiveButton(getString(R.string.yes),
                         { dialog, id ->
                             val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
                             val editor = mSettings.edit()
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
                         })
-                .setNegativeButton("Нет", { dialog, id -> dialog.cancel() })
+                .setNegativeButton(getString(R.string.no), { dialog, id -> dialog.cancel() })
         val alert = builder.create()
         alert.show()
     }
@@ -204,8 +204,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
         NetworkController.registerUserInfoCallBack(null)
-        super.onDestroy()
+        super.onStop()
     }
 }

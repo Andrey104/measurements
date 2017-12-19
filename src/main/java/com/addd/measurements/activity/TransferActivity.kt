@@ -20,13 +20,18 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
     private var date: String? = null
     private var userDate: String? = null
     private var cause: Int? = null
-    private val months = arrayOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
-            "декабря")
+    private var months = emptyArray<String>()
+    private lateinit var intentIdKey: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        months = resources.getStringArray(R.array.months)
+        intentIdKey = getString(R.string.id)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transfer)
-        id = intent.getStringExtra("id")
+        if (intent != null && intent.hasExtra(intentIdKey)) {
+            id = intent.getStringExtra(intentIdKey)
+        }
         dateButton.setOnClickListener { datePick() }
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doTransferRequest() }
@@ -35,13 +40,13 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
     private fun doTransferRequest(): Boolean {
         val check = radioGroup.checkedRadioButtonId
         if (check == -1 && date == null) {
-            Toast.makeText(this, "Выберите дату и причину", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.select_date_cause), Toast.LENGTH_SHORT).show()
             return false
         } else if (date == null) {
-            Toast.makeText(this, "Выберите дату", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.select_date), Toast.LENGTH_SHORT).show()
             return false
         } else if (check == -1) {
-            Toast.makeText(this, "Выберите причину", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.select_cause), Toast.LENGTH_SHORT).show()
             return false
         }
 
@@ -69,25 +74,22 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
 
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            var day: String = if (dayOfMonth < 10) {
-                "0" + dayOfMonth
-            } else {
-                dayOfMonth.toString()
-            }
-            date = "$year-${monthOfYear + 1}-${day}T00:00"
+            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
             textViewDate.text = "$dayOfMonth ${months[monthOfYear]} $year года"
             userDate = "$dayOfMonth ${months[monthOfYear]} $year года"
+            textViewDate.text = userDate
         }
         val calendar = Calendar.getInstance()
-        val datePikerDialog = DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        val datePicker = DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        datePicker.show()
 
-        datePikerDialog.show()
     }
 
     override fun onResume() {
         NetworkController.registerTransferMeasurementCallback(this)
         super.onResume()
     }
+
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
         val viewAlert = layoutInflater.inflate(R.layout.update_dialog, null)
@@ -105,12 +107,12 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
             finish()
         } else {
             alert.dismiss()
-            Toast.makeText(applicationContext, "При переносе произошла ошибка", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.transfer_error), Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
         NetworkController.registerTransferMeasurementCallback(null)
+        super.onStop()
     }
 }

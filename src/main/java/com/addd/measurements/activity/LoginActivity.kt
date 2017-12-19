@@ -34,7 +34,7 @@ class LoginActivity : AppCompatActivity(), NetworkAuthorization.MyCallback {
 
     private fun goLogin() {
         if (editLogin.length() == 0 || editPassword.length() == 0) {
-            Toast.makeText(applicationContext, "Пустое поле Логин или Пароль", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.emty_login_or_password), Toast.LENGTH_SHORT).show()
         } else {
             NetworkAuthorization.authorization(editLogin.text.toString(), editPassword.text.toString(), this)
         }
@@ -46,13 +46,13 @@ class LoginActivity : AppCompatActivity(), NetworkAuthorization.MyCallback {
                 startActivity(Intent(applicationContext, MainActivity::class.java))
                 finish()
             }
-            400 -> Toast.makeText(applicationContext, "Неправильный логин или пароль", Toast.LENGTH_SHORT).show()
-            else -> Toast.makeText(applicationContext, "Что-то пошло не так =(", Toast.LENGTH_SHORT).show()
+            400 -> Toast.makeText(applicationContext, getString(R.string.wrong_login_password), Toast.LENGTH_SHORT).show()
+            else -> Toast.makeText(applicationContext, getString(R.string.something_wrong), Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
         NetworkAuthorization.registerCallback(null)
-        super.onDestroy()
+        super.onStop()
     }
 }

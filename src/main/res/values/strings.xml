@@ -27,7 +27,6 @@
     <string name="reject">Отклонить</string>
     <string name="problem">Проблема</string>
     <string name="transfer_measurement">Перенос замера</string>
-    <string name="select_date">Выберите дату</string>
     <string name="cause">Причина:</string>
     <string name="client">Клиент</string>
     <string name="gauger">Замерщик</string>
@@ -43,4 +42,48 @@
     <string name="offer_concluded">Договор заключен</string>
     <string name="sum">Сумма</string>
     <string name="new_problem">Новая проблема</string>
+    <string name="id">id</string>
+    <string name="deal">deal</string>
+    <string name="enter_sum_comment">Введите сумму и комментарий</string>
+    <string name="enter_sum">Введите сумму</string>
+    <string name="enter_comment">Введите комментарий</string>
+    <string name="measurement_closed">Замер завершен</string>
+    <string name="close_measurement_error">При завершении произошла ошибка</string>
+    <string name="emty_login_or_password">Пустое поле Логин или Пароль</string>
+    <string name="wrong_login_password">Неправильный логин или пароль</string>
+    <string name="something_wrong">Что-то пошло не так =(</string>
+    <string name="exit_app">Выход из приложения</string>
+    <string name="realy_exit_app">Вы действительно хотите выйти из приложения?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="check">check</string>
+    <string name="exit_account">Выход из аккаунта</string>
+    <string name="realy_exit_account">Вы действительно хотите выйти из аккаунта?</string>
+    <string name="not_distributed">Не распределено</string>
+    <string name="measurement_not_closed">Замер не завершен</string>
+    <string name="measurement_reject">Замер отклонен</string>
+    <string name="update_error">При обновлении данных произошла ошибка</string>
+    <string name="error_measurement_reject">При отклонении замера произошла ошибка</string>
+    <string name="select_date_cause">Выберите дату и причину</string>
+    <string name="select_date">Выберите дату</string>
+    <string name="select_cause">Выберите причину</string>
+    <string name="transfer_error">При переносе произошла ошибка</string>
+    <string name="no_save_data">Нет сохраненных данных на заданную дату, проверьте подключение к интернету</string>
+    <string name="nothing_show">По данному запросу нет данных</string>
+    <string name="no_internet">Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища</string>
+
+    <string-array name="months">
+        <item>января</item>
+        <item>февраля</item>
+        <item>марта</item>
+        <item>апреля</item>
+        <item>мая</item>
+        <item>июня</item>
+        <item>июля</item>
+        <item>августа</item>
+        <item>сентября</item>
+        <item>октября</item>
+        <item>ноября</item>
+        <item>декабря</item>
+    </string-array>
 </resources>

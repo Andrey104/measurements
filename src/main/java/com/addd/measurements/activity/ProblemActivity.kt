@@ -15,7 +15,7 @@ class ProblemActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
     }
 }

@@ -15,11 +15,15 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
     private var cause: Int = 0
     private lateinit var id: String
     private lateinit var alert: AlertDialog
+    private lateinit var intentIdKey: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        intentIdKey = getString(R.string.id)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reject)
-        id = intent.getStringExtra("id")
+        if (intent != null && intent.hasExtra(intentIdKey)) {
+            id = intent.getStringExtra(intentIdKey)
+        }
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doRejectRequest() }
     }
@@ -28,10 +32,11 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
         NetworkController.registerRejectCallback(this)
         super.onResume()
     }
+
     private fun doRejectRequest(): Boolean {
         val check = radioGroupReject.checkedRadioButtonId
         if (check == -1) {
-            Toast.makeText(this, "Выберите причину", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.select_cause), Toast.LENGTH_SHORT).show()
             return false
         }
         val comment = editComment.text.toString()
@@ -58,9 +63,9 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
         }
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
         NetworkController.registerRejectCallback(null)
-        super.onDestroy()
+        super.onStop()
     }
 
     private fun showDialog() {
@@ -74,12 +79,12 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
 
     override fun resultReject(code: Int) {
         if (code == 200) {
-            Toast.makeText(this, "Замер отклонен", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.measurement_reject), Toast.LENGTH_SHORT).show()
             setResult(200)
             alert.dismiss()
             finish()
         } else {
-            Toast.makeText(this, "При отклонении замера произошла ошибка", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_measurement_reject), Toast.LENGTH_SHORT).show()
             alert.dismiss()
         }
     }

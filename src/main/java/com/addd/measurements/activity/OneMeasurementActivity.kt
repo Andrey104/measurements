@@ -25,7 +25,11 @@ import kotlinx.android.synthetic.main.content_one_measurement.*
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement {
     lateinit var measurement: Measurement
     private lateinit var alert: AlertDialog
+    private lateinit var intentIdKey: String
+    private lateinit var intentDealKey: String
     override fun onCreate(savedInstanceState: Bundle?) {
+        intentDealKey = getString(R.string.deal)
+        intentIdKey = getString(R.string.id)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_measurement)
         setSupportActionBar(toolbar)
@@ -34,6 +38,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             showPopupMenu(view)
         }
         displayMeasurement(getSavedMeasurement())
+
 
     }
 
@@ -45,19 +50,21 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     private fun getSavedMeasurement(): Measurement {
         val gson = Gson()
-        val json = intent.getStringExtra("measurement")
-        if (json!!.isEmpty()) {
-            measurement = Measurement()
-        } else {
-            val type = object : TypeToken<Measurement>() {
-            }.type
-            measurement = gson.fromJson(json, type)
+        if (intent != null && intent.hasExtra("measurement")) {
+            val json = intent.getStringExtra("measurement")
+            if (json!!.isEmpty()) {
+                measurement = Measurement()
+            } else {
+                val type = object : TypeToken<Measurement>() {
+                }.type
+                measurement = gson.fromJson(json, type)
+            }
         }
         return measurement
     }
 
     private fun displayMeasurement(measurement: Measurement) {
-        title = "Замер ${intent.getStringExtra("id")}"
+        title = "Замер ${intent.getStringExtra(getString(R.string.id))}"
         setStatus(measurement)
 
 
@@ -71,7 +78,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         time.text = measurement.time.toString()
         date.text = measurement.date.toString()
         if (measurement.workerName == null) {
-            worker_name.text = "Не распределено"
+            worker_name.text = getString(R.string.not_distributed)
         } else {
             worker_name.text = measurement.workerName.toString()
         }
@@ -128,9 +135,9 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     private fun setStatus(measurement: Measurement) {
         when (measurement.status) {
-            0, 1 -> textViewStatus.text = "Замер не завершен"
+            0, 1 -> textViewStatus.text = getString(R.string.measurement_not_closed)
             2, 3 -> {
-                textViewStatus.text = "Замер завершен"
+                textViewStatus.text = getString(R.string.measurement_closed)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textViewStatus.setTextColor(resources.getColor(R.color.red, applicationContext.theme))
                 } else {
@@ -138,7 +145,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                 }
             }
             4 -> {
-                textViewStatus.text = "Замер отклонен"
+                textViewStatus.text = getString(R.string.measurement_reject)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textViewStatus.setTextColor(resources.getColor(R.color.red, applicationContext.theme))
                 } else {
@@ -177,27 +184,27 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             when (item.itemId) {
                 R.id.complete -> {
                     val intent = Intent(applicationContext, CompleteActivity::class.java)
-                    intent.putExtra("id", measurement.id.toString())
-                    intent.putExtra("deal", measurement.deal.toString())
+                    intent.putExtra(intentIdKey, measurement.id.toString())
+                    intent.putExtra(intentDealKey, measurement.deal)
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.shift -> {
                     val intent = Intent(applicationContext, TransferActivity::class.java)
-                    intent.putExtra("id", measurement.id.toString())
+                    intent.putExtra(intentIdKey, measurement.id.toString())
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.reject -> {
                     val intent = Intent(applicationContext, RejectActivity::class.java)
-                    intent.putExtra("id", measurement.id.toString())
+                    intent.putExtra(intentIdKey, measurement.id.toString())
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.problem -> {
                     val intent = Intent(applicationContext, ProblemActivity::class.java)
-                    intent.putExtra("id", measurement.id.toString())
-                    intent.putExtra("deal", measurement.deal.toString())
+                    intent.putExtra(intentIdKey, measurement.id.toString())
+                    intent.putExtra(intentDealKey, measurement.deal.toString())
                     startActivityForResult(intent, 0)
                     true
                 }
@@ -220,7 +227,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         if (measurement != null) {
             displayMeasurement(measurement)
         } else {
-            Toast.makeText(applicationContext, "При обновлении данных произошла ошибка", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.update_error), Toast.LENGTH_SHORT).show()
         }
         alert.dismiss()
     }
@@ -229,8 +236,9 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         NetworkController.registerUpdateOneMeasurementCallback(this)
         super.onResume()
     }
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onStop() {
         NetworkController.registerUpdateOneMeasurementCallback(null)
+        super.onStop()
     }
 }

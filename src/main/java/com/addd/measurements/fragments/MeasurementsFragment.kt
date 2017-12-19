@@ -20,6 +20,10 @@ import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
+import java.nio.file.Files.size
+import android.support.v7.widget.RecyclerView
+
+
 
 
 /**
@@ -29,6 +33,9 @@ import java.util.*
 class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements {
     private lateinit var date: String
     lateinit var alert: AlertDialog
+    private var isLoading = false
+    private var mPageSize = 20
+    private var mTotalItemsCount = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         NetworkController.registerCallBack(this)
@@ -37,7 +44,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
         if (bundle != null) {
-            when (bundle.getInt("check")) {
+            when (bundle.getInt(getString(R.string.check))) {
                 0 -> onClickCurrent(bottomNavigationView)
 
                 1 -> onClickRejected(bottomNavigationView)
@@ -49,7 +56,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
         if (bundle != null) {
             showDialog()
-            when (bundle.getInt("check")) {
+            when (bundle.getInt(getString(R.string.check))) {
                 0 -> NetworkController.getTodayCurrentMeasurements(context)
                 1 -> NetworkController.getTodayRejectMeasurements(context)
                 2 -> NetworkController.getTodayClosedMeasurements(context)
@@ -124,17 +131,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun dateCurrentMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            var day: String = if (dayOfMonth < 10) {
-                "0" + dayOfMonth
-            } else {
-                dayOfMonth.toString()
-            }
-            val realmonth = monthOfYear + 1
-            if (realmonth < 10) {
-                date = "$year-0$realmonth-$day"
-            } else {
-                date = "$year-$realmonth-$day"
-            }
+            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
             showDialog()
             NetworkController.getDateCurrentMeasurements(context, date)
         }
@@ -146,17 +143,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun dateRejectMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            var day: String = if (dayOfMonth < 10) {
-                "0" + dayOfMonth
-            } else {
-                dayOfMonth.toString()
-            }
-            val realmonth = monthOfYear + 1
-            if (realmonth < 10) {
-                date = "$year-0$realmonth-$day"
-            } else {
-                date = "$year-$realmonth-$day"
-            }
+            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
             showDialog()
             NetworkController.getDateRejectMeasurements(context, date)
         }
@@ -168,17 +155,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun dateClosedMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            var day: String = if (dayOfMonth < 10) {
-                "0" + dayOfMonth
-            } else {
-                dayOfMonth.toString()
-            }
-            val realmonth = monthOfYear + 1
-            if (realmonth < 10) {
-                date = "$year-0$realmonth-$day"
-            } else {
-                date = "$year-$realmonth-$day"
-            }
+            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
             showDialog()
             NetworkController.getDateClosedMeasurements(context, date)
         }
@@ -208,18 +185,18 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         alert.show()
     }
 
-    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements : Int?, notDistributed : Int?) {
+    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?) {
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
-                Toast.makeText(context, "Нет сохраненных данных на заданную дату, проверьте подключение к интернету", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.no_save_data), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "По данному запросу нет данных", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.nothing_show), Toast.LENGTH_SHORT).show()
             }
         } else {
             if (result == 0) {
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
             }
         }
         val toolbar = (activity as AppCompatActivity).supportActionBar
@@ -232,6 +209,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         recyclerList.addItemDecoration(dividerItemDecoration)
 
 
+
+
         onChange(date, listMeasurements)
         alert.dismiss()
     }
@@ -239,7 +218,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private fun onChange(date: String, list: List<Measurement>) {
         val toolbar = (activity as AppCompatActivity).supportActionBar
         if (list.isEmpty()) {
-        toolbar?.title = "$date"
+            toolbar?.title = "$date"
         }
         var my = 0
         var wrong = 0
@@ -254,8 +233,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         toolbar?.title = "$date В:${list.size} Н:$wrong M:$my"
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
         NetworkController.registerCallBack(null)
+        super.onStop()
     }
 }
