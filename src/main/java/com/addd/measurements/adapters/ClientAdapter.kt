@@ -17,12 +17,8 @@ import com.addd.measurements.modelAPI.Clients
 /**
  * Created by addd on 13.12.2017.
  */
-class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
-    private var mClientsList: List<Clients> = ArrayList()
-
-    constructor(notesList: List<Clients>) {
-        mClientsList = notesList
-    }
+class ClientAdapter(notesList: List<Clients>) : RecyclerView.Adapter<ClientAdapter.ViewHolder>() {
+    private var mClientsList: List<Clients> = notesList
 
 
     override fun getItemCount(): Int {
@@ -88,14 +84,14 @@ class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
     }
 
 
-    class ViewHolder : RecyclerView.ViewHolder {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var name: TextView
 
-
-        constructor(itemView: View) : super(itemView) {
+        init {
             name = itemView.findViewById(R.id.name)
         }
+
 
     }
 }

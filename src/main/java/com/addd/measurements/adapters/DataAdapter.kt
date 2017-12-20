@@ -102,6 +102,10 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
 
     }
 
+    fun getMesurementItem(int: Int) : Measurement {
+        return mNotesList[int]
+    }
+
     override fun getItemCount(): Int {
         return mNotesList.size
     }
@@ -153,8 +157,8 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
     }
 
 
-    override fun resultResponsible(code: Int) {
-        if (code == 200) {
+    override fun resultResponsible(result: Boolean) {
+        if (result) {
             fragment?.updateList()
         }
     }

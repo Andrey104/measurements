@@ -77,8 +77,8 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
         alert.show()
     }
 
-    override fun resultReject(code: Int) {
-        if (code == 200) {
+    override fun resultReject(result: Boolean) {
+        if (result) {
             Toast.makeText(this, getString(R.string.measurement_reject), Toast.LENGTH_SHORT).show()
             setResult(200)
             alert.dismiss()

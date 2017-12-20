@@ -46,7 +46,6 @@ object NetworkController : IMiddleware {
     private lateinit var mSettings: SharedPreferences
 
 
-
     private val BASE_URL = "http://188.225.46.31/api/"
     private val api: MeasurementsAPI by lazy { init(MyApp.instance) }
     private fun init(context: Context): MeasurementsAPI {
@@ -314,7 +313,7 @@ object NetworkController : IMiddleware {
             }
 
             override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
-                updateOneMeasurement?.resultUpdate( null)
+                updateOneMeasurement?.resultUpdate(null)
             }
 
         })
@@ -325,13 +324,15 @@ object NetworkController : IMiddleware {
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
-                    transferMeasurement?.resultTransfer(response.code())
+                    if (response.code() == 200) {
+                        transferMeasurement?.resultTransfer(true)
+                    }
                 }
 
             }
 
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                transferMeasurement?.resultTransfer(500)
+                transferMeasurement?.resultTransfer(false)
             }
         })
     }
@@ -341,12 +342,14 @@ object NetworkController : IMiddleware {
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
-                    responsible?.resultResponsible(response?.code())
+                    if (response.code() == 200) {
+                        responsible?.resultResponsible(true)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                responsible?.resultResponsible(500)
+                responsible?.resultResponsible(false)
 
             }
         })
@@ -432,12 +435,14 @@ object NetworkController : IMiddleware {
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
-                    rejectCallback?.resultReject(response?.code())
+                    if (response.code() == 200) {
+                        rejectCallback?.resultReject(true)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                rejectCallback?.resultReject(500)
+                rejectCallback?.resultReject(false)
             }
         })
     }
@@ -448,12 +453,14 @@ object NetworkController : IMiddleware {
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
-                    closeCallback?.resultClose(response?.code())
+                    if (response.code() == 200) {
+                        closeCallback?.resultClose(true)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                closeCallback?.resultClose(500)
+                closeCallback?.resultClose(false)
             }
         })
     }
@@ -561,7 +568,7 @@ object NetworkController : IMiddleware {
     }
 
     interface TransferMeasurementCallback {
-        fun resultTransfer(code: Int)
+        fun resultTransfer(result: Boolean)
     }
 
     fun registerTransferMeasurementCallback(callback: TransferMeasurementCallback?) {
@@ -569,7 +576,7 @@ object NetworkController : IMiddleware {
     }
 
     interface ResponsibleCallback {
-        fun resultResponsible(code: Int)
+        fun resultResponsible(result: Boolean)
     }
 
     fun registerResponsibleCallback(callback: ResponsibleCallback?) {
@@ -577,7 +584,7 @@ object NetworkController : IMiddleware {
     }
 
     interface RejectCallback {
-        fun resultReject(code: Int)
+        fun resultReject(result: Boolean)
     }
 
     fun registerRejectCallback(callback: RejectCallback?) {
@@ -585,7 +592,7 @@ object NetworkController : IMiddleware {
     }
 
     interface CloseCallback {
-        fun resultClose(code: Int)
+        fun resultClose(result: Boolean)
     }
 
     fun registerCloseCallback(callback: CloseCallback?) {

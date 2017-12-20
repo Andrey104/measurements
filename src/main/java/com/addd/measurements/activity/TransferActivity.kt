@@ -60,15 +60,11 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
     }
 
     fun onRadioButtonClick(view: View) {
-        val checked = (view as RadioButton).isChecked
-        // Получаем нажатый переключатель
-        when (view.getId()) {
-            R.id.radioButtonClient -> if (checked) {
-                cause = 1
-            }
-            R.id.radioButtonDauger -> if (checked) {
-                cause = 2
-            }
+        cause = when (view.id) {
+            R.id.radioButtonClient -> 1
+            R.id.radioButtonDauger -> 2
+            else -> -1
+
         }
     }
 
@@ -99,8 +95,8 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         alert.show()
     }
 
-    override fun resultTransfer(code: Int) {
-        if (code == 200) {
+    override fun resultTransfer(result : Boolean) {
+        if (result) {
             alert.dismiss()
             setResult(200)
             Toast.makeText(applicationContext, "Замер перенесен на $userDate", Toast.LENGTH_SHORT).show()

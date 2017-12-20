@@ -91,8 +91,8 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         alert.show()
     }
 
-    override fun resultClose(code: Int) {
-        if (code == 200) {
+    override fun resultClose(result: Boolean) {
+        if (result) {
             setResult(200)
             Toast.makeText(applicationContext, getString(R.string.measurement_closed), Toast.LENGTH_SHORT).show()
             alert.dismiss()
