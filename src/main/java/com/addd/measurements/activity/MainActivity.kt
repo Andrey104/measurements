@@ -15,7 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import com.addd.measurements.R
+import com.addd.measurements.*
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.MyObjectsFragment
 import com.addd.measurements.fragments.ProblemsFragment
@@ -27,9 +27,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
     private val bundle = Bundle()
-    private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
-    private lateinit var check: String
 
     override fun onResume() {
         NetworkController.registerUserInfoCallBack(this)
@@ -37,9 +35,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         APP_TOKEN = getString(R.string.token)
-        APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
-        check = getString(R.string.check)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -53,7 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         var fragmentClass: Class<*>?
         fragmentClass = MeasurementsFragment::class.java
-        bundle.putInt(check, 0)
+        bundle.putInt(CHECK, 0)
         startFragment(fragmentClass, bundle)
 
         informationUser()
@@ -105,17 +101,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         menuItem.isChecked = false
         when (item.itemId) {
             R.id.nav_current -> {
-                bundle.putInt(check, 0)
+                bundle.putInt(CHECK, STATUS_CURRENT)
                 fragmentClass = MeasurementsFragment::class.java
                 changeFragment(fragmentClass, item, bundle)
             }
             R.id.nav_rejected -> {
-                bundle.putInt(check, 1)
+                bundle.putInt(CHECK, STATUS_REJECT)
                 fragmentClass = MeasurementsFragment::class.java
                 changeFragment(fragmentClass, item, bundle)
             }
             R.id.nav_closed -> {
-                bundle.putInt(check, 2)
+                bundle.putInt(CHECK, STATUS_CLOSE)
                 fragmentClass = MeasurementsFragment::class.java
                 changeFragment(fragmentClass, item, bundle)
             }
