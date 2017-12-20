@@ -137,7 +137,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
             showDialog()
-            NetworkController.getOneMeasurement(this, measurement.id.toString())
+            NetworkController.getOneMeasurement(measurement.id.toString())
             setResult(200)
         }
     }

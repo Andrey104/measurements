@@ -43,7 +43,7 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
 
         val reject = Reject(cause, if (comment.isEmpty()) null else comment)
         showDialog()
-        NetworkController.rejectMeasurement(this, reject, id)
+        NetworkController.rejectMeasurement(reject, id)
         return true
     }
 

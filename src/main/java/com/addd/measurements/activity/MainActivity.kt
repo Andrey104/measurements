@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun informationUser() {
-        NetworkController.getInfoUser(this)
+        NetworkController.getInfoUser()
     }
 
     override fun result(user: User) {

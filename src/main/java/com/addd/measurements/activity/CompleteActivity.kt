@@ -73,7 +73,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
                 sum, checkBoxOffer.isChecked, serverDate)
         showDialog()
-        NetworkController.closeMeasurement(this, close, id)
+        NetworkController.closeMeasurement(close, id)
         return true
     }
 

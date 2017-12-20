@@ -52,9 +52,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         if (bundle != null) {
             showDialog()
             when (bundle.getInt(getString(R.string.check))) {
-                0 -> NetworkController.getTodayCurrentMeasurements(context)
-                1 -> NetworkController.getTodayRejectMeasurements(context)
-                2 -> NetworkController.getTodayClosedMeasurements(context)
+                0 -> NetworkController.getTodayCurrentMeasurements()
+                1 -> NetworkController.getTodayRejectMeasurements()
+                2 -> NetworkController.getTodayClosedMeasurements()
             }
         }
 
@@ -71,11 +71,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    NetworkController.getTodayCurrentMeasurements(context)
+                    NetworkController.getTodayCurrentMeasurements()
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    NetworkController.getTomorrowCurrentMeasurements(context)
+                    NetworkController.getTomorrowCurrentMeasurements()
                 }
                 R.id.date -> {
                     dateCurrentMeasurements()
@@ -90,11 +90,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    NetworkController.getTodayRejectMeasurements(context)
+                    NetworkController.getTodayRejectMeasurements()
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    NetworkController.getTomorrowRejectMeasurements(context)
+                    NetworkController.getTomorrowRejectMeasurements()
                 }
                 R.id.date -> {
                     dateRejectMeasurements()
@@ -109,11 +109,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             when (item.itemId) {
                 R.id.today -> {
                     showDialog()
-                    NetworkController.getTodayClosedMeasurements(context)
+                    NetworkController.getTodayClosedMeasurements()
                 }
                 R.id.tomorrow -> {
                     showDialog()
-                    NetworkController.getTomorrowClosedMeasurements(context)
+                    NetworkController.getTomorrowClosedMeasurements()
                 }
                 R.id.date -> {
                     dateClosedMeasurements()
@@ -126,9 +126,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun dateCurrentMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
+            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             showDialog()
-            NetworkController.getDateCurrentMeasurements(context, date)
+            NetworkController.getDateCurrentMeasurements(date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -138,9 +138,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun dateRejectMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
+            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             showDialog()
-            NetworkController.getDateRejectMeasurements(context, date)
+            NetworkController.getDateRejectMeasurements(date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -150,9 +150,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun dateClosedMeasurements() {
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
+            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             showDialog()
-            NetworkController.getDateClosedMeasurements(context, date)
+            NetworkController.getDateClosedMeasurements(date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
@@ -162,7 +162,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     fun updateList() {
         showDialog()
-        NetworkController.updateListInFragment(context)
+        NetworkController.updateListInFragment()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

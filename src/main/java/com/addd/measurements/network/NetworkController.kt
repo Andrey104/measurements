@@ -12,6 +12,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import okhttp3.Credentials
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Response
@@ -23,7 +24,6 @@ import java.util.*
  * Created by addd on 11.12.2017.
  */
 object NetworkController : IMiddleware {
-    private var APP_TOKEN: String = "token"
     private val APP_LIST_TODAY_CURRENT = "listTodayCurrent"
     private val APP_LIST_TOMORROW_CURRENT = "listTomorrowCurrent"
     private val APP_LIST_TODAY_CLOSED = "listTodayClosed"
@@ -32,11 +32,9 @@ object NetworkController : IMiddleware {
     private val APP_LIST_TOMORROW_REJECTED = "listTomorrowRejected"
     private val APP_USER_INFO: String = "userInfo"
     private lateinit var date: String
-    private lateinit var token: String
     private lateinit var status: String
     private var save: Boolean = true
 
-    private val serviceAPI = MeasurementsAPI.Factory.create()
     var callbackListMeasurements: CallbackListMeasurements? = null
     var userCallback: UserInfoCallback? = null
     var updateOneMeasurement: CallbackUpdateOneMeasurement? = null
@@ -46,6 +44,25 @@ object NetworkController : IMiddleware {
     var closeCallback: CloseCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
+
+
+
+    private val BASE_URL = "http://188.225.46.31/api/"
+    private val api: MeasurementsAPI by lazy { init(MyApp.instance) }
+    private fun init(context: Context): MeasurementsAPI {
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        val okHttpClient = OkHttpClient.Builder()
+        val interceptor = Interceptor { chain ->
+            val request = chain?.request()?.newBuilder()?.addHeader("Authorization", "Token " + sp.getString("token", ""))?.build()
+            chain?.proceed(request)
+        }
+
+        okHttpClient.networkInterceptors().add(interceptor)
+        val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())).client(okHttpClient.build()).build()
+        val api = retrofit.create(MeasurementsAPI::class.java)
+        return api
+
+    }
 
     private fun getTodayDate(): String {
         val calendar = Calendar.getInstance()
@@ -86,59 +103,56 @@ object NetworkController : IMiddleware {
     }
 
     //------------------------------запросы------------------------------------------
-    override fun getTodayCurrentMeasurements(context: Context) {
+    override fun getTodayCurrentMeasurements() {
         date = getTodayDate()
-        token = getToken(context)
         status = "current"
         save = true
 
-        val call = serviceAPI.getCurrentMeasurement(token, date)
+        val call = api.getCurrent(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
-                    saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CURRENT)
+                    saveMeasurementsList(listMeasurements, APP_LIST_TODAY_CURRENT)
                     callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
                 }
             }
 
             override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CURRENT)
+                listMeasurements = loadSharedPreferencesList(APP_LIST_TODAY_CURRENT)
                 callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
             }
 
         })
     }
 
-    override fun getTomorrowCurrentMeasurements(context: Context) {
+    override fun getTomorrowCurrentMeasurements() {
         save = true
         date = getTomorrowDate()
-        token = getToken(context)
         status = "current"
-        val call = serviceAPI.getCurrentMeasurement(token, date)
+        val call = api.getCurrentMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
-                    saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CURRENT)
+                    saveMeasurementsList(listMeasurements, APP_LIST_TOMORROW_CURRENT)
                     callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
 
                 }
             }
 
             override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CURRENT)
+                listMeasurements = loadSharedPreferencesList(APP_LIST_TOMORROW_CURRENT)
                 callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
             }
         })
     }
 
-    override fun getDateCurrentMeasurements(context: Context, date: String) {
+    override fun getDateCurrentMeasurements(date: String) {
         save = false
-        token = getToken(context)
         status = "current"
         this.date = date
-        val call = serviceAPI.getCurrentMeasurement(token, date)
+        val call = api.getCurrentMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
@@ -154,61 +168,58 @@ object NetworkController : IMiddleware {
         })
     }
 
-    override fun getTodayRejectMeasurements(context: Context) {
+    override fun getTodayRejectMeasurements() {
         save = true
         date = getTodayDate()
-        token = getToken(context)
         status = "rejected"
 
-        val call = serviceAPI.getRejectedMeasurement(token, date)
+        val call = api.getRejectedMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
-                    saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_REJECTED)
+                    saveMeasurementsList(listMeasurements, APP_LIST_TODAY_REJECTED)
                     callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
 
                 }
             }
 
             override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_REJECTED)
+                listMeasurements = loadSharedPreferencesList(APP_LIST_TODAY_REJECTED)
                 callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
             }
         })
 
     }
 
-    override fun getTomorrowRejectMeasurements(context: Context) {
+    override fun getTomorrowRejectMeasurements() {
         save = true
         date = getTomorrowDate()
-        token = getToken(context)
         status = "rejected"
-        val call = serviceAPI.getRejectedMeasurement(token, date)
+        val call = api.getRejectedMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
-                    saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_REJECTED)
+                    saveMeasurementsList(listMeasurements, APP_LIST_TOMORROW_REJECTED)
                     callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
 
                 }
             }
 
             override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_REJECTED)
+                listMeasurements = loadSharedPreferencesList(APP_LIST_TOMORROW_REJECTED)
                 callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
             }
         })
     }
 
-    override fun getDateRejectMeasurements(context: Context, date: String) {
+    override fun getDateRejectMeasurements(date: String) {
         save = false
-        token = getToken(context)
         status = "rejected"
         this.date = date
 
-        val call = serviceAPI.getRejectedMeasurement(token, date)
+        val call = api.getRejectedMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
@@ -224,60 +235,57 @@ object NetworkController : IMiddleware {
         })
     }
 
-    override fun getTodayClosedMeasurements(context: Context) {
+    override fun getTodayClosedMeasurements() {
         save = true
 
         date = getTodayDate()
-        token = getToken(context)
         status = "closed"
 
-        val call = serviceAPI.getClosedMeasurement(token, date)
+        val call = api.getClosedMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
-                    saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CLOSED)
+                    saveMeasurementsList(listMeasurements, APP_LIST_TODAY_CLOSED)
                     callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
 
                 }
             }
 
             override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CLOSED)
+                listMeasurements = loadSharedPreferencesList(APP_LIST_TODAY_CLOSED)
                 callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
             }
         })
     }
 
-    override fun getTomorrowClosedMeasurements(context: Context) {
+    override fun getTomorrowClosedMeasurements() {
         save = true
         date = getTomorrowDate()
-        token = getToken(context)
         status = "closed"
-        val call = serviceAPI.getClosedMeasurement(token, date)
+        val call = api.getClosedMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
-                    saveMeasurementsList(context, listMeasurements, APP_LIST_TOMORROW_CLOSED)
+                    saveMeasurementsList(listMeasurements, APP_LIST_TOMORROW_CLOSED)
                     callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
 
                 }
             }
 
             override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
-                listMeasurements = loadSharedPreferencesList(context, APP_LIST_TOMORROW_CLOSED)
+                listMeasurements = loadSharedPreferencesList(APP_LIST_TOMORROW_CLOSED)
                 callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
             }
         })
     }
 
-    override fun getDateClosedMeasurements(context: Context, date: String) {
+    override fun getDateClosedMeasurements(date: String) {
         save = false
-        token = getToken(context)
         status = "closed"
         this.date = date
-        val call = serviceAPI.getClosedMeasurement(token, date)
+        val call = api.getClosedMeasurement(date)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
@@ -292,9 +300,8 @@ object NetworkController : IMiddleware {
         })
     }
 
-    fun getOneMeasurement(context: Context, id: String) {
-        token = getToken(context)
-        val call = serviceAPI.getOneMeasurement(token, id)
+    fun getOneMeasurement(id: String) {
+        val call = api.getOneMeasurement(id)
         call.enqueue(object : retrofit2.Callback<Measurement> {
             override fun onResponse(call: Call<Measurement>?, response: Response<Measurement>?) {
                 var measurement: Measurement? = null
@@ -314,7 +321,7 @@ object NetworkController : IMiddleware {
     }
 
     fun doTransferMeasurement(transfer: Transfer, id: String) {
-        val call = serviceAPI.transferMeasurement(token, transfer, id)
+        val call = api.transferMeasurement(transfer, id)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
@@ -330,7 +337,7 @@ object NetworkController : IMiddleware {
     }
 
     fun becomeResponsible(id: Int) {
-        val call = serviceAPI.becomeResponsible(token, id)
+        val call = api.becomeResponsible(id)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
@@ -345,17 +352,16 @@ object NetworkController : IMiddleware {
         })
     }
 
-    fun updateListInFragment(context: Context) {
-        token = getToken(context)
+    fun updateListInFragment() {
         when (status) {
             "current" -> {
-                val call = serviceAPI.getCurrentMeasurement(token, date)
+                val call = api.getCurrentMeasurement(date)
                 call.enqueue(object : retrofit2.Callback<MyResult> {
                     override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                         response?.body()?.let {
                             listMeasurements = response.body().results!!
                             if (save) {
-                                saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CURRENT)
+                                saveMeasurementsList(listMeasurements, APP_LIST_TODAY_CURRENT)
                             }
                             callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
                         }
@@ -363,7 +369,7 @@ object NetworkController : IMiddleware {
 
                     override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
                         if (save) {
-                            listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CURRENT)
+                            listMeasurements = loadSharedPreferencesList(APP_LIST_TODAY_CURRENT)
                             callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
                         } else {
                             callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
@@ -372,13 +378,13 @@ object NetworkController : IMiddleware {
                 })
             }
             "rejected" -> {
-                val call = serviceAPI.getRejectedMeasurement(token, date)
+                val call = api.getRejectedMeasurement(date)
                 call.enqueue(object : retrofit2.Callback<MyResult> {
                     override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                         response?.body()?.let {
                             listMeasurements = response.body().results!!
                             if (save) {
-                                saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_REJECTED)
+                                saveMeasurementsList(listMeasurements, APP_LIST_TODAY_REJECTED)
                             }
                             callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
                         }
@@ -386,7 +392,7 @@ object NetworkController : IMiddleware {
 
                     override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
                         if (save) {
-                            listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_REJECTED)
+                            listMeasurements = loadSharedPreferencesList(APP_LIST_TODAY_REJECTED)
                             callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
                         } else {
                             callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
@@ -395,13 +401,13 @@ object NetworkController : IMiddleware {
                 })
             }
             "closed" -> {
-                val call = serviceAPI.getClosedMeasurement(token, date)
+                val call = api.getClosedMeasurement(date)
                 call.enqueue(object : retrofit2.Callback<MyResult> {
                     override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                         response?.body()?.let {
                             listMeasurements = response.body().results!!
                             if (save) {
-                                saveMeasurementsList(context, listMeasurements, APP_LIST_TODAY_CLOSED)
+                                saveMeasurementsList(listMeasurements, APP_LIST_TODAY_CLOSED)
                             }
                             callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
                         }
@@ -409,7 +415,7 @@ object NetworkController : IMiddleware {
 
                     override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
                         if (save) {
-                            listMeasurements = loadSharedPreferencesList(context, APP_LIST_TODAY_CLOSED)
+                            listMeasurements = loadSharedPreferencesList(APP_LIST_TODAY_CLOSED)
                             callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
                         } else {
                             callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
@@ -420,10 +426,9 @@ object NetworkController : IMiddleware {
         }
     }
 
-    fun rejectMeasurement(context: Context, reject: Reject, id: String) {
-        token = getToken(context)
+    fun rejectMeasurement(reject: Reject, id: String) {
 
-        val call = serviceAPI.rejectMeasurement(token, reject, id)
+        val call = api.rejectMeasurement(reject, id)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
@@ -437,10 +442,9 @@ object NetworkController : IMiddleware {
         })
     }
 
-    fun closeMeasurement(context: Context, close: Close, id: String) {
-        token = getToken(context)
+    fun closeMeasurement(close: Close, id: String) {
 
-        val call = serviceAPI.closeMeasurement(token, close, id)
+        val call = api.closeMeasurement(close, id)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {
@@ -455,8 +459,8 @@ object NetworkController : IMiddleware {
     }
 //----------------------------------внутренние функции класса------------------------------------------
 
-    private fun saveMeasurementsList(context: Context, list: List<Measurement>, name: String) {
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+    private fun saveMeasurementsList(list: List<Measurement>, name: String) {
+        val mPrefs = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val prefsEditor = mPrefs.edit()
         val gson = Gson()
         val json = gson.toJson(list)
@@ -464,9 +468,9 @@ object NetworkController : IMiddleware {
         prefsEditor.commit()
     }
 
-    private fun loadSharedPreferencesList(context: Context, name: String): List<Measurement> {
+    private fun loadSharedPreferencesList(name: String): List<Measurement> {
         var callLog: List<Measurement>
-        val mSettings = PreferenceManager.getDefaultSharedPreferences(context)
+        val mSettings = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val gson = Gson()
         val json = mSettings.getString(name, "")
         if (json!!.isEmpty()) {
@@ -479,19 +483,9 @@ object NetworkController : IMiddleware {
         return callLog
     }
 
-    private fun getToken(context: Context): String {
-        mSettings = PreferenceManager.getDefaultSharedPreferences(context)
-        var token = ""
-        if (mSettings.contains(APP_TOKEN)) {
-            token = "Token " + mSettings.getString(APP_TOKEN, "")
-        }
-        return token
-    }
-
-    fun getInfoUser(context: Context) {
-        mSettings = PreferenceManager.getDefaultSharedPreferences(context)
-        val token = getToken(context)
-        val call = serviceAPI.userInfo(token)
+    fun getInfoUser() {
+        mSettings = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
+        val call = api.userInfo()
 
         call.enqueue(object : retrofit2.Callback<User> {
             override fun onResponse(call: Call<User>?, response: Response<User>?) {
@@ -499,9 +493,9 @@ object NetworkController : IMiddleware {
                     val userInfo: User
                     if (response.code() == 200) {
                         userInfo = response.body()
-                        saveUserInfo(userInfo, context)
+                        saveUserInfo(userInfo)
                     } else {
-                        userInfo = loadSharedPreferencesUser(context)
+                        userInfo = loadSharedPreferencesUser()
                     }
                     userCallback?.result(userInfo)
                 }
@@ -509,14 +503,14 @@ object NetworkController : IMiddleware {
             }
 
             override fun onFailure(call: Call<User>?, t: Throwable?) {
-                val userInfo = loadSharedPreferencesUser(context)
+                val userInfo = loadSharedPreferencesUser()
                 userCallback?.result(userInfo)
             }
         })
     }
 
-    private fun saveUserInfo(user: User, context: Context) {
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+    private fun saveUserInfo(user: User) {
+        val mPrefs = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val prefsEditor = mPrefs.edit()
         val gson = Gson()
         val json = gson.toJson(user)
@@ -524,9 +518,9 @@ object NetworkController : IMiddleware {
         prefsEditor.commit()
     }
 
-    private fun loadSharedPreferencesUser(context: Context): User {
+    private fun loadSharedPreferencesUser(): User {
         var user: User
-        val mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val mPrefs = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val gson = Gson()
         val json = mPrefs.getString(APP_USER_INFO, "")
         user = if (json!!.isEmpty()) {
