@@ -29,6 +29,7 @@ object NetworkController {
     var responsible: ResponsibleCallback? = null
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
+    var problemCallback: ProblemCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -251,6 +252,23 @@ object NetworkController {
             }
         })
     }
+
+    fun addProblem(problem: Problem, id: String) {
+        val call = api.addProblem(problem, id)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                response?.let {
+                    if (response.code() == 200) {
+                        problemCallback?.resultClose(true)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                problemCallback?.resultClose(false)
+            }
+        })
+    }
 //----------------------------------внутренние функции класса------------------------------------------
 
     private fun saveMeasurementsList(list: List<Measurement>, name: String) {
@@ -380,5 +398,13 @@ object NetworkController {
 
     fun registerCloseCallback(callback: CloseCallback?) {
         NetworkController.closeCallback = callback
+    }
+
+    interface ProblemCallback {
+        fun resultClose(result: Boolean)
+    }
+
+    fun registerProblemCallback(callback: ProblemCallback?) {
+        NetworkController.problemCallback = callback
     }
 }

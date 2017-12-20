@@ -2,8 +2,6 @@ package com.addd.measurements.network
 
 import com.addd.measurements.modelAPI.*
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
 
@@ -38,5 +36,7 @@ interface MeasurementsAPI {
     @POST("measurements/{id}/close/")
     fun closeMeasurement(@Body close: Close, @Path("id") id: String): Call<Void>
 
+    @POST("deals/{id}/discussion/")
+    fun addProblem(@Body problem : Problem, @Path("id") id: String): Call<Void>
 
 }

@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.ClientAdapter
+import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import com.google.gson.Gson
@@ -28,7 +29,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     private lateinit var alert: AlertDialog
     private lateinit var intentIdKey: String
     private lateinit var intentDealKey: String
-
+    private var status: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         intentDealKey = getString(R.string.deal)
@@ -37,12 +38,15 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         setContentView(R.layout.activity_one_measurement)
         setSupportActionBar(toolbar)
 
+        measurement = getSavedMeasurement()
+        displayMeasurement(measurement)
+
         fab.setOnClickListener { view ->
             showPopupMenu(view)
         }
-        displayMeasurement(getSavedMeasurement())
-
-
+        if (measurement.color != 2) {
+            fab.hide()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -52,7 +56,6 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
 
     private fun getSavedMeasurement(): Measurement {
-        val gson = Gson()
         if (intent != null && intent.hasExtra("measurement")) {
             val json = intent.getStringExtra("measurement")
             if (json.isEmpty()) {
@@ -127,10 +130,12 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             2, 3 -> {
                 textViewStatus.text = getString(R.string.measurement_closed)
                 selectColorVersion(textViewStatus, R.color.red)
+                status = 1
             }
             4 -> {
                 textViewStatus.text = getString(R.string.measurement_reject)
                 selectColorVersion(textViewStatus, R.color.red)
+                status = 1
             }
         }
 
@@ -147,7 +152,13 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     private fun showPopupMenu(view: View) {
         var popupMenu = PopupMenu(this, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        //для отображения иконок
+        if (status == 1) {
+            popupMenu.menu.findItem(R.id.complete).isVisible = false
+            popupMenu.menu.findItem(R.id.shift).isVisible = false
+            popupMenu.menu.findItem(R.id.reject).isVisible = false
+        }
+
+        // для отображения иконок
         try {
             val classPopupMenu = Class.forName(popupMenu.javaClass.name)
             val mPopup = classPopupMenu.getDeclaredField("mPopup")
