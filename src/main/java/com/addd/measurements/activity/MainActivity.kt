@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var fragment  = MeasurementsFragment()
         bundle.putInt(CHECK, 0)
         startFragment(fragment, bundle)
-
         informationUser()
     }
 
