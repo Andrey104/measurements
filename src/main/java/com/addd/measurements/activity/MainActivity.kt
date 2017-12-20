@@ -15,7 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import com.addd.measurements.R
+import com.addd.measurements.*
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.MyObjectsFragment
 import com.addd.measurements.fragments.ProblemsFragment
@@ -27,19 +27,13 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
     private val bundle = Bundle()
-    private lateinit var APP_USER_INFO: String
-    private lateinit var APP_TOKEN: String
-    private lateinit var check: String
 
     override fun onResume() {
         NetworkController.registerUserInfoCallBack(this)
         super.onResume()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_TOKEN = getString(R.string.token)
-        APP_USER_INFO = getString(R.string.user_info)
         title = getString(R.string.measurements)
-        check = getString(R.string.check)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -51,10 +45,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val menuItem = nav_view.menu.findItem(R.id.nav_current)
         menuItem.isChecked = true
 
-        var fragmentClass: Class<*>?
-        fragmentClass = MeasurementsFragment::class.java
-        bundle.putInt(check, 0)
-        startFragment(fragmentClass, bundle)
+        var fragment  = MeasurementsFragment()
+        bundle.putInt(CHECK, 0)
+        startFragment(fragment, bundle)
 
         informationUser()
     }
@@ -100,32 +93,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        var fragmentClass: Class<*>?
         val menuItem = nav_view.menu.findItem(R.id.nav_current)
         menuItem.isChecked = false
         when (item.itemId) {
             R.id.nav_current -> {
-                bundle.putInt(check, 0)
-                fragmentClass = MeasurementsFragment::class.java
-                changeFragment(fragmentClass, item, bundle)
+                val fragment = MeasurementsFragment()
+                bundle.putInt(CHECK, STATUS_CURRENT)
+                changeFragment(fragment, item, bundle)
             }
             R.id.nav_rejected -> {
-                bundle.putInt(check, 1)
-                fragmentClass = MeasurementsFragment::class.java
-                changeFragment(fragmentClass, item, bundle)
+                val fragment = MeasurementsFragment()
+                bundle.putInt(CHECK, STATUS_REJECT)
+                changeFragment(fragment, item, bundle)
             }
             R.id.nav_closed -> {
-                bundle.putInt(check, 2)
-                fragmentClass = MeasurementsFragment::class.java
-                changeFragment(fragmentClass, item, bundle)
+                val fragment = MeasurementsFragment()
+                bundle.putInt(CHECK, STATUS_CLOSE)
+                changeFragment(fragment, item, bundle)
             }
             R.id.nav_myObjects -> {
-                fragmentClass = MyObjectsFragment::class.java
-                changeFragment(fragmentClass, item, null)
+                val fragment = MyObjectsFragment()
+                changeFragment(fragment, item, null)
             }
             R.id.nav_problems -> {
-                fragmentClass = ProblemsFragment::class.java
-                changeFragment(fragmentClass, item, null)
+                val fragment = ProblemsFragment()
+                changeFragment(fragment, item, null)
             }
             R.id.nav_exit -> {
                 exitFromApp()
@@ -157,13 +149,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         alert.show()
     }
 
-    private fun changeFragment(fragmentClass: Class<*>?, item: MenuItem, bundle: Bundle?) {
-        var fragment: Fragment? = null
-        try {
-            fragment = fragmentClass?.newInstance() as Fragment?
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    private fun changeFragment(fragment: Fragment, item: MenuItem, bundle: Bundle?) {
         fragment?.arguments = bundle
 
         // Вставляем фрагмент, заменяя текущий фрагмент
@@ -175,15 +161,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         title = item.title
     }
 
-    private fun startFragment(fragmentClass: Class<*>?, bundle: Bundle?) {
-        var fragment: Fragment? = null
-
-        try {
-            fragment = fragmentClass?.newInstance() as Fragment?
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        fragment?.arguments = bundle
+    private fun startFragment(fragment: Fragment, bundle: Bundle?) {
+        fragment.arguments = bundle
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }

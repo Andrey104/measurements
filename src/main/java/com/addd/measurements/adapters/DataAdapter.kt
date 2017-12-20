@@ -26,8 +26,6 @@ import java.util.*
 
 class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkController.ResponsibleCallback {
     private var mNotesList: List<Measurement> = ArrayList()
-    private lateinit var mSettings: SharedPreferences
-    private var APP_TOKEN: String = "token"
     private var fragment: MeasurementsFragment? = null
 
     constructor(notesList: List<Measurement>, fragment: MeasurementsFragment) {

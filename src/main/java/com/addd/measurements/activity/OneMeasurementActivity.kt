@@ -28,6 +28,8 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     private lateinit var alert: AlertDialog
     private lateinit var intentIdKey: String
     private lateinit var intentDealKey: String
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         intentDealKey = getString(R.string.deal)
         intentIdKey = getString(R.string.id)

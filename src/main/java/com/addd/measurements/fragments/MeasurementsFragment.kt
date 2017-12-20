@@ -14,16 +14,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.addd.measurements.R
-import com.addd.measurements.activity.OneMeasurementActivity
+import com.addd.measurements.*
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
-
-
 
 
 /**
@@ -37,26 +33,20 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         NetworkController.registerCallBack(this)
         val view: View = inflater?.inflate(R.layout.measurements_fragment, container, false) ?: View(context)
-        val bundle = this.arguments
+
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
-        if (bundle != null) {
-            when (bundle.getInt(getString(R.string.check))) {
-                0 -> onClickCurrent(bottomNavigationView)
 
-                1 -> onClickRejected(bottomNavigationView)
+        onClickMenu(bottomNavigationView)
 
-                2 -> onClickClosed(bottomNavigationView)
-
-            }
-        }
-
-        bundle?.let{
-            showDialog()
-            when (bundle.getInt(getString(R.string.check))) {
-                0 -> NetworkController.getTodayCurrentMeasurements()
-                1 -> NetworkController.getTodayRejectMeasurements()
-                2 -> NetworkController.getTodayClosedMeasurements()
+        val bundle = this.arguments
+        date = getTodayDate()
+        showDialog()
+        bundle?.let {
+            when (bundle.getInt(CHECK)) {
+                STATUS_CURRENT->NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
+                STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
+                STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
             }
         }
 
@@ -65,96 +55,51 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     override fun onResume() {
         NetworkController.registerCallBack(this)
+//        alert.dismiss()
         super.onResume()
     }
 
-    private fun onClickCurrent(bottomNavigationView: BottomNavigationView) {
+    private fun onClickMenu(bottomNavigationView: BottomNavigationView){
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            val bundle = this.arguments
             when (item.itemId) {
                 R.id.today -> {
+                    date = getTodayDate()
                     showDialog()
-                    NetworkController.getTodayCurrentMeasurements()
+                    when(bundle.get(CHECK)){
+                        STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
+                        STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
+                        STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
+                    }
                 }
                 R.id.tomorrow -> {
+                    date = getTomorrowDate()
                     showDialog()
-                    NetworkController.getTomorrowCurrentMeasurements()
+                    when(bundle.get(CHECK)){
+                        STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TOMORROW_CURRENT)
+                        STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TOMORROW_REJECTED)
+                        STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TOMORROW_CLOSED)
+                    }
                 }
                 R.id.date -> {
-                    dateCurrentMeasurements()
+                    datePick()
+
                 }
             }
             true
         }
     }
 
-    private fun onClickRejected(bottomNavigationView: BottomNavigationView) {
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.today -> {
-                    showDialog()
-                    NetworkController.getTodayRejectMeasurements()
-                }
-                R.id.tomorrow -> {
-                    showDialog()
-                    NetworkController.getTomorrowRejectMeasurements()
-                }
-                R.id.date -> {
-                    dateRejectMeasurements()
-                }
+    private fun datePick() {
+        val bundle = this.arguments
+        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
+            showDialog()
+            when(bundle.get(CHECK)){
+                STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, null)
+                STATUS_REJECT -> NetworkController.getRejectMeasurements(date, null)
+                STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, null)
             }
-            true
-        }
-    }
-
-    private fun onClickClosed(bottomNavigationView: BottomNavigationView) {
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.today -> {
-                    showDialog()
-                    NetworkController.getTodayClosedMeasurements()
-                }
-                R.id.tomorrow -> {
-                    showDialog()
-                    NetworkController.getTomorrowClosedMeasurements()
-                }
-                R.id.date -> {
-                    dateClosedMeasurements()
-                }
-            }
-            true
-        }
-    }
-
-
-    private fun dateCurrentMeasurements() {
-        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
-            showDialog()
-            NetworkController.getDateCurrentMeasurements(date)
-        }
-        val calendar = Calendar.getInstance()
-        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-
-        datePikerDialog.show()
-    }
-
-    private fun dateRejectMeasurements() {
-        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
-            showDialog()
-            NetworkController.getDateRejectMeasurements(date)
-        }
-        val calendar = Calendar.getInstance()
-        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-
-        datePikerDialog.show()
-    }
-
-    private fun dateClosedMeasurements() {
-        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
-            showDialog()
-            NetworkController.getDateClosedMeasurements(date)
         }
         val calendar = Calendar.getInstance()
         val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))

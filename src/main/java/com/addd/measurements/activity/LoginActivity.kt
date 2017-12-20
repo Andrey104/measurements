@@ -6,15 +6,14 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.addd.measurements.APP_TOKEN
 import com.addd.measurements.R
 import com.addd.measurements.network.NetworkAuthorization
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity(), NetworkAuthorization.MyCallback {
-    private lateinit var APP_TOKEN: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        APP_TOKEN = getString(R.string.token)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

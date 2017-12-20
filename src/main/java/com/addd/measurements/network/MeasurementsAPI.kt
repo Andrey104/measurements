@@ -20,9 +20,6 @@ interface MeasurementsAPI {
     @GET("measurements/current")
     fun getCurrentMeasurement(@Query("date") date: String): Call<MyResult>
 
-    @GET("measurements/current")
-    fun getCurrent(@Query("date") date: String): Call<MyResult>
-
     @GET("measurements/rejected")
     fun getRejectedMeasurement(@Query("date") date: String): Call<MyResult>
 
@@ -42,15 +39,4 @@ interface MeasurementsAPI {
     fun closeMeasurement(@Body close: Close, @Path("id") id: String): Call<Void>
 
 
-//    companion object Factory {
-//
-//        fun create(): MeasurementsAPI {
-//            val retrofit = Retrofit.Builder()
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .baseUrl("http://188.225.46.31/api/")
-//                    .build()
-//
-//            return retrofit.create(MeasurementsAPI::class.java)
-//        }
-//    }
 }
