@@ -22,20 +22,23 @@ object NetworkAuthorization {
         call.enqueue(object : Callback<Authorization> {
             override fun onResponse(call: Call<Authorization>?, response: Response<Authorization>?) {
                 response?.let {
-                    if (response.code() != 200) {
-                        callback!!.resultAuth(400)
-                    } else if (response.code() == 200) {
-                        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-                        val editor: SharedPreferences.Editor = mSettings.edit()
-                        editor.putString(APP_TOKEN, response.body().token)
-                        editor.apply()
-                        callback!!.resultAuth(200)
+                    when {
+                        response.code() != 200 -> callback?.resultAuth(400)
+                        response.code() == 200 -> {
+                            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                            val editor: SharedPreferences.Editor = mSettings.edit()
+                            editor.putString(APP_TOKEN, response.body().token)
+                            editor.apply()
+                            callback?.resultAuth(200)
+                        }
+                        else -> {
+                        }
                     }
                 }
             }
 
             override fun onFailure(call: Call<Authorization>?, t: Throwable?) {
-                callback!!.resultAuth(500)
+                callback?.resultAuth(500)
             }
         })
     }

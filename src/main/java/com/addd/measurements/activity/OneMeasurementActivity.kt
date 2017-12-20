@@ -11,6 +11,7 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.TextView
 import android.widget.Toast
 import com.addd.measurements.R
 import com.addd.measurements.adapters.ClientAdapter
@@ -52,7 +53,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         val gson = Gson()
         if (intent != null && intent.hasExtra("measurement")) {
             val json = intent.getStringExtra("measurement")
-            if (json!!.isEmpty()) {
+            if (json.isEmpty()) {
                 measurement = Measurement()
             } else {
                 val type = object : TypeToken<Measurement>() {
@@ -68,10 +69,10 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         setStatus(measurement)
 
 
-        if (measurement.company!!.symbol!!.length == 1) {
+        if (measurement.company?.symbol?.length == 1) {
             symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30F)
         }
-        symbol.text = measurement.company.symbol.toString()
+        symbol.text = measurement.company?.symbol.toString()
         setColorSymbol(measurement)
 
         address.text = measurement.address.toString()
@@ -94,42 +95,27 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     private fun setColorSymbol(measurement: Measurement) {
-        when (measurement.company!!.id) {
-            1 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                symbol.setTextColor(resources.getColor(R.color.green, applicationContext.theme))
-            } else {
-                symbol.setTextColor(resources.getColor(R.color.green))
-            }
-            2 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                symbol.setTextColor(resources.getColor(R.color.orange, applicationContext.theme))
-            } else {
-                symbol.setTextColor(resources.getColor(R.color.orange))
-            }
-            3 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                symbol.setTextColor(resources.getColor(R.color.blue, applicationContext.theme))
-            } else {
-                symbol.setTextColor(resources.getColor(R.color.blue))
-            }
+        when (measurement.company?.id) {
+            1 -> selectColorVersion(symbol, R.color.green)
+            2 -> selectColorVersion(symbol, R.color.orange)
+            3 -> selectColorVersion(symbol, R.color.blue)
+        }
+    }
+
+
+    private fun selectColorVersion(item: TextView, color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            item.setTextColor(resources.getColor(color, applicationContext.theme))
+        } else {
+            item.setTextColor(resources.getColor(color))
         }
     }
 
     private fun setColorWorker(measurement: Measurement) {
         when (measurement.color) {
-            1 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                worker_name.setTextColor(resources.getColor(R.color.red, applicationContext.theme))
-            } else {
-                worker_name.setTextColor(resources.getColor(R.color.red))
-            }
-            2 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                worker_name.setTextColor(resources.getColor(R.color.green, applicationContext.theme))
-            } else {
-                worker_name.setTextColor(resources.getColor(R.color.green))
-            }
-            3 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                worker_name.setTextColor(resources.getColor(R.color.blue, applicationContext.theme))
-            } else {
-                worker_name.setTextColor(resources.getColor(R.color.blue))
-            }
+            1 -> selectColorVersion(worker_name, R.color.red)
+            2 -> selectColorVersion(worker_name, R.color.green)
+            3 -> selectColorVersion(worker_name, R.color.blue)
         }
     }
 
@@ -138,19 +124,11 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             0, 1 -> textViewStatus.text = getString(R.string.measurement_not_closed)
             2, 3 -> {
                 textViewStatus.text = getString(R.string.measurement_closed)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    textViewStatus.setTextColor(resources.getColor(R.color.red, applicationContext.theme))
-                } else {
-                    textViewStatus.setTextColor(resources.getColor(R.color.red))
-                }
+                selectColorVersion(textViewStatus, R.color.red)
             }
             4 -> {
                 textViewStatus.text = getString(R.string.measurement_reject)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    textViewStatus.setTextColor(resources.getColor(R.color.red, applicationContext.theme))
-                } else {
-                    textViewStatus.setTextColor(resources.getColor(R.color.red))
-                }
+                selectColorVersion(textViewStatus, R.color.red)
             }
         }
 
@@ -223,7 +201,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         alert.show()
     }
 
-    override fun resultUpdate(int: Int, measurement: Measurement?) {
+    override fun resultUpdate(measurement: Measurement?) {
         if (measurement != null) {
             displayMeasurement(measurement)
         } else {

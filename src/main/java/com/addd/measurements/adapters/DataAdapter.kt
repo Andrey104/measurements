@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import android.preference.PreferenceManager
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import com.addd.measurements.R
 import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.modelAPI.Measurement
-import com.addd.measurements.network.MeasurementsAPI
 import com.addd.measurements.network.NetworkController
 import com.google.gson.Gson
 import java.util.*
@@ -30,7 +28,8 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
     private var mNotesList: List<Measurement> = ArrayList()
     private lateinit var mSettings: SharedPreferences
     private var APP_TOKEN: String = "token"
-    private var fragment : MeasurementsFragment? = null
+    private var fragment: MeasurementsFragment? = null
+
     constructor(notesList: List<Measurement>, fragment: MeasurementsFragment) {
         mNotesList = notesList
         this.fragment = fragment
@@ -52,13 +51,7 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
     fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         var measurement = mNotesList[i]
         val id = measurement.id
-        when (measurement.deal.toString().length) {
-            1 -> viewHolder.deal.text = "0000" + measurement.deal.toString()
-            2 -> viewHolder.deal.text = "000" + measurement.deal.toString()
-            3 -> viewHolder.deal.text = "00" + measurement.deal.toString()
-            4 -> viewHolder.deal.text = "0" + measurement.deal.toString()
-        }
-
+        viewHolder.deal.text = String.format("%05d", measurement.deal)
         viewHolder.address.text = measurement.address
         viewHolder.time.text = measurement.time
 
@@ -67,46 +60,14 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
         } else {
             viewHolder.workerName.text = measurement.workerName.toString()
         }
-        when (measurement.color) {
-            1 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                viewHolder.workerName.setTextColor(viewHolder.itemView.resources.getColor(R.color.red, viewHolder.itemView.context.theme))
-            } else {
-                viewHolder.workerName.setTextColor(viewHolder.itemView.resources.getColor(R.color.red))
-            }
-            2 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                viewHolder.workerName.setTextColor(viewHolder.itemView.resources.getColor(R.color.green, viewHolder.itemView.context.theme))
-            } else {
-                viewHolder.workerName.setTextColor(viewHolder.itemView.resources.getColor(R.color.green))
-            }
-            3 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                viewHolder.workerName.setTextColor(viewHolder.itemView.resources.getColor(R.color.blue, viewHolder.itemView.context.theme))
-            } else {
-                viewHolder.workerName.setTextColor(viewHolder.itemView.resources.getColor(R.color.blue))
-            }
-        }
+        setColorResponsible(measurement?.color ?: 0, viewHolder)
 
-        viewHolder.symbol.text = measurement.company!!.symbol
+        viewHolder.symbol.text = measurement.company?.symbol
 
         if (viewHolder.symbol.text.length == 1) {
             viewHolder.symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30F)
         }
-        when (measurement.company!!.id) {
-            1 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                viewHolder.symbol.setTextColor(viewHolder.itemView.resources.getColor(R.color.green, viewHolder.itemView.context.theme))
-            } else {
-                viewHolder.symbol.setTextColor(viewHolder.itemView.resources.getColor(R.color.green))
-            }
-            2 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                viewHolder.symbol.setTextColor(viewHolder.itemView.resources.getColor(R.color.orange, viewHolder.itemView.context.theme))
-            } else {
-                viewHolder.symbol.setTextColor(viewHolder.itemView.resources.getColor(R.color.orange))
-            }
-            3 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                viewHolder.symbol.setTextColor(viewHolder.itemView.resources.getColor(R.color.blue, viewHolder.itemView.context.theme))
-            } else {
-                viewHolder.symbol.setTextColor(viewHolder.itemView.resources.getColor(R.color.blue))
-            }
-        }
+        setColorCompany(measurement.company?.id ?: 0, viewHolder)
 
         viewHolder.itemView.setOnClickListener { v ->
             val intent = Intent(v.context, OneMeasurementActivity::class.java)
@@ -122,13 +83,15 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
 
             intent.putExtra("id", id)
             intent.putExtra("symbol", viewHolder.symbol.text.length.toString())
-            fragment!!.startActivityForResult(intent, 0)
+            fragment?.startActivityForResult(intent, 0)
         }
         viewHolder.itemView.setOnLongClickListener {
             val ad = AlertDialog.Builder(it.context)
             ad.setTitle("Стать ответственным?")  // заголовок
             ad.setPositiveButton("Да") { dialog, arg1 ->
-                NetworkController.becomeResponsible(id!!)
+                if (id != null) {
+                    NetworkController.becomeResponsible(id)
+                }
             }
             ad.setNegativeButton("Отмена") { dialog, arg1 -> }
 
@@ -139,9 +102,32 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
 
     }
 
-
     override fun getItemCount(): Int {
         return mNotesList.size
+    }
+
+    private fun setColorResponsible(color: Int, viewHolder: ViewHolder) {
+        when (color) {
+            1 -> selectColorVersion(viewHolder.workerName, R.color.red, viewHolder.itemView.context)
+            2 -> selectColorVersion(viewHolder.workerName, R.color.green, viewHolder.itemView.context)
+            3 -> selectColorVersion(viewHolder.workerName, R.color.blue, viewHolder.itemView.context)
+        }
+    }
+
+    private fun setColorCompany(color: Int, viewHolder: ViewHolder) {
+        when (color) {
+            1 -> selectColorVersion(viewHolder.symbol, R.color.green, viewHolder.itemView.context)
+            2 -> selectColorVersion(viewHolder.symbol, R.color.orange, viewHolder.itemView.context)
+            3 -> selectColorVersion(viewHolder.symbol, R.color.blue, viewHolder.itemView.context)
+        }
+    }
+
+    private fun selectColorVersion(item: TextView, color: Int, context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            item.setTextColor(context.resources.getColor(color, context.theme))
+        } else {
+            item.setTextColor(context.resources.getColor(color))
+        }
     }
 
     /**
@@ -170,8 +156,6 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
     override fun resultResponsible(code: Int) {
         if (code == 200) {
             fragment?.updateList()
-        } else {
-
         }
     }
 }

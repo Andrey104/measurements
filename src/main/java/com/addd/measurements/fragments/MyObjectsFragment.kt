@@ -14,7 +14,7 @@ import com.addd.measurements.R
  */
 class MyObjectsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater!!.inflate(R.layout.myobjects_fragment, container, false)
+        return inflater?.inflate(R.layout.myobjects_fragment, container, false) ?: View(context)
     }
 
 }

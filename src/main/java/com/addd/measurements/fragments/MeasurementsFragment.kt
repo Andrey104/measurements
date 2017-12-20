@@ -20,8 +20,6 @@ import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
-import java.nio.file.Files.size
-import android.support.v7.widget.RecyclerView
 
 
 
@@ -33,13 +31,10 @@ import android.support.v7.widget.RecyclerView
 class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements {
     private lateinit var date: String
     lateinit var alert: AlertDialog
-    private var isLoading = false
-    private var mPageSize = 20
-    private var mTotalItemsCount = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         NetworkController.registerCallBack(this)
-        val view: View = inflater!!.inflate(R.layout.measurements_fragment, container, false)
+        val view: View = inflater?.inflate(R.layout.measurements_fragment, container, false) ?: View(context)
         val bundle = this.arguments
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)

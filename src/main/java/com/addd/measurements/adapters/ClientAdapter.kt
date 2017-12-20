@@ -32,14 +32,14 @@ class ClientAdapter : RecyclerView.Adapter<ClientAdapter.ViewHolder> {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var client = mClientsList[position]
-        holder.name.text = client.client!!.fio.toString()
+        holder.name.text = client.client?.fio.toString()
         val arrayList: ArrayList<String> = ArrayList()
-        if (client!!.client!!.phones != null) {
+        if (client.client?.phones != null) {
             val linearLayout = holder.itemView.findViewById<LinearLayout>(R.id.linearLayoutPhone)
 
             var textViewNumber: TextView
             var textViewComment: TextView
-            for (phone in client!!.client!!.phones!!) {
+            for (phone in client.client?.phones!!) {
                 textViewNumber = TextView(holder.itemView.context)
                 textViewComment = TextView(holder.itemView.context)
                 textViewNumber.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16F)

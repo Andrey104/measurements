@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val bundle = Bundle()
     private lateinit var APP_USER_INFO: String
     private lateinit var APP_TOKEN: String
-    private lateinit var check : String
+    private lateinit var check: String
 
     override fun onResume() {
         NetworkController.registerUserInfoCallBack(this)
@@ -68,9 +68,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             builder.setTitle(getString(R.string.exit_app))
                     .setMessage(getString(R.string.realy_exit_app))
                     .setCancelable(false)
-                    .setPositiveButton(getString(R.string.yes),
-                            { dialog, id -> finish() })
-                    .setNegativeButton(getString(R.string.no), { dialog, id -> dialog.cancel() })
+                    .setPositiveButton(getString(R.string.yes)) { dialog, id -> finish() }
+                    .setNegativeButton(getString(R.string.no)) { dialog, id -> dialog.cancel() }
             val alert = builder.create()
             alert.show()
         }
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val param = query
-                Toast.makeText(applicationContext, param,Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, param, Toast.LENGTH_SHORT).show()
                 return true
             }
 
@@ -144,16 +143,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         builder.setTitle(getString(R.string.exit_account))
                 .setMessage(getString(R.string.realy_exit_account))
                 .setCancelable(false)
-                .setPositiveButton(getString(R.string.yes),
-                        { dialog, id ->
-                            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                            val editor = mSettings.edit()
-                            editor.clear()
-                            editor.apply()
-                            startActivity(Intent(applicationContext, LoginActivity::class.java))
-                            finish()
-                        })
-                .setNegativeButton(getString(R.string.no), { dialog, id -> dialog.cancel() })
+                .setPositiveButton(getString(R.string.yes))
+                { dialog, id ->
+                    val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                    val editor = mSettings.edit()
+                    editor.clear()
+                    editor.apply()
+                    startActivity(Intent(applicationContext, LoginActivity::class.java))
+                    finish()
+                }
+                .setNegativeButton(getString(R.string.no)) { dialog, id -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
     }
@@ -161,11 +160,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun changeFragment(fragmentClass: Class<*>?, item: MenuItem, bundle: Bundle?) {
         var fragment: Fragment? = null
         try {
-            fragment = fragmentClass!!.newInstance() as Fragment?
+            fragment = fragmentClass?.newInstance() as Fragment?
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        fragment!!.arguments = bundle
+        fragment?.arguments = bundle
 
         // Вставляем фрагмент, заменяя текущий фрагмент
         val fragmentManager = supportFragmentManager
@@ -180,11 +179,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var fragment: Fragment? = null
 
         try {
-            fragment = fragmentClass!!.newInstance() as Fragment?
+            fragment = fragmentClass?.newInstance() as Fragment?
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        fragment!!.arguments = bundle
+        fragment?.arguments = bundle
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
@@ -197,7 +196,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         val navHeader = navigationView.getHeaderView(0)
         val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
-        if (user.firstName!!.isEmpty() || user.lastName!!.isEmpty()) {
+        if (user.firstName?.isEmpty()!! || user.lastName?.isEmpty()!!) {
             textName.text = ""
         } else {
             textName.text = "${user.firstName} ${user.lastName}"
