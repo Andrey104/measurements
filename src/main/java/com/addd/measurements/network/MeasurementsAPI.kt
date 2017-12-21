@@ -16,13 +16,13 @@ interface MeasurementsAPI {
     fun getOneMeasurement(@Path("id") id: String): Call<Measurement>
 
     @GET("measurements/current")
-    fun getCurrentMeasurement(@Query("date") date: String): Call<MyResult>
+    fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResult>
 
     @GET("measurements/rejected")
-    fun getRejectedMeasurement(@Query("date") date: String): Call<MyResult>
+    fun getRejectedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResult>
 
     @GET("measurements/closed")
-    fun getClosedMeasurement(@Query("date") date: String): Call<MyResult>
+    fun getClosedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResult>
 
     @POST("measurements/{id}/transfer/")
     fun transferMeasurement(@Body transfer: Transfer, @Path("id") id: String): Call<Void>

@@ -70,7 +70,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     private fun displayMeasurement(measurement: Measurement) {
-        title = "Замер ${intent.getStringExtra(getString(R.string.id))}"
+        title = String.format("Замер %05d", (intent.getStringExtra(getString(R.string.id))).toInt())
         setStatus(measurement)
 
 

@@ -30,6 +30,7 @@ object NetworkController {
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
     var problemCallback: ProblemCallback? = null
+    var callbackPaginationListMeasurements: PaginationCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -55,7 +56,7 @@ object NetworkController {
     fun getCurrentMeasurements(date: String, nameSave: String?) {
         this.date = date
         status = "current"
-        val call = api.getCurrentMeasurement(date)
+        val call = api.getCurrentMeasurement(date, 1)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
@@ -63,7 +64,7 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed, response?.body()?.count ?: 0)
                 }
             }
 
@@ -73,7 +74,7 @@ object NetworkController {
                 } else {
                     emptyList()
                 }
-                callbackListMeasurements?.resultList(listMeasurements, 1, NetworkController.date, 0, 0, 0)
+                callbackListMeasurements?.resultList(listMeasurements, 1, NetworkController.date, 0, 0, 0, 0)
             }
 
         })
@@ -82,7 +83,7 @@ object NetworkController {
     fun getRejectMeasurements(date: String, nameSave: String?) {
         this.date = date
         status = "rejected"
-        val call = api.getRejectedMeasurement(date)
+        val call = api.getRejectedMeasurement(date, 1)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
@@ -90,7 +91,7 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed,response?.body()?.count ?: 0)
 
                 }
             }
@@ -101,7 +102,7 @@ object NetworkController {
                 } else {
                     emptyList()
                 }
-                callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
+                callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0,0)
             }
         })
     }
@@ -109,7 +110,7 @@ object NetworkController {
     fun getCloseMeasurements(date: String, nameSave: String?) {
         status = "closed"
         this.date = date
-        val call = api.getClosedMeasurement(date)
+        val call = api.getClosedMeasurement(date, 1)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
@@ -117,7 +118,7 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed,response?.body()?.count ?: 0)
 
                 }
             }
@@ -128,7 +129,7 @@ object NetworkController {
                 } else {
                     emptyList()
                 }
-                callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0)
+                callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0, 0)
             }
         })
     }
@@ -215,6 +216,63 @@ object NetworkController {
                 }
             }
         }
+    }
+
+    fun pagination(page: Int) {
+        when (status) {
+            "current" -> paginationCurrentRequest(page)
+            "rejected" ->  paginationRejectRequest(page)
+            "closed" -> paginationCloseRequest(page)
+            }
+
+    }
+    private fun paginationCurrentRequest(page: Int) {
+        val call = api.getCurrentMeasurement(date, page)
+        call.enqueue(object : retrofit2.Callback<MyResult> {
+            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+                response?.body()?.let {
+                    listMeasurements = response.body().results!!
+                    callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+                callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
+            }
+
+        })
+    }
+    private fun paginationRejectRequest(page: Int) {
+        val call = api.getRejectedMeasurement(date, page)
+        call.enqueue(object : retrofit2.Callback<MyResult> {
+            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+                response?.body()?.let {
+                    listMeasurements = response.body().results!!
+                    callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+                callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
+            }
+
+        })
+    }
+    private fun paginationCloseRequest(page: Int) {
+        val call = api.getClosedMeasurement(date, page)
+        call.enqueue(object : retrofit2.Callback<MyResult> {
+            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+                response?.body()?.let {
+                    listMeasurements = response.body().results!!
+                    callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
+                }
+            }
+
+            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+                callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
+            }
+
+        })
     }
 
     fun rejectMeasurement(reject: Reject, id: String) {
@@ -345,7 +403,7 @@ object NetworkController {
 //---------------------------------------callbacks-------------------------------------------------------
 
     interface CallbackListMeasurements {
-        fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?)
+        fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count : Int)
     }
 
     fun registerCallBack(callbackListMeasurements: CallbackListMeasurements?) {
@@ -406,5 +464,13 @@ object NetworkController {
 
     fun registerProblemCallback(callback: ProblemCallback?) {
         NetworkController.problemCallback = callback
+    }
+
+    interface PaginationCallback {
+        fun resultPaginationClose(listMeasurements: List<Measurement>, result: Int)
+    }
+
+    fun registerPaginationCallback(callback: PaginationCallback?) {
+        NetworkController.callbackPaginationListMeasurements = callback
     }
 }

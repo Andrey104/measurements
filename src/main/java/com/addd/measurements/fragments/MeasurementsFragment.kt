@@ -4,10 +4,12 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -21,20 +23,28 @@ import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
  * Created by addd on 03.12.2017.
  */
 
-class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements, DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback {
+class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements, DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback, NetworkController.PaginationCallback {
     private lateinit var date: String
     lateinit var alert: AlertDialog
     lateinit var fragmentListMeasurements: List<Measurement>
+    private var isLoading = false
+    private var isLastPage = false
+    private var currentPage = 1
+    private var TOTAL_PAGES = 4
+    private lateinit var adapter: DataAdapter
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         NetworkController.registerCallBack(this)
         NetworkController.registerResponsibleCallback(this)
+        NetworkController.registerPaginationCallback(this)
         val view: View = inflater?.inflate(R.layout.measurements_fragment, container, false) ?: View(context)
 
 
@@ -63,6 +73,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                 R.id.today -> {
                     date = getTodayDate()
                     showDialog()
+                    currentPage = 1
+                    isLastPage = false
                     when (bundle.get(CHECK)) {
                         STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
                         STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
@@ -72,6 +84,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                 R.id.tomorrow -> {
                     date = getTomorrowDate()
                     showDialog()
+                    currentPage = 1
+                    isLastPage = false
                     when (bundle.get(CHECK)) {
                         STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TOMORROW_CURRENT)
                         STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TOMORROW_REJECTED)
@@ -114,6 +128,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun datePick() {
         val bundle = this.arguments
+        currentPage = 1
+        isLastPage = false
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             showDialog()
@@ -130,6 +146,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     fun updateList() {
+        currentPage = 1
+        isLastPage = false
         showDialog()
         NetworkController.updateListInFragment()
     }
@@ -149,7 +167,12 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         alert.show()
     }
 
-    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?) {
+    override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
+        TOTAL_PAGES = if (count % 20 == 0) {
+            count / 20
+        } else {
+            (count / 20) + 1
+        }
         fragmentListMeasurements = listMeasurements
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
@@ -166,42 +189,50 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         }
         val toolbar = (activity as AppCompatActivity).supportActionBar
         toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
-
-        recyclerList.adapter = DataAdapter(listMeasurements,this)
-        val layoutManager = LinearLayoutManager(activity.applicationContext)
+        adapter = DataAdapter(listMeasurements as ArrayList, this)
+        recyclerList.adapter = adapter
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerList.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
         recyclerList.addItemDecoration(dividerItemDecoration)
+        recyclerList.addOnScrollListener(object : PaginationScrollListener(recyclerList.layoutManager as LinearLayoutManager) {
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
 
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
 
+            override fun loadMoreItems() {
+                isLoading = true
+                currentPage += 1
 
+                loadNextPage()
+            }
 
-        onChange(date, listMeasurements)
+            override fun getTotalPageCount(): Int {
+                return TOTAL_PAGES
+            }
+
+        })
+        addFooter()
+
         alert.dismiss()
+    }
+
+    private fun addFooter() {
+        if (currentPage < TOTAL_PAGES) {
+            adapter.addLoadingFooter()
+        } else {
+            isLastPage = true
+        }
     }
 
     override fun resultResponsible(result: Boolean) {
         if (result) {
             updateList()
         }
-    }
-
-    private fun onChange(date: String, list: List<Measurement>) {
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        if (list.isEmpty()) {
-            toolbar?.title = "$date"
-        }
-        var my = 0
-        var wrong = 0
-        for (measurement in list) {
-            if (measurement.color == 1) {
-                wrong++
-            }
-            if (measurement.color == 2) {
-                my++
-            }
-        }
-        toolbar?.title = "$date В:${list.size} Н:$wrong M:$my"
     }
 
     override fun onResume() {
@@ -214,4 +245,21 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         NetworkController.registerCallBack(null)
         super.onStop()
     }
+
+    private fun loadNextPage() {
+        NetworkController.pagination(currentPage)
+    }
+
+    override fun resultPaginationClose(listMeasurements: List<Measurement>, result: Int) {
+        adapter.removeLoadingFooter()
+        isLoading = false
+
+        adapter.addAll(listMeasurements)
+
+        if (currentPage != TOTAL_PAGES)
+            adapter.addLoadingFooter()
+        else
+            isLastPage = true
+    }
+
 }
