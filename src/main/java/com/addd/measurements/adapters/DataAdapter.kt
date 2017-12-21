@@ -1,8 +1,6 @@
 package com.addd.measurements.adapters
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
@@ -11,11 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.R
-import com.addd.measurements.activity.OneMeasurementActivity
-import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.modelAPI.Measurement
-import com.addd.measurements.network.NetworkController
-import com.google.gson.Gson
 import java.util.*
 
 
@@ -23,13 +17,13 @@ import java.util.*
  * Created by addd on 07.12.2017.
  */
 
-class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkController.ResponsibleCallback {
+class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>{
+    private val listener : CustomAdapterCallback
     private var mNotesList: List<Measurement> = ArrayList()
-    private var fragment: MeasurementsFragment? = null
 
-    constructor(notesList: List<Measurement>, fragment: MeasurementsFragment) {
+    constructor(notesList: List<Measurement>, listener : CustomAdapterCallback) {
         mNotesList = notesList
-        this.fragment = fragment
+        this.listener = listener
     }
 
     /**
@@ -37,8 +31,7 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
      */
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         var v = LayoutInflater.from(viewGroup.context).inflate(R.layout.list_item_measurement, viewGroup, false)
-        NetworkController.registerResponsibleCallback(this)
-        return ViewHolder(v)
+        return ViewHolder(v, listener)
     }
 
     /**
@@ -66,41 +59,8 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
         }
         setColorCompany(measurement.company?.id ?: 0, viewHolder)
 
-        viewHolder.itemView.setOnClickListener { v ->
-            val intent = Intent(v.context, OneMeasurementActivity::class.java)
-            var id: String = viewHolder.deal.text.toString()
-            for (meas in mNotesList) {
-                if (meas.deal == id.toInt()) {
-                    val gson = Gson()
-                    val json = gson.toJson(meas)
-                    intent.putExtra("measurement", json)
-                    break
-                }
-            }
 
-            intent.putExtra("id", id)
-            intent.putExtra("symbol", viewHolder.symbol.text.length.toString())
-            fragment?.startActivityForResult(intent, 0)
-        }
-        viewHolder.itemView.setOnLongClickListener {
-            val ad = AlertDialog.Builder(it.context)
-            ad.setTitle("Стать ответственным?")  // заголовок
-            ad.setPositiveButton("Да") { dialog, arg1 ->
-                if (id != null) {
-                    NetworkController.becomeResponsible(id)
-                }
-            }
-            ad.setNegativeButton("Отмена") { dialog, arg1 -> }
 
-            ad.setCancelable(true)
-            ad.show()
-            true
-        }
-
-    }
-
-    fun getMesurementItem(int: Int) : Measurement {
-        return mNotesList[int]
     }
 
     override fun getItemCount(): Int {
@@ -135,7 +95,16 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
      * Реализация класса ViewHolder, хранящего ссылки на виджеты.
      */
 
-    class ViewHolder : RecyclerView.ViewHolder {
+    class ViewHolder : RecyclerView.ViewHolder, View.OnClickListener, View.OnLongClickListener{
+        override fun onLongClick(v: View?): Boolean {
+            listener.onItemLongClick(adapterPosition)
+            return true
+        }
+
+        private val listener: CustomAdapterCallback
+        override fun onClick(v: View?) {
+            listener.onItemClick(adapterPosition)
+        }
 
         var symbol: TextView
         var deal: TextView
@@ -143,20 +112,21 @@ class DataAdapter : RecyclerView.Adapter<DataAdapter.ViewHolder>, NetworkControl
         var time: TextView
         var workerName: TextView
 
-        constructor(itemView: View) : super(itemView) {
+        constructor(itemView: View, listener : CustomAdapterCallback) : super(itemView) {
             deal = itemView.findViewById(R.id.deal)
             address = itemView.findViewById(R.id.address)
             time = itemView.findViewById(R.id.time)
             workerName = itemView.findViewById(R.id.worker_name)
             symbol = itemView.findViewById(R.id.symbol)
+            this.listener = listener
+            this.itemView.setOnClickListener(this)
+            this.itemView.setOnLongClickListener(this)
         }
 
     }
 
-
-    override fun resultResponsible(result: Boolean) {
-        if (result) {
-            fragment?.updateList()
-        }
+    interface CustomAdapterCallback {
+        fun onItemClick(pos: Int)
+        fun onItemLongClick(pos: Int)
     }
 }
