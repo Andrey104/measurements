@@ -14,6 +14,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by addd on 11.12.2017.
@@ -91,7 +92,7 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed,response?.body()?.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed, response?.body()?.count ?: 0)
 
                 }
             }
@@ -102,7 +103,7 @@ object NetworkController {
                 } else {
                     emptyList()
                 }
-                callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0,0)
+                callbackListMeasurements?.resultList(listMeasurements, 1, date, 0, 0, 0, 0)
             }
         })
     }
@@ -118,7 +119,7 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed,response?.body()?.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed, response?.body()?.count ?: 0)
 
                 }
             }
@@ -220,18 +221,52 @@ object NetworkController {
 
     fun pagination(page: Int) {
         when (status) {
-            "current" -> paginationCurrentRequest(page)
-            "rejected" ->  paginationRejectRequest(page)
-            "closed" -> paginationCloseRequest(page)
+            "current" -> {
+                var nameList: String? = null
+                if (date == getTodayDate()) {
+                    nameList = APP_LIST_TODAY_CURRENT
+                }
+                if (date == getTomorrowDate()) {
+                    nameList = APP_LIST_TOMORROW_CURRENT
+                }
+                paginationCurrentRequest(page, nameList)
             }
 
+            "rejected" -> {
+                var nameList: String? = null
+                if (date == getTodayDate()) {
+                    nameList = APP_LIST_TODAY_REJECTED
+                }
+                if (date == getTomorrowDate()) {
+                    nameList = APP_LIST_TOMORROW_REJECTED
+                }
+                paginationRejectRequest(page, nameList)
+            }
+            "closed" -> {
+                var nameList : String? = null
+                if (date == getTodayDate()) {
+                    nameList = APP_LIST_TODAY_CLOSED
+                }
+                if (date == getTomorrowDate()) {
+                    nameList = APP_LIST_TOMORROW_CLOSED
+                }
+                paginationCloseRequest(page, nameList)
+            }
+        }
+
     }
-    private fun paginationCurrentRequest(page: Int) {
+
+    private fun paginationCurrentRequest(page: Int, name: String?) {
         val call = api.getCurrentMeasurement(date, page)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
+                    if (name != null) {
+                        val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
+                        buferList.addAll(listMeasurements)
+                        saveMeasurementsList(buferList, name)
+                    }
                     callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
                 }
             }
@@ -242,12 +277,18 @@ object NetworkController {
 
         })
     }
-    private fun paginationRejectRequest(page: Int) {
+
+    private fun paginationRejectRequest(page: Int, name: String?) {
         val call = api.getRejectedMeasurement(date, page)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
+                    if (name != null) {
+                        val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
+                        buferList.addAll(listMeasurements)
+                        saveMeasurementsList(buferList, name)
+                    }
                     callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
                 }
             }
@@ -258,12 +299,18 @@ object NetworkController {
 
         })
     }
-    private fun paginationCloseRequest(page: Int) {
+
+    private fun paginationCloseRequest(page: Int,name: String?) {
         val call = api.getClosedMeasurement(date, page)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
+                    if (name != null) {
+                        val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
+                        buferList.addAll(listMeasurements)
+                        saveMeasurementsList(buferList, name)
+                    }
                     callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
                 }
             }
@@ -403,7 +450,7 @@ object NetworkController {
 //---------------------------------------callbacks-------------------------------------------------------
 
     interface CallbackListMeasurements {
-        fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count : Int)
+        fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int)
     }
 
     fun registerCallBack(callbackListMeasurements: CallbackListMeasurements?) {
