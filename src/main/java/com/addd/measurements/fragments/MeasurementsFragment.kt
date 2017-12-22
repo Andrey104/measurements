@@ -4,12 +4,10 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -22,7 +20,8 @@ import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.measurements_fragment.*
-import java.util.*
+import kotlinx.android.synthetic.main.measurements_fragment.view.*
+import java.util.Calendar
 import kotlin.collections.ArrayList
 
 
@@ -32,7 +31,7 @@ import kotlin.collections.ArrayList
 
 class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements, DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback, NetworkController.PaginationCallback {
     private lateinit var date: String
-    lateinit var alert: AlertDialog
+    var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
     lateinit var fragmentListMeasurements: List<Measurement>
     private var isLoading = false
     private var isLastPage = false
@@ -54,7 +53,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
         val bundle = this.arguments
         date = getTodayDate()
-        showDialog()
+        adapter = DataAdapter(emptyList, this)
+        view.recyclerList.adapter = adapter
+        view.progressBarMain.visibility = View.VISIBLE
         bundle?.let {
             when (bundle.getInt(CHECK)) {
                 STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
@@ -72,7 +73,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             when (item.itemId) {
                 R.id.today -> {
                     date = getTodayDate()
-                    showDialog()
+                    adapter = DataAdapter(emptyList, this)
+                    recyclerList.adapter = adapter
+                    progressBarMain.visibility = View.VISIBLE
                     currentPage = 1
                     isLastPage = false
                     when (bundle.get(CHECK)) {
@@ -83,7 +86,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                 }
                 R.id.tomorrow -> {
                     date = getTomorrowDate()
-                    showDialog()
+                    adapter = DataAdapter(emptyList, this)
+                    recyclerList.adapter = adapter
+                    progressBarMain.visibility = View.VISIBLE
                     currentPage = 1
                     isLastPage = false
                     when (bundle.get(CHECK)) {
@@ -132,7 +137,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         isLastPage = false
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
-            showDialog()
+            adapter = DataAdapter(emptyList, this)
+            recyclerList.adapter = adapter
+            progressBarMain.visibility = View.VISIBLE
             when (bundle.get(CHECK)) {
                 STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, null)
                 STATUS_REJECT -> NetworkController.getRejectMeasurements(date, null)
@@ -148,7 +155,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     fun updateList() {
         currentPage = 1
         isLastPage = false
-        showDialog()
+        adapter = DataAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        progressBarMain.visibility = View.VISIBLE
         NetworkController.updateListInFragment()
     }
 
@@ -158,14 +167,6 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         }
     }
 
-    private fun showDialog() {
-        val builder = AlertDialog.Builder(context)
-        val viewAlert = layoutInflater.inflate(R.layout.load_dialog, null)
-        builder.setView(viewAlert)
-                .setCancelable(false)
-        alert = builder.create()
-        alert.show()
-    }
 
     override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
         TOTAL_PAGES = if (count % 20 == 0) {
@@ -218,7 +219,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         })
         addFooter()
 
-        alert.dismiss()
+        progressBarMain.visibility = View.GONE
     }
 
     private fun addFooter() {
@@ -237,12 +238,16 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     override fun onResume() {
         NetworkController.registerCallBack(this)
-//        alert.dismiss()
+        NetworkController.registerResponsibleCallback(this)
+        NetworkController.registerPaginationCallback(this)
         super.onResume()
     }
 
     override fun onStop() {
         NetworkController.registerCallBack(null)
+        NetworkController.registerPaginationCallback(null)
+        NetworkController.registerResponsibleCallback(null)
+        progressBarMain.visibility = View.GONE
         super.onStop()
     }
 
@@ -251,15 +256,18 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     override fun resultPaginationClose(listMeasurements: List<Measurement>, result: Int) {
-        adapter.removeLoadingFooter()
+        if (!adapter.isEmpty()) {
+            adapter.removeLoadingFooter()
+            isLoading = false
+
+            adapter.addAll(listMeasurements)
+
+            if (currentPage != TOTAL_PAGES)
+                adapter.addLoadingFooter()
+            else
+                isLastPage = true
+        }
         isLoading = false
-
-        adapter.addAll(listMeasurements)
-
-        if (currentPage != TOTAL_PAGES)
-            adapter.addLoadingFooter()
-        else
-            isLastPage = true
     }
 
 }

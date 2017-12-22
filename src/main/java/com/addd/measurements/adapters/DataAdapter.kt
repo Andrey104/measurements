@@ -60,6 +60,9 @@ class DataAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.listener = listener
     }
 
+    fun isEmpty() = mNotesList.isEmpty()
+
+
     /**
      * Создание новых View и ViewHolder элемента списка, которые впоследствии могут переиспользоваться.
      */
