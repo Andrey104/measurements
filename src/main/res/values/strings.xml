@@ -69,13 +69,15 @@
     <string name="select_cause">Выберите причину</string>
     <string name="transfer_error">При переносе произошла ошибка</string>
     <string name="no_save_data">Нет сохраненных данных на заданную дату, проверьте подключение к интернету</string>
-    <string name="nothing_show">По данному запросу нет данных</string>
+    <string name="nothing_show">По данному запросу ничего не найдено</string>
     <string name="no_internet">Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища</string>
     <string name="problem_added">Проблема добавлена</string>
     <string name="error">Произошла ошибка</string>
     <string name="enter_header_description">Введите заголовок и описание проблемы</string>
     <string name="enter_string">Введите заголовок</string>
     <string name="enter_description">Введите описание</string>
+    <string name="problems">Проблемы</string>
+    <string name="address_not_set">Адрес не задан</string>
 
     <string-array name="months">
         <item>января</item>

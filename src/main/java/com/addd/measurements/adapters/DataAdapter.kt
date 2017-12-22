@@ -19,7 +19,14 @@ import kotlin.collections.ArrayList
  * Created by addd on 07.12.2017.
  */
 
-class DataAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class DataAdapter(notesList: ArrayList<Measurement>, private val listener: CustomAdapterCallback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var mNotesList: List<Measurement> = notesList
+    private val ITEM = 0
+    private val LOADING = 1
+    private var isLoadingAdded = false
+
+    fun isEmpty() = mNotesList.isEmpty()
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         when (getItemViewType(position)) {
             ITEM -> {
@@ -48,21 +55,6 @@ class DataAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         }
     }
-
-    private val listener: CustomAdapterCallback
-    private var mNotesList: List<Measurement> = ArrayList()
-    private val ITEM = 0
-    private val LOADING = 1
-    private var isLoadingAdded = false
-
-    constructor(notesList: ArrayList<Measurement>, listener: CustomAdapterCallback) {
-        mNotesList = notesList
-        this.listener = listener
-    }
-
-    fun isEmpty() = mNotesList.isEmpty()
-
-
     /**
      * Создание новых View и ViewHolder элемента списка, которые впоследствии могут переиспользоваться.
      */
@@ -121,19 +113,23 @@ class DataAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private fun setColorResponsible(color: Int, viewHolder: ViewHolder) {
-        when (color) {
-            1 -> selectColorVersion(viewHolder.workerName, R.color.red, viewHolder.itemView.context)
-            2 -> selectColorVersion(viewHolder.workerName, R.color.green, viewHolder.itemView.context)
-            3 -> selectColorVersion(viewHolder.workerName, R.color.blue, viewHolder.itemView.context)
-        }
+        selectColorVersion(viewHolder.workerName, when (color) {
+            1 -> R.color.red
+            2 -> R.color.green
+            3 -> R.color.blue
+            else -> R.color.blue
+        }, viewHolder.itemView.context)
+
     }
 
     private fun setColorCompany(color: Int, viewHolder: ViewHolder) {
-        when (color) {
-            1 -> selectColorVersion(viewHolder.symbol, R.color.green, viewHolder.itemView.context)
-            2 -> selectColorVersion(viewHolder.symbol, R.color.orange, viewHolder.itemView.context)
-            3 -> selectColorVersion(viewHolder.symbol, R.color.blue, viewHolder.itemView.context)
-        }
+        selectColorVersion(viewHolder.symbol, when (color) {
+            1 -> R.color.green
+            2 ->R.color.orange
+            3 ->  R.color.blue
+            else -> R.color.blue
+        }, viewHolder.itemView.context)
+
     }
 
     private fun selectColorVersion(item: TextView, color: Int, context: Context) {

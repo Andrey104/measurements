@@ -1,5 +1,8 @@
 package com.addd.measurements
 
+import android.support.annotation.StringRes
+import android.support.v4.app.Fragment
+import android.widget.Toast
 import com.google.gson.Gson
 import java.util.*
 
@@ -25,4 +28,12 @@ fun getTomorrowDate(): String {
     val calendar = Calendar.getInstance()
     calendar.add(Calendar.DAY_OF_MONTH, 1)
     return String.format("%d-%02d-%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH))
+}
+
+fun Fragment.toast(s: String) {
+    Toast.makeText(activity, s, Toast.LENGTH_SHORT).show()
+}
+
+fun Fragment.toast(@StringRes r: Int) {
+    Toast.makeText(activity, r, Toast.LENGTH_SHORT).show()
 }

@@ -40,11 +40,12 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private lateinit var adapter: DataAdapter
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        (activity as AppCompatActivity).supportActionBar?.show()
         NetworkController.registerCallBack(this)
         NetworkController.registerResponsibleCallback(this)
         NetworkController.registerPaginationCallback(this)
-        val view: View = inflater?.inflate(R.layout.measurements_fragment, container, false) ?: View(context)
+        val view: View = inflater.inflate(R.layout.measurements_fragment, container, false) ?: View(context)
 
 
         val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
@@ -108,10 +109,10 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     override fun onItemClick(pos: Int) {
         val intent = Intent(context, OneMeasurementActivity::class.java)
-        var id = fragmentListMeasurements[pos].id.toString()
+        var deal = fragmentListMeasurements[pos].deal
         val json = gson.toJson(fragmentListMeasurements[pos])
         intent.putExtra("measurement", json)
-        intent.putExtra("id", id)
+        intent.putExtra("id", deal)
         intent.putExtra("symbol", fragmentListMeasurements[pos].company?.symbol?.length.toString())
         startActivityForResult(intent, 0)
     }
@@ -185,7 +186,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             if (result == 0) {
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                toast(R.string.no_internet)
             }
         }
         val toolbar = (activity as AppCompatActivity).supportActionBar

@@ -18,10 +18,10 @@ import com.addd.measurements.adapters.ClientAdapter
 import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_measurement.*
 import kotlinx.android.synthetic.main.content_one_measurement.*
+import java.util.*
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement {
@@ -70,7 +70,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     private fun displayMeasurement(measurement: Measurement) {
-        title = String.format("Замер %05d", (intent.getStringExtra(getString(R.string.id))).toInt())
+        title = String.format("Замер %05d", measurement.deal)
         setStatus(measurement)
 
 
@@ -91,7 +91,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         setColorWorker(measurement)
         comment.text = measurement.managerComment.toString()
 
-        list_clients.adapter = ClientAdapter(measurement.clients!!)
+        list_clients.adapter = ClientAdapter(measurement.clients ?: Collections.emptyList())
         val layoutManager = LinearLayoutManager(applicationContext)
         list_clients.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(list_clients.context, layoutManager.orientation)
@@ -194,7 +194,6 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                 }
                 R.id.problem -> {
                     val intent = Intent(applicationContext, ProblemActivity::class.java)
-                    intent.putExtra(intentIdKey, measurement.id.toString())
                     intent.putExtra(intentDealKey, measurement.deal.toString())
                     startActivityForResult(intent, 0)
                     true

@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle(getString(R.string.exit_app))
+            builder.setTitle(R.string.exit_app)
                     .setMessage(getString(R.string.realy_exit_app))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.yes)) { dialog, id -> finish() }
@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         val navHeader = navigationView.getHeaderView(0)
         val textName = navHeader.findViewById<TextView>(R.id.textUserNameDrawer)
-        if (user.firstName?.isEmpty()!! || user.lastName?.isEmpty()!!) {
+        if (user.firstName.isNullOrEmpty() || user.lastName.isNullOrEmpty()) {
             textName.text = ""
         } else {
             textName.text = "${user.firstName} ${user.lastName}"

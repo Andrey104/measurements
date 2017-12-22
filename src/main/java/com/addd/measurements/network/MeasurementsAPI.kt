@@ -39,4 +39,7 @@ interface MeasurementsAPI {
     @POST("deals/{id}/discussion/")
     fun addProblem(@Body problem : Problem, @Path("id") id: String): Call<Void>
 
+    @GET("discussions")
+    fun getProblems(@Query("page") page: Int): Call<MyResultProblem>
+
 }

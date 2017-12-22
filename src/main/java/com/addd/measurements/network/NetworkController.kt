@@ -13,7 +13,6 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -32,6 +31,8 @@ object NetworkController {
     var closeCallback: CloseCallback? = null
     var problemCallback: ProblemCallback? = null
     var callbackPaginationListMeasurements: PaginationCallback? = null
+    var problemListCallback: ProblemListCallback? = null
+    var problemPaginationResultCallback: ProblemPaginationList? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -42,8 +43,8 @@ object NetworkController {
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
         val okHttpClient = OkHttpClient.Builder()
         val interceptor = Interceptor { chain ->
-            val request = chain?.request()?.newBuilder()?.addHeader("Authorization", "Token " + sp.getString("token", ""))?.build()
-            chain?.proceed(request)
+            val request = chain.request().newBuilder().addHeader("Authorization", "Token " + sp.getString("token", ""))?.build()
+            chain.proceed(request)
         }
 
         okHttpClient.networkInterceptors().add(interceptor)
@@ -243,7 +244,7 @@ object NetworkController {
                 paginationRejectRequest(page, nameList)
             }
             "closed" -> {
-                var nameList : String? = null
+                var nameList: String? = null
                 if (date == getTodayDate()) {
                     nameList = APP_LIST_TODAY_CLOSED
                 }
@@ -300,7 +301,7 @@ object NetworkController {
         })
     }
 
-    private fun paginationCloseRequest(page: Int,name: String?) {
+    private fun paginationCloseRequest(page: Int, name: String?) {
         val call = api.getClosedMeasurement(date, page)
         call.enqueue(object : retrofit2.Callback<MyResult> {
             override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
@@ -362,15 +363,47 @@ object NetworkController {
         val call = api.addProblem(problem, id)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-                response?.let {
-                    if (response.code() == 200) {
-                        problemCallback?.resultClose(true)
-                    }
+                if (response?.code() == 200) {
+                    problemCallback?.resultClose(true)
                 }
             }
 
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
                 problemCallback?.resultClose(false)
+            }
+        })
+    }
+
+    fun getProblems(page: Int) {
+        val call = api.getProblems(page)
+        call.enqueue(object : retrofit2.Callback<MyResultProblem> {
+            override fun onResponse(call: Call<MyResultProblem>?, response: Response<MyResultProblem>?) {
+                if (response?.code() == 200) {
+
+                    problemListCallback?.resultProblemList(response.body()?.results ?: emptyList(), true,response.body().count ?: 1)
+
+                }
+            }
+
+            override fun onFailure(call: Call<MyResultProblem>?, t: Throwable?) {
+                problemListCallback?.resultProblemList(emptyList(), false,1)
+            }
+        })
+    }
+
+    fun paginationProblem(page: Int) {
+        val call = api.getProblems(page)
+        call.enqueue(object : retrofit2.Callback<MyResultProblem> {
+            override fun onResponse(call: Call<MyResultProblem>?, response: Response<MyResultProblem>?) {
+                if (response?.code() == 200) {
+
+                    problemPaginationResultCallback?.problemPaginationResult(response.body()?.results ?: emptyList(), true)
+
+                }
+            }
+
+            override fun onFailure(call: Call<MyResultProblem>?, t: Throwable?) {
+                problemPaginationResultCallback?.problemPaginationResult(emptyList(), false)
             }
         })
     }
@@ -388,7 +421,7 @@ object NetworkController {
         var callLog: List<Measurement>
         val mSettings = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val json = mSettings.getString(name, "")
-        if (json!!.isEmpty()) {
+        if (json.isNullOrEmpty()) {
             callLog = ArrayList<Measurement>()
         } else {
             val type = object : TypeToken<List<Measurement>>() {
@@ -436,7 +469,7 @@ object NetworkController {
         var user: User
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val json = mPrefs.getString(APP_USER_INFO, "")
-        user = if (json!!.isEmpty()) {
+        user = if (json.isNullOrEmpty()) {
             User()
         } else {
             val type = object : TypeToken<User>() {
@@ -519,5 +552,22 @@ object NetworkController {
 
     fun registerPaginationCallback(callback: PaginationCallback?) {
         NetworkController.callbackPaginationListMeasurements = callback
+    }
+
+    interface ProblemListCallback {
+        fun resultProblemList(listMeasurements: List<MyProblem>,result: Boolean, count: Int)
+    }
+
+    fun registerProblemListCallback(callback: ProblemListCallback?) {
+        NetworkController.problemListCallback = callback
+    }
+
+    interface ProblemPaginationList {
+        fun problemPaginationResult(list: List<MyProblem>, result: Boolean)
+    }
+
+    fun registerProblemPagination(callback: ProblemPaginationList) {
+        NetworkController.problemPaginationResultCallback = callback
+
     }
 }
