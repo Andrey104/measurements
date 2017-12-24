@@ -1,10 +1,8 @@
 package com.addd.measurements.network
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.addd.measurements.MyApp
-import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.MyProblem
 import com.addd.measurements.modelAPI.MyResultProblem
 import com.addd.measurements.modelAPI.ProblemRequest
@@ -20,11 +18,11 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by addd on 24.12.2017.
  */
 object NetworkControllerProblem {
-    private lateinit var date: String
-    private lateinit var status: String
     var addProblemCallback : AddProblemCallback? = null
     var problemListCallback : ProblemListCallback? = null
     var problemPaginationResultCallback : ProblemPaginationList? = null
+    var oneProblemCallback : OneProblem? = null
+
 
 
     private val BASE_URL = "http://188.225.46.31/api/"
@@ -92,6 +90,24 @@ object NetworkControllerProblem {
         })
     }
 
+    fun getOneProblem(id: String) {
+        val call = api.getProblems(id)
+        call.enqueue(object : retrofit2.Callback<MyProblem> {
+            override fun onResponse(call: Call<MyProblem>?, response: Response<MyProblem>?) {
+                if (response?.code() == 200) {
+                    oneProblemCallback?.resultGetOneProblem(response.body())
+
+                }
+            }
+
+            override fun onFailure(call: Call<MyProblem>?, t: Throwable?) {
+                oneProblemCallback?.resultGetOneProblem(null)
+            }
+        })
+    }
+
+
+
     interface AddProblemCallback {
         fun resultAddProblem(result: Boolean)
     }
@@ -115,5 +131,13 @@ object NetworkControllerProblem {
     fun registerProblemPagination(callback: ProblemPaginationList) {
         problemPaginationResultCallback = callback
 
+    }
+
+    interface OneProblem {
+        fun resultGetOneProblem(problem: MyProblem?)
+    }
+
+    fun registerGetOneProblemCallback(callback: OneProblem?) {
+        oneProblemCallback = callback
     }
 }

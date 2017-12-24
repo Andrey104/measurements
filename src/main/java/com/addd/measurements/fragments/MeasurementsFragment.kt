@@ -244,12 +244,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         super.onResume()
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         NetworkController.registerCallBack(null)
         NetworkController.registerPaginationCallback(null)
         NetworkController.registerResponsibleCallback(null)
-        progressBarMain.visibility = View.GONE
-        super.onStop()
+        super.onDestroy()
     }
 
     private fun loadNextPage() {

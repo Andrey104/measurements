@@ -93,4 +93,5 @@
         <item>ноября</item>
         <item>декабря</item>
     </string-array>
+    <string name="title_activity_one_problem">OneProblemActivity</string>
 </resources>

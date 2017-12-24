@@ -12,7 +12,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.addd.measurements.PaginationScrollListener
 import com.addd.measurements.R
+import com.addd.measurements.activity.OneProblemActivity
 import com.addd.measurements.adapters.ProblemAdapter
+import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.MyProblem
 import com.addd.measurements.network.NetworkController
 import com.addd.measurements.network.NetworkControllerProblem
@@ -44,7 +46,11 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
     }
 
     override fun onItemClick(pos: Int) {
-        toast(problems[pos].deal.toString())
+        val intent = Intent(context, OneProblemActivity::class.java)
+        val json = gson.toJson(problems[pos])
+        intent.putExtra("problem", json)
+
+        startActivityForResult(intent, 0)
     }
 
     override fun resultProblemList(listProblems: List<MyProblem>, result: Boolean, count: Int) {
@@ -121,7 +127,7 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
         adapter = ProblemAdapter(emptyList, this)
         recyclerList.adapter = adapter
         progressBarMain.visibility = View.VISIBLE
-        NetworkController.updateListInFragment()
+        NetworkControllerProblem.getProblems(1)
     }
     override fun problemPaginationResult(list: List<MyProblem>, result: Boolean) {
         if (!adapter.isEmpty()) {

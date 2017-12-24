@@ -8,7 +8,7 @@
     tools:context="com.addd.measurements.activity.RejectActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbarAst"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         android:layout_width="match_parent"
         app:title="@string/reject_measurement"

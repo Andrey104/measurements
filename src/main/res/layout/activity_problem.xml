@@ -24,8 +24,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="Заголовок"
-        android:inputType="textPersonName" />
+        android:hint="Заголовок" />
 
     <EditText
         android:id="@+id/editTextDescription"
@@ -35,6 +34,7 @@
         android:ems="10"
         android:hint="Описание"
         android:inputType="textMultiLine" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

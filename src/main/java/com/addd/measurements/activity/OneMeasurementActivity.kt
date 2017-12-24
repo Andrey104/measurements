@@ -36,7 +36,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         intentIdKey = getString(R.string.id)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_measurement)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbarAst)
 
         measurement = getSavedMeasurement()
         displayMeasurement(measurement)
