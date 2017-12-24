@@ -16,13 +16,13 @@ interface MeasurementsAPI {
     fun getOneMeasurement(@Path("id") id: String): Call<Measurement>
 
     @GET("measurements/current")
-    fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResult>
+    fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
 
     @GET("measurements/rejected")
-    fun getRejectedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResult>
+    fun getRejectedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
 
     @GET("measurements/closed")
-    fun getClosedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResult>
+    fun getClosedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
 
     @POST("measurements/{id}/transfer/")
     fun transferMeasurement(@Body transfer: Transfer, @Path("id") id: String): Call<Void>
@@ -37,7 +37,7 @@ interface MeasurementsAPI {
     fun closeMeasurement(@Body close: Close, @Path("id") id: String): Call<Void>
 
     @POST("deals/{id}/discussion/")
-    fun addProblem(@Body problem : Problem, @Path("id") id: String): Call<Void>
+    fun addProblem(@Body problem : ProblemRequest, @Path("id") id: String): Call<Void>
 
     @GET("discussions")
     fun getProblems(@Query("page") page: Int): Call<MyResultProblem>

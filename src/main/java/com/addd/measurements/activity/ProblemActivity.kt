@@ -4,12 +4,12 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.addd.measurements.R
-import com.addd.measurements.modelAPI.Problem
-import com.addd.measurements.network.NetworkController
+import com.addd.measurements.modelAPI.ProblemRequest
+import com.addd.measurements.network.NetworkControllerProblem
 import kotlinx.android.synthetic.main.activity_problem.*
 
-class ProblemActivity : AppCompatActivity(), NetworkController.ProblemCallback{
-    override fun resultClose(result: Boolean) {
+class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblemCallback{
+    override fun resultAddProblem(result: Boolean) {
         if (result) {
             Toast.makeText(this, getString(R.string.problem_added), Toast.LENGTH_SHORT).show()
             finish()
@@ -19,7 +19,7 @@ class ProblemActivity : AppCompatActivity(), NetworkController.ProblemCallback{
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        NetworkController.registerProblemCallback(this)
+        NetworkControllerProblem.registerAddProblemCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_problem)
         buttonCancel.setOnClickListener { finish() }
@@ -37,19 +37,19 @@ class ProblemActivity : AppCompatActivity(), NetworkController.ProblemCallback{
             Toast.makeText(this, getString(R.string.enter_description), Toast.LENGTH_SHORT).show()
             return false
         }
-        val problem = Problem(editTextHeader.text.toString(), editTextDescription.text.toString())
-        NetworkController.addProblem(problem, intent.getStringExtra("deal"))
+        val problem = ProblemRequest(editTextHeader.text.toString(), editTextDescription.text.toString())
+        NetworkControllerProblem.addProblem(problem, intent.getStringExtra("deal"))
 
         return true
     }
 
     override fun onResume() {
-        NetworkController.registerProblemCallback(this)
+        NetworkControllerProblem.registerAddProblemCallback(this)
         super.onResume()
     }
 
     override fun onStop() {
-        NetworkController.registerProblemCallback(null)
+        NetworkControllerProblem.registerAddProblemCallback(null)
         super.onStop()
     }
 }

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by addd on 18.12.2017.
  */
-class MyResult(
+class MyResultMeasurements(
         @SerializedName("count")
         @Expose
         val count: Int? = null,

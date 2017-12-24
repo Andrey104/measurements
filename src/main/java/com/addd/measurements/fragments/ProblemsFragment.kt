@@ -15,6 +15,7 @@ import com.addd.measurements.R
 import com.addd.measurements.adapters.ProblemAdapter
 import com.addd.measurements.modelAPI.MyProblem
 import com.addd.measurements.network.NetworkController
+import com.addd.measurements.network.NetworkControllerProblem
 import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.problems_fragment.*
 import kotlinx.android.synthetic.main.problems_fragment.view.*
@@ -22,9 +23,9 @@ import kotlinx.android.synthetic.main.problems_fragment.view.*
 /**
  * Created by addd on 03.12.2017.
  */
-class ProblemsFragment : Fragment(), NetworkController.ProblemListCallback, ProblemAdapter.CustomAdapterCallback, NetworkController.ProblemPaginationList {
+class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallback, ProblemAdapter.CustomAdapterCallback, NetworkControllerProblem.ProblemPaginationList {
     private lateinit var adapter: ProblemAdapter
-    lateinit var problems: MyProblem
+    lateinit var problems: List<MyProblem>
     var emptyList: ArrayList<MyProblem> = ArrayList(emptyList())
     private var isLoading = false
     private var isLastPage = false
@@ -32,21 +33,22 @@ class ProblemsFragment : Fragment(), NetworkController.ProblemListCallback, Prob
     private var TOTAL_PAGES = 4
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        NetworkController.registerProblemListCallback(this)
-        NetworkController.registerProblemPagination(this)
+        NetworkControllerProblem.registerProblemListCallback(this)
+        NetworkControllerProblem.registerProblemPagination(this)
         val view = inflater?.inflate(R.layout.problems_fragment, container, false) ?: View(context)
         val toolbar = (activity as AppCompatActivity).supportActionBar
         toolbar?.hide()
         view.progressBarMain.visibility = View.VISIBLE
-        NetworkController.getProblems(1)
+        NetworkControllerProblem.getProblems(1)
         return view
     }
 
     override fun onItemClick(pos: Int) {
-        toast("собака")
+        toast(problems[pos].deal.toString())
     }
 
     override fun resultProblemList(listProblems: List<MyProblem>, result: Boolean, count: Int) {
+        problems = listProblems
         TOTAL_PAGES = if (count % 20 == 0) {
             count / 20
         } else {
@@ -110,10 +112,10 @@ class ProblemsFragment : Fragment(), NetworkController.ProblemListCallback, Prob
     }
 
     private fun loadNextPage() {
-        NetworkController.paginationProblem(currentPage)
+        NetworkControllerProblem.paginationProblem(currentPage)
     }
 
-        fun updateList() {
+    fun updateList() {
         currentPage = 1
         isLastPage = false
         adapter = ProblemAdapter(emptyList, this)

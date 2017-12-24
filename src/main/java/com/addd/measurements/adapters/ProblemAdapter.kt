@@ -34,9 +34,9 @@ class ProblemAdapter(notesList: ArrayList<MyProblem>, private val listener: Cust
                 viewHolder.headerText.text = problem.title
                 viewHolder.addressText.text = problem.address ?: MyApp.instance.getString(R.string.address_not_set)
                 if (problem.status == 0) {
-                    viewHolder.imageView.setImageResource(R.drawable.clock)
+                    viewHolder.imageView.setImageResource(R.drawable.ic_access_time_black_24dp)
                 } else {
-                    viewHolder.imageView.setImageResource(R.drawable.check_mark_black)
+                    viewHolder.imageView.setImageResource(R.drawable.ic_check_black_24dp)
                 }
             }
             LOADING -> {

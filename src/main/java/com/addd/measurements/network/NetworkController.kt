@@ -29,10 +29,7 @@ object NetworkController {
     var responsible: ResponsibleCallback? = null
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
-    var problemCallback: ProblemCallback? = null
     var callbackPaginationListMeasurements: PaginationCallback? = null
-    var problemListCallback: ProblemListCallback? = null
-    var problemPaginationResultCallback: ProblemPaginationList? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
 
@@ -59,8 +56,8 @@ object NetworkController {
         this.date = date
         status = "current"
         val call = api.getCurrentMeasurement(date, 1)
-        call.enqueue(object : retrofit2.Callback<MyResult> {
-            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+        call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
+            override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
                     if (nameSave != null) {
@@ -70,7 +67,7 @@ object NetworkController {
                 }
             }
 
-            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+            override fun onFailure(call: Call<MyResultMeasurements>?, t: Throwable?) {
                 listMeasurements = if (nameSave != null) {
                     loadSharedPreferencesList(nameSave)
                 } else {
@@ -86,8 +83,8 @@ object NetworkController {
         this.date = date
         status = "rejected"
         val call = api.getRejectedMeasurement(date, 1)
-        call.enqueue(object : retrofit2.Callback<MyResult> {
-            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+        call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
+            override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
                     if (nameSave != null) {
@@ -98,7 +95,7 @@ object NetworkController {
                 }
             }
 
-            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+            override fun onFailure(call: Call<MyResultMeasurements>?, t: Throwable?) {
                 listMeasurements = if (nameSave != null) {
                     loadSharedPreferencesList(nameSave)
                 } else {
@@ -113,8 +110,8 @@ object NetworkController {
         status = "closed"
         this.date = date
         val call = api.getClosedMeasurement(date, 1)
-        call.enqueue(object : retrofit2.Callback<MyResult> {
-            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+        call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
+            override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
                     if (nameSave != null) {
@@ -125,7 +122,7 @@ object NetworkController {
                 }
             }
 
-            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+            override fun onFailure(call: Call<MyResultMeasurements>?, t: Throwable?) {
                 listMeasurements = if (nameSave != null) {
                     loadSharedPreferencesList(nameSave)
                 } else {
@@ -259,8 +256,8 @@ object NetworkController {
 
     private fun paginationCurrentRequest(page: Int, name: String?) {
         val call = api.getCurrentMeasurement(date, page)
-        call.enqueue(object : retrofit2.Callback<MyResult> {
-            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+        call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
+            override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
                     if (name != null) {
@@ -272,7 +269,7 @@ object NetworkController {
                 }
             }
 
-            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+            override fun onFailure(call: Call<MyResultMeasurements>?, t: Throwable?) {
                 callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
             }
 
@@ -281,8 +278,8 @@ object NetworkController {
 
     private fun paginationRejectRequest(page: Int, name: String?) {
         val call = api.getRejectedMeasurement(date, page)
-        call.enqueue(object : retrofit2.Callback<MyResult> {
-            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+        call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
+            override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
                     if (name != null) {
@@ -294,7 +291,7 @@ object NetworkController {
                 }
             }
 
-            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+            override fun onFailure(call: Call<MyResultMeasurements>?, t: Throwable?) {
                 callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
             }
 
@@ -303,8 +300,8 @@ object NetworkController {
 
     private fun paginationCloseRequest(page: Int, name: String?) {
         val call = api.getClosedMeasurement(date, page)
-        call.enqueue(object : retrofit2.Callback<MyResult> {
-            override fun onResponse(call: Call<MyResult>?, response: Response<MyResult>?) {
+        call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
+            override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
                     listMeasurements = response.body().results!!
                     if (name != null) {
@@ -316,7 +313,7 @@ object NetworkController {
                 }
             }
 
-            override fun onFailure(call: Call<MyResult>?, t: Throwable?) {
+            override fun onFailure(call: Call<MyResultMeasurements>?, t: Throwable?) {
                 callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
             }
 
@@ -359,54 +356,6 @@ object NetworkController {
         })
     }
 
-    fun addProblem(problem: Problem, id: String) {
-        val call = api.addProblem(problem, id)
-        call.enqueue(object : retrofit2.Callback<Void> {
-            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-                if (response?.code() == 200) {
-                    problemCallback?.resultClose(true)
-                }
-            }
-
-            override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                problemCallback?.resultClose(false)
-            }
-        })
-    }
-
-    fun getProblems(page: Int) {
-        val call = api.getProblems(page)
-        call.enqueue(object : retrofit2.Callback<MyResultProblem> {
-            override fun onResponse(call: Call<MyResultProblem>?, response: Response<MyResultProblem>?) {
-                if (response?.code() == 200) {
-
-                    problemListCallback?.resultProblemList(response.body()?.results ?: emptyList(), true,response.body().count ?: 1)
-
-                }
-            }
-
-            override fun onFailure(call: Call<MyResultProblem>?, t: Throwable?) {
-                problemListCallback?.resultProblemList(emptyList(), false,1)
-            }
-        })
-    }
-
-    fun paginationProblem(page: Int) {
-        val call = api.getProblems(page)
-        call.enqueue(object : retrofit2.Callback<MyResultProblem> {
-            override fun onResponse(call: Call<MyResultProblem>?, response: Response<MyResultProblem>?) {
-                if (response?.code() == 200) {
-
-                    problemPaginationResultCallback?.problemPaginationResult(response.body()?.results ?: emptyList(), true)
-
-                }
-            }
-
-            override fun onFailure(call: Call<MyResultProblem>?, t: Throwable?) {
-                problemPaginationResultCallback?.problemPaginationResult(emptyList(), false)
-            }
-        })
-    }
 //----------------------------------внутренние функции класса------------------------------------------
 
     private fun saveMeasurementsList(list: List<Measurement>, name: String) {
@@ -538,14 +487,6 @@ object NetworkController {
         NetworkController.closeCallback = callback
     }
 
-    interface ProblemCallback {
-        fun resultClose(result: Boolean)
-    }
-
-    fun registerProblemCallback(callback: ProblemCallback?) {
-        NetworkController.problemCallback = callback
-    }
-
     interface PaginationCallback {
         fun resultPaginationClose(listMeasurements: List<Measurement>, result: Int)
     }
@@ -554,20 +495,4 @@ object NetworkController {
         NetworkController.callbackPaginationListMeasurements = callback
     }
 
-    interface ProblemListCallback {
-        fun resultProblemList(listMeasurements: List<MyProblem>,result: Boolean, count: Int)
-    }
-
-    fun registerProblemListCallback(callback: ProblemListCallback?) {
-        NetworkController.problemListCallback = callback
-    }
-
-    interface ProblemPaginationList {
-        fun problemPaginationResult(list: List<MyProblem>, result: Boolean)
-    }
-
-    fun registerProblemPagination(callback: ProblemPaginationList) {
-        NetworkController.problemPaginationResultCallback = callback
-
-    }
 }

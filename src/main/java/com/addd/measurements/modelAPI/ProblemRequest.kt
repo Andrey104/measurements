@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by addd on 20.12.2017.
  */
-class Problem(
+class ProblemRequest(
         @SerializedName("title")
         @Expose
         var title: String,
