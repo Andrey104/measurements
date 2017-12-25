@@ -190,7 +190,15 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             }
         }
         val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
+        if (this.arguments.getInt(CHECK) == STATUS_CURRENT) {
+            toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
+        }
+        if (this.arguments.getInt(CHECK) == STATUS_REJECT) {
+            toolbar?.title = "Отклоненные"
+        }
+        if (this.arguments.getInt(CHECK) == STATUS_CLOSE) {
+            toolbar?.title = "Закрытые"
+        }
         adapter = DataAdapter(listMeasurements as ArrayList, this)
         recyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

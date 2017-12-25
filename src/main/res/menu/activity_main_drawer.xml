@@ -22,10 +22,25 @@
         </menu>
 
     </item>
-    <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/nav_myObjects"
-            android:title="Мои объекты" />
+            android:id="@+id/uncheckableDeal"
+            android:title="Мои объекты">
+            <menu>
+                <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_currentDeal"
+                    android:title="Текущие" />
+                <item
+                    android:id="@+id/nav_rejectDeal"
+                    android:title="Отклоненные" />
+                <item
+                    android:id="@+id/nav_closeDeal"
+                    android:title="Закрытые" />
+                </group>
+            </menu>
+        </item>
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_problems"
             android:title="Проблемы" />

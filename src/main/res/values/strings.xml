@@ -94,4 +94,5 @@
         <item>декабря</item>
     </string-array>
     <string name="title_activity_one_problem">OneProblemActivity</string>
+    <string name="goto_deal">Перейти к сделке</string>
 </resources>

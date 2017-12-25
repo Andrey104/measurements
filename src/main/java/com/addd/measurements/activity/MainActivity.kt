@@ -17,7 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.addd.measurements.*
 import com.addd.measurements.fragments.MeasurementsFragment
-import com.addd.measurements.fragments.MyObjectsFragment
+import com.addd.measurements.fragments.DealFragment
 import com.addd.measurements.fragments.ProblemsFragment
 import com.addd.measurements.modelAPI.User
 import com.addd.measurements.network.NetworkController
@@ -110,9 +110,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 bundle.putInt(CHECK, STATUS_CLOSE)
                 changeFragment(fragment, item, bundle)
             }
-            R.id.nav_myObjects -> {
-                val fragment = MyObjectsFragment()
-                changeFragment(fragment, item, null)
+            R.id.nav_currentDeal -> {
+                val fragment = DealFragment()
+                bundle.putInt(CHECK, STATUS_CURRENT)
+                changeFragment(fragment, item, bundle)
+            }
+            R.id.nav_rejectDeal -> {
+                val fragment = DealFragment()
+                bundle.putInt(CHECK, STATUS_REJECT)
+                changeFragment(fragment, item, bundle)
+            }
+            R.id.nav_closeDeal -> {
+                val fragment = DealFragment()
+                bundle.putInt(CHECK, STATUS_CLOSE)
+                changeFragment(fragment, item, bundle)
             }
             R.id.nav_problems -> {
                 val fragment = ProblemsFragment()

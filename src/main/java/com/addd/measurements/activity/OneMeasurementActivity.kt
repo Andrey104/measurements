@@ -130,7 +130,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             2, 3 -> {
                 textViewStatus.text = getString(R.string.measurement_closed)
                 selectColorVersion(textViewStatus, R.color.red)
-                status = 1
+                status = 2
             }
             4 -> {
                 textViewStatus.text = getString(R.string.measurement_reject)
@@ -157,6 +157,13 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             popupMenu.menu.findItem(R.id.shift).isVisible = false
             popupMenu.menu.findItem(R.id.reject).isVisible = false
         }
+        if (status == 2) {
+            popupMenu.menu.findItem(R.id.complete).isVisible = false
+            popupMenu.menu.findItem(R.id.shift).isVisible = false
+            popupMenu.menu.findItem(R.id.reject).isVisible = false
+            popupMenu.menu.findItem(R.id.deal).isVisible = true
+        }
+
 
         // для отображения иконок
         try {
@@ -196,6 +203,10 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                     val intent = Intent(applicationContext, ProblemActivity::class.java)
                     intent.putExtra(intentDealKey, measurement.deal.toString())
                     startActivityForResult(intent, 0)
+                    true
+                }
+                R.id.deal -> {
+                    Toast.makeText(applicationContext, "Собака", Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false
