@@ -1,6 +1,7 @@
 package com.addd.measurements.adapters
 
 import android.os.Build
+import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +22,9 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
         holder.name.text = mCommentsList[position].user
         if (mCommentsList[position].user == "admin") {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                holder.name.setTextColor(MyApp.instance.resources.getColor(R.color.red, MyApp.instance.theme))
+                holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin, MyApp.instance.theme))
             } else {
-                holder.name.setTextColor(MyApp.instance.resources.getColor(R.color.red))
+                holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin))
             }
         }
         holder.date.text = mCommentsList[position].date
@@ -49,11 +50,13 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
         var name: TextView
         var date: TextView
         var text: TextView
+        var constraintLayout: ConstraintLayout
 
         init {
             date =itemView.findViewById(R.id.dateComment)
             name = itemView.findViewById(R.id.nameComment)
             text = itemView.findViewById(R.id.textComment)
+            constraintLayout = itemView.findViewById(R.id.constraintLayout)
         }
 
 
