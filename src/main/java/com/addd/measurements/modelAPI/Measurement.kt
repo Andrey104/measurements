@@ -43,7 +43,7 @@ class Measurement(
         val deal: Int? = null,
         @SerializedName("pictures")
         @Expose
-        val pictures: List<Any>? = null,
+        val pictures: List<Picture>? = null,
         @SerializedName("color")
         @Expose
         val color: Int? = null,

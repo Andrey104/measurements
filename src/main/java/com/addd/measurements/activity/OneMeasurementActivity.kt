@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.TypedValue
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -54,6 +55,15 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.images) {
+            val intent = Intent(applicationContext, ImagesActivity::class.java)
+            val json = gson.toJson(measurement)
+            intent.putExtra("measurement", json)
+            startActivity(intent)
+        }
+        return true
+    }
 
     private fun getSavedMeasurement(): Measurement {
         if (intent != null && intent.hasExtra("measurement")) {

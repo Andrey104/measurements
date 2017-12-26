@@ -1,6 +1,8 @@
 package com.addd.measurements.network
 
 import com.addd.measurements.modelAPI.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -48,4 +50,7 @@ interface MeasurementsAPI {
     @GET("discussions/{id}")
     fun getProblems(@Path("id") id: String): Call<MyProblem>
 
+    @Multipart
+    @POST("measurements/{id}/image_upload/")
+    fun addPicture(@Part file: MultipartBody.Part, @Path("id") id: String): Call<Void>
 }

@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".MyApp"
@@ -49,7 +50,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.OneProblemActivity"
-            android:label="@string/title_activity_one_problem"/>
+            android:label="@string/title_activity_one_problem" />
+        <activity android:name=".activity.ImagesActivity" />
+        <activity android:name=".activity.OnePhotoActivity"></activity>
     </application>
 
 </manifest>
