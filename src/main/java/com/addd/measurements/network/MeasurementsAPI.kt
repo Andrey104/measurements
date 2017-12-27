@@ -52,5 +52,5 @@ interface MeasurementsAPI {
 
     @Multipart
     @POST("measurements/{id}/image_upload/")
-    fun addPicture(@Part file: MultipartBody.Part, @Path("id") id: String): Call<Void>
+    fun addPicture(@Path("id") id: String, @Part file : MultipartBody.Part ) : Call<Void>
 }
