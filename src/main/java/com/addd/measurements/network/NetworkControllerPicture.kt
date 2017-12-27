@@ -3,7 +3,6 @@ package com.addd.measurements.network
 import android.content.Context
 import android.net.Uri
 import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.addd.measurements.MyApp
 import com.addd.measurements.modelAPI.Measurement
@@ -21,6 +20,7 @@ import java.io.File
  */
 object NetworkControllerPicture {
     var callbackPictureAdd : PictureCallback? = null
+    var updatePicturesOneMeasurement: UpdatePicturesCallback? = null
     private val BASE_URL = "http://188.225.46.31/api/"
     private val api: MeasurementsAPI by lazy { init(MyApp.instance) }
     private fun init(context: Context): MeasurementsAPI {
@@ -43,7 +43,7 @@ object NetworkControllerPicture {
         val path = fileUri?.path
         val newPath = path?.slice(5 until path.length)
         val file = File(newPath)
-        Toast.makeText(MyApp.instance, file.name, Toast.LENGTH_LONG).show()
+        Toast.makeText(MyApp.instance, file.path, Toast.LENGTH_LONG).show()
 
         val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
         val body = MultipartBody.Part.createFormData("url", file.name, requestFile)
@@ -63,11 +63,39 @@ object NetworkControllerPicture {
 
     }
 
+    fun getOneMeasurement(id: String) {
+        val call = api.getOneMeasurement(id)
+        call.enqueue(object : retrofit2.Callback<Measurement> {
+            override fun onResponse(call: Call<Measurement>?, response: Response<Measurement>?) {
+                var measurement: Measurement? = null
+                response?.body().let {
+                    if (response?.code() == 200) {
+                        measurement = response.body()
+                    }
+                    updatePicturesOneMeasurement?.resultUpdate(measurement)
+                }
+            }
+
+            override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
+                updatePicturesOneMeasurement?.resultUpdate(null)
+            }
+
+        })
+    }
+
     interface PictureCallback {
         fun resultPictureAdd(result: Boolean)
     }
 
     fun registerPictureCallback(callback:PictureCallback?) {
         callbackPictureAdd = callback
+    }
+
+    interface UpdatePicturesCallback {
+        fun resultUpdate(measurement: Measurement?)
+    }
+
+    fun registerUpdateCallback(picturesCallback: UpdatePicturesCallback?) {
+        updatePicturesOneMeasurement = picturesCallback
     }
 }

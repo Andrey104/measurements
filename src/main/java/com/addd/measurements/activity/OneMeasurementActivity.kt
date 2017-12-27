@@ -60,7 +60,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             val intent = Intent(applicationContext, ImagesActivity::class.java)
             val json = gson.toJson(measurement)
             intent.putExtra("measurement", json)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
         }
         return true
     }
@@ -236,6 +236,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     override fun resultUpdate(measurement: Measurement?) {
         if (measurement != null) {
+            this.measurement = measurement
             displayMeasurement(measurement)
         } else {
             Toast.makeText(applicationContext, getString(R.string.update_error), Toast.LENGTH_SHORT).show()

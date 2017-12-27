@@ -15,13 +15,12 @@ import com.addd.measurements.adapters.ImageGalleryAdapter
 import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.MeasurementPhoto
-import com.addd.measurements.network.NetworkController
 import com.addd.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_images.*
 
 
-class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCallback, NetworkController.CallbackUpdateOneMeasurement{
+class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCallback, NetworkControllerPicture.UpdatePicturesCallback {
     private val PERMISSIONS_STORAGE = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val BASE_URL = "http://188.225.46.31/"
@@ -32,13 +31,13 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerPicture.registerPictureCallback(this)
+       NetworkControllerPicture.registerUpdateCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_images)
         getSavedMeasurement()
 
         val layoutManager = GridLayoutManager(this, 2)
-        val recyclerView = rv_images
-        recyclerPhotoList = recyclerView
+        recyclerPhotoList = rv_images
         recyclerPhotoList.setHasFixedSize(true)
         recyclerPhotoList.layoutManager = layoutManager
 
@@ -66,6 +65,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
     private fun displayPictures(recyclerView: RecyclerView) {
         if (measurement.pictures != null) {
+            arrayPhoto = ArrayList<MeasurementPhoto>()
             for (photo in measurement.pictures!!) {
                 arrayPhoto.add(MeasurementPhoto(BASE_URL + photo.url!!, photo.id.toString()!!))
             }
@@ -73,6 +73,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
         val adapter = ImageGalleryAdapter(this, arrayPhoto)
         recyclerView.adapter = adapter
+        recyclerView.adapter.notifyDataSetChanged()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -98,16 +99,15 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     override fun resultPictureAdd(result: Boolean) {
         if (result) {
             Toast.makeText(applicationContext, "Фотография добавлена", Toast.LENGTH_SHORT).show()
-            NetworkController.getOneMeasurement(measurement.id.toString())
+            NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
+            setResult(200)
         } else {
             Toast.makeText(applicationContext, "При загрузке произошла ошибка", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun resultUpdate(measurement: Measurement?) {
-        if (measurement != null) {
-            this.measurement = measurement
+            this.measurement = measurement!!
             displayPictures(recyclerPhotoList)
-        }
     }
 }
