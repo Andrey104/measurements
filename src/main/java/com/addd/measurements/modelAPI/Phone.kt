@@ -11,9 +11,6 @@ class Phone(
         @SerializedName("id")
         @Expose
         val id: Int? = null,
-        @SerializedName("client")
-        @Expose
-        val client: Int? = null,
         @SerializedName("number")
         @Expose
         val number: String? = null,

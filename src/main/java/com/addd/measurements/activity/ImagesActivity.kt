@@ -18,6 +18,7 @@ import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.addd.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_images.*
+import java.io.File
 
 
 class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCallback, NetworkControllerPicture.UpdatePicturesCallback {
@@ -67,6 +68,8 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         if (measurement.pictures != null) {
             arrayPhoto = ArrayList<MeasurementPhoto>()
             for (photo in measurement.pictures!!) {
+                val photoUrl = photo.url
+//                photoUrl?.startsWith("media" true)
                 arrayPhoto.add(MeasurementPhoto(BASE_URL + photo.url!!, photo.id.toString()!!))
             }
         }
@@ -80,6 +83,8 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
             NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
+//            val file = File(uri?.path)
+//            Toast.makeText(applicationContext, file.path, Toast.LENGTH_SHORT).show()
         }
     }
 

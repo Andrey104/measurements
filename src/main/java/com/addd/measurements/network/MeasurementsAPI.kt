@@ -53,4 +53,13 @@ interface MeasurementsAPI {
     @Multipart
     @POST("measurements/{id}/image_upload/")
     fun addPicture(@Path("id") id: String, @Part file : MultipartBody.Part ) : Call<Void>
+
+//    @GET("measurements/current")
+//    fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
+//
+//    @GET("measurements/rejected")
+//    fun getRejectedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
+//
+//    @GET("measurements/closed")
+//    fun getClosedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
 }

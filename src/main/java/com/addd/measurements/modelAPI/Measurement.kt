@@ -64,5 +64,11 @@ class Measurement(
         val actions: List<Any>? = null,
         @SerializedName("company")
         @Expose
-        val company: Company? = null
+        val company: Company? = null,
+        @SerializedName("non_cash")
+        @Expose
+        val nonCash: Boolean? = null,
+        @SerializedName("transfers")
+        @Expose
+        val transfers: List<TransferGet>? = null
 )

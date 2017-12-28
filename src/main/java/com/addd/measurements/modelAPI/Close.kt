@@ -21,6 +21,9 @@ class Close(
         var contract: Boolean,
         @SerializedName("mount_date")
         @Expose
-        var mountDate: String?
+        var mountDate: String?,
+        @SerializedName("non_cash")
+        @Expose
+        var nonCash: Boolean?
 
 )

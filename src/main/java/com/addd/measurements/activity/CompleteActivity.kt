@@ -71,7 +71,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
         val close = Close(editTextComment.text.toString(),
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
-                sum, checkBoxOffer.isChecked, serverDate)
+                sum, checkBoxOffer.isChecked, serverDate,checkBoxCash.isChecked)
         showDialog()
         NetworkController.closeMeasurement(close, id)
         return true

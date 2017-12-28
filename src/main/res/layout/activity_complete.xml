@@ -33,6 +33,13 @@
         android:layout_marginTop="5dp"
         android:text="@string/offer_concluded" />
 
+    <CheckBox
+        android:id="@+id/checkBoxCash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text="Безналичная оплата" />
+
     <EditText
         android:id="@+id/editTextSum"
         android:layout_width="match_parent"
