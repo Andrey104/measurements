@@ -17,7 +17,6 @@
     <string name="action_settings">Settings</string>
     <string name="my_settings">mySettings</string>
     <string name="token">token</string>
-    <string name="measurements">Замеры</string>
     <string name="title_activity_one_measurement">OneMeasurementActivity</string>
     <string name="user_info">userInfo</string>
     <string name="load">Идет загрузка..</string>
@@ -43,6 +42,7 @@
     <string name="sum">Сумма</string>
     <string name="new_problem">Новая проблема</string>
     <string name="id">id</string>
+    <string name="okay">OK</string>
     <string name="deal">deal</string>
     <string name="enter_sum_comment">Введите сумму и комментарий</string>
     <string name="enter_sum">Введите сумму</string>
@@ -70,7 +70,7 @@
     <string name="transfer_error">При переносе произошла ошибка</string>
     <string name="no_save_data">Нет сохраненных данных на заданную дату, проверьте подключение к интернету</string>
     <string name="nothing_show">По данному запросу ничего не найдено</string>
-    <string name="no_internet">Отсутствует связь с ИНТЕРНЕТ! Данные загружены из локального хранилища</string>
+    <string name="no_internet">Нет доступа к интернету! Данные загружены из локального хранилища</string>
     <string name="problem_added">Проблема добавлена</string>
     <string name="error">Произошла ошибка</string>
     <string name="enter_header_description">Введите заголовок и описание проблемы</string>
@@ -95,4 +95,29 @@
     </string-array>
     <string name="title_activity_one_problem">OneProblemActivity</string>
     <string name="goto_deal">Перейти к сделке</string>
+    <string name="photo_added">Фотография добавлена</string>
+    <string name="error_add_photo">При загрузке произошла ошибка</string>
+    <string name="expect_answer">Ожидает ответа</string>
+    <string name="thereis_answer">Ответ есть</string>
+    <string name="comment_added">Комментарий добавлен</string>
+    <string name="error_add_comment">При добавлении комментария произошла ошибка</string>
+    <string name="become_response">Стать ответственным?</string>
+    <string name="textview">TextView</string>
+    <string name="non_cash">Безналичная оплата</string>
+    <string name="prepayment">Предоплата</string>
+    <string name="date_mount">Дата монтажа:</string>
+    <string name="ok">ОК</string>
+    <string name="measurements">Замеры</string>
+    <string name="current">Текущие</string>
+    <string name="rejected">Отклоненные</string>
+    <string name="closed">Закрытые</string>
+    <string name="my_objects">Мои объекты</string>
+    <string name="exit_from_account">Выйти из аккаунта</string>
+    <string name="header">Заголовок</string>
+    <string name="description">Описание</string>
+    <string name="photo">Фото</string>
+    <string name="name_first_last">Имя Фамилия</string>
+    <string name="all">ВСЕ</string>
+    <string name="enter_comment_sym">Введите комментарий:</string>
+    <string name="update_data">Обновление данных</string>
 </resources>

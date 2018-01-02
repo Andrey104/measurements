@@ -13,10 +13,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
-import com.addd.measurements.R
+import com.addd.measurements.*
 import com.addd.measurements.adapters.ClientAdapter
-import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import com.google.gson.reflect.TypeToken
@@ -28,13 +26,11 @@ import java.util.*
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement {
     lateinit var measurement: Measurement
     private lateinit var alert: AlertDialog
-    private lateinit var intentIdKey: String
-    private lateinit var intentDealKey: String
     private var status: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        intentDealKey = getString(R.string.deal)
-        intentIdKey = getString(R.string.id)
+        NetworkController.registerUpdateOneMeasurementCallback(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_measurement)
         setSupportActionBar(toolbarAst)
@@ -59,22 +55,20 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         if (item?.itemId == R.id.images) {
             val intent = Intent(applicationContext, ImagesActivity::class.java)
             val json = gson.toJson(measurement)
-            intent.putExtra("measurement", json)
+            intent.putExtra(MEASUREMENT_KEY, json)
             startActivityForResult(intent, 1)
         }
         return true
     }
 
     private fun getSavedMeasurement(): Measurement {
-        if (intent != null && intent.hasExtra("measurement")) {
-            val json = intent.getStringExtra("measurement")
-            if (json.isEmpty()) {
-                measurement = Measurement()
-            } else {
-                val type = object : TypeToken<Measurement>() {
-                }.type
-                measurement = gson.fromJson(json, type)
-            }
+        val json = intent?.getStringExtra(MEASUREMENT_KEY)
+        measurement = if (json?.isEmpty() != false) {
+            Measurement()
+        } else {
+            val type = object : TypeToken<Measurement>() {
+            }.type
+            gson.fromJson(json, type)
         }
         return measurement
     }
@@ -192,31 +186,31 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             when (item.itemId) {
                 R.id.complete -> {
                     val intent = Intent(applicationContext, CompleteActivity::class.java)
-                    intent.putExtra(intentIdKey, measurement.id.toString())
-                    intent.putExtra(intentDealKey, measurement.deal)
+                    intent.putExtra(ID_KEY, measurement.id.toString())
+                    intent.putExtra(DEAL_KEY, measurement.deal)
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.shift -> {
                     val intent = Intent(applicationContext, TransferActivity::class.java)
-                    intent.putExtra(intentIdKey, measurement.id.toString())
+                    intent.putExtra(ID_KEY, measurement.id.toString())
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.reject -> {
                     val intent = Intent(applicationContext, RejectActivity::class.java)
-                    intent.putExtra(intentIdKey, measurement.id.toString())
+                    intent.putExtra(ID_KEY, measurement.id.toString())
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.problem -> {
                     val intent = Intent(applicationContext, ProblemActivity::class.java)
-                    intent.putExtra(intentDealKey, measurement.deal.toString())
+                    intent.putExtra(DEAL_KEY, measurement.deal.toString())
                     startActivityForResult(intent, 0)
                     true
                 }
                 R.id.deal -> {
-                    Toast.makeText(applicationContext, "Собака", Toast.LENGTH_SHORT).show()
+                    toast("Собака")
                     true
                 }
                 else -> false
@@ -239,18 +233,13 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             this.measurement = measurement
             displayMeasurement(measurement)
         } else {
-            Toast.makeText(applicationContext, getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+           toast(R.string.update_error)
         }
         alert.dismiss()
     }
 
-    override fun onResume() {
-        NetworkController.registerUpdateOneMeasurementCallback(this)
-        super.onResume()
-    }
-
-    override fun onStop() {
+    override fun onDestroy() {
         NetworkController.registerUpdateOneMeasurementCallback(null)
-        super.onStop()
+        super.onDestroy()
     }
 }

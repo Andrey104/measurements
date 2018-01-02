@@ -18,7 +18,6 @@ class MyApp : Application() {
 
     companion object {
         lateinit var instance: Context
-            get
             private set
     }
 }

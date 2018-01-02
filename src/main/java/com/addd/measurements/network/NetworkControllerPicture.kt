@@ -35,8 +35,7 @@ object NetworkControllerPicture {
 
         okHttpClient.networkInterceptors().add(interceptor)
         val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())).client(okHttpClient.build()).build()
-        val api = retrofit.create(MeasurementsAPI::class.java)
-        return api
+        return retrofit.create(MeasurementsAPI::class.java)
     }
 
     fun addPicture(id: String, fileUri: Uri?) {

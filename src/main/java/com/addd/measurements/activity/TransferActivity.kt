@@ -5,33 +5,33 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.RadioButton
-import android.widget.Toast
+import com.addd.measurements.ID_KEY
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Transfer
 import com.addd.measurements.network.NetworkController
+import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.activity_transfer.*
 import java.util.*
 
 
 class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurementCallback {
     private lateinit var id: String
-    lateinit var alert: AlertDialog
+    private lateinit var alert: AlertDialog
     private var date: String? = null
     private var userDate: String? = null
     private var cause: Int? = null
     private var months = emptyArray<String>()
-    private lateinit var intentIdKey: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        NetworkController.registerTransferMeasurementCallback(this)
         months = resources.getStringArray(R.array.months)
-        intentIdKey = getString(R.string.id)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transfer)
-        if (intent != null && intent.hasExtra(intentIdKey)) {
-            id = intent.getStringExtra(intentIdKey)
-        }
+
+        id = intent?.getStringExtra(ID_KEY) ?: "0"
+
         dateButton.setOnClickListener { datePick() }
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doTransferRequest() }
@@ -40,13 +40,13 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
     private fun doTransferRequest(): Boolean {
         val check = radioGroup.checkedRadioButtonId
         if (check == -1 && date == null) {
-            Toast.makeText(this, getString(R.string.select_date_cause), Toast.LENGTH_SHORT).show()
+            toast(R.string.select_date_cause)
             return false
         } else if (date == null) {
-            Toast.makeText(this, getString(R.string.select_date), Toast.LENGTH_SHORT).show()
+            toast(R.string.select_date)
             return false
         } else if (check == -1) {
-            Toast.makeText(this, getString(R.string.select_cause), Toast.LENGTH_SHORT).show()
+            toast(R.string.select_cause)
             return false
         }
 
@@ -81,10 +81,6 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
 
     }
 
-    override fun onResume() {
-        NetworkController.registerTransferMeasurementCallback(this)
-        super.onResume()
-    }
 
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
@@ -95,20 +91,20 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         alert.show()
     }
 
-    override fun resultTransfer(result : Boolean) {
+    override fun resultTransfer(result: Boolean) {
         if (result) {
             alert.dismiss()
             setResult(200)
-            Toast.makeText(applicationContext, "Замер перенесен на $userDate", Toast.LENGTH_SHORT).show()
+            toast("Замер перенесен на $userDate")
             finish()
         } else {
             alert.dismiss()
-            Toast.makeText(applicationContext, getString(R.string.transfer_error), Toast.LENGTH_SHORT).show()
+            toast(R.string.transfer_error)
         }
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         NetworkController.registerTransferMeasurementCallback(null)
-        super.onStop()
+        super.onDestroy()
     }
 }

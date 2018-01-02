@@ -5,38 +5,33 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.RadioButton
-import android.widget.Toast
+import com.addd.measurements.ID_KEY
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Reject
 import com.addd.measurements.network.NetworkController
+import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.activity_reject.*
 
 class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
     private var cause: Int = 0
     private lateinit var id: String
     private lateinit var alert: AlertDialog
-    private lateinit var intentIdKey: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        intentIdKey = getString(R.string.id)
+        NetworkController.registerRejectCallback(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reject)
-        if (intent != null && intent.hasExtra(intentIdKey)) {
-            id = intent.getStringExtra(intentIdKey)
-        }
+
+        id = intent?.getStringExtra(ID_KEY) ?: "0"
+
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doRejectRequest() }
     }
 
-    override fun onResume() {
-        NetworkController.registerRejectCallback(this)
-        super.onResume()
-    }
-
     private fun doRejectRequest(): Boolean {
-        val check = radioGroupReject.checkedRadioButtonId
-        if (check == -1) {
-            Toast.makeText(this, getString(R.string.select_cause), Toast.LENGTH_SHORT).show()
+        if (radioGroupReject.checkedRadioButtonId == -1) {
+            toast(R.string.select_cause)
             return false
         }
         val comment = editComment.text.toString()
@@ -63,9 +58,9 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
         }
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         NetworkController.registerRejectCallback(null)
-        super.onStop()
+        super.onDestroy()
     }
 
     private fun showDialog() {
@@ -79,12 +74,12 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
 
     override fun resultReject(result: Boolean) {
         if (result) {
-            Toast.makeText(this, getString(R.string.measurement_reject), Toast.LENGTH_SHORT).show()
+            toast(R.string.measurement_reject)
             setResult(200)
             alert.dismiss()
             finish()
         } else {
-            Toast.makeText(this, getString(R.string.error_measurement_reject), Toast.LENGTH_SHORT).show()
+            toast(R.string.error_measurement_reject)
             alert.dismiss()
         }
     }

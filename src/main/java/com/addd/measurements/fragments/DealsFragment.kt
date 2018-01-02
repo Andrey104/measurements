@@ -7,13 +7,9 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.addd.measurements.*
-import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.adapters.DealAdapter
 import com.addd.measurements.modelAPI.Deal
-import com.addd.measurements.network.NetworkController
-import kotlinx.android.synthetic.main.measurements_fragment.*
 
 
 /**

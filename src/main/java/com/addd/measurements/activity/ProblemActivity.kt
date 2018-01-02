@@ -2,21 +2,14 @@ package com.addd.measurements.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import com.addd.measurements.DEAL_KEY
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.ProblemRequest
 import com.addd.measurements.network.NetworkControllerProblem
+import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.activity_problem.*
 
-class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblemCallback{
-    override fun resultAddProblem(result: Boolean) {
-        if (result) {
-            Toast.makeText(this, getString(R.string.problem_added), Toast.LENGTH_SHORT).show()
-            finish()
-        } else {
-            Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show()
-        }
-    }
+class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblemCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerProblem.registerAddProblemCallback(this)
@@ -28,19 +21,28 @@ class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblem
 
     private fun doAddProblemRequest(): Boolean {
         if (editTextHeader.text.isEmpty() && editTextDescription.text.isEmpty()) {
-            Toast.makeText(this, getString(R.string.enter_header_description), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_header_description)
             return false
         } else if (editTextHeader.text.isEmpty()) {
-            Toast.makeText(this, getString(R.string.enter_string), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_string)
             return false
         } else if (editTextDescription.text.isEmpty()) {
-            Toast.makeText(this, getString(R.string.enter_description), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_description)
             return false
         }
         val problem = ProblemRequest(editTextHeader.text.toString(), editTextDescription.text.toString())
-        NetworkControllerProblem.addProblem(problem, intent.getStringExtra("deal"))
+        NetworkControllerProblem.addProblem(problem, intent?.getStringExtra(DEAL_KEY) ?: "0")
 
         return true
+    }
+
+    override fun resultAddProblem(result: Boolean) {
+        if (result) {
+            toast(R.string.problem_added)
+            finish()
+        } else {
+            toast(R.string.error)
+        }
     }
 
     override fun onResume() {

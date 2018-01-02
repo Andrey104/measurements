@@ -5,18 +5,18 @@
 
     <item
         android:id="@+id/uncheckableMes"
-        android:title="Замеры">
+        android:title="@string/measurements">
         <menu>
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_current"
-                    android:title="Текущие" />
+                    android:title="@string/current" />
                 <item
                     android:id="@+id/nav_rejected"
-                    android:title="Отклоненные" />
+                    android:title="@string/rejected" />
                 <item
                     android:id="@+id/nav_closed"
-                    android:title="Закрытые" />
+                    android:title="@string/closed" />
 
             </group>
         </menu>
@@ -25,27 +25,27 @@
 
         <item
             android:id="@+id/uncheckableDeal"
-            android:title="Мои объекты">
+            android:title="@string/my_objects">
             <menu>
                 <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_currentDeal"
-                    android:title="Текущие" />
+                    android:title="@string/current" />
                 <item
                     android:id="@+id/nav_rejectDeal"
-                    android:title="Отклоненные" />
+                    android:title="@string/rejected" />
                 <item
                     android:id="@+id/nav_closeDeal"
-                    android:title="Закрытые" />
+                    android:title="@string/closed" />
                 </group>
             </menu>
         </item>
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_problems"
-            android:title="Проблемы" />
+            android:title="@string/problems" />
         <item
             android:id="@+id/nav_exit"
-            android:title="Выйти из аккаунта" />
+            android:title="@string/exit_from_account" />
     </group>
 </menu>

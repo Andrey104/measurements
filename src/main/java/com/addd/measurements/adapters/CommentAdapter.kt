@@ -19,8 +19,8 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
     private var mCommentsList: List<Comment> = notesList
 
     override fun onBindViewHolder(holder: CommentAdapter.ViewHolder, position: Int) {
-        holder.name.text = mCommentsList[position].user
-        if (mCommentsList[position].user == "admin") {
+        holder.name.text = mCommentsList[position].user.toString()
+        if (mCommentsList[position].user == 5) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin, MyApp.instance.theme))
             } else {

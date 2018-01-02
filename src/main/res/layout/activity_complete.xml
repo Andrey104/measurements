@@ -22,8 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:text="TextView"
-        android:textSize="18dp" />
+        android:text="@string/textview"
+        android:textSize="18sp"
+        android:layout_marginStart="5dp" />
 
     <CheckBox
         android:id="@+id/checkBoxOffer"
@@ -31,14 +32,16 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:text="@string/offer_concluded" />
+        android:text="@string/offer_concluded"
+        android:layout_marginStart="5dp" />
 
     <CheckBox
         android:id="@+id/checkBoxCash"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:text="Безналичная оплата" />
+        android:text="@string/non_cash"
+        android:layout_marginStart="5dp" />
 
     <EditText
         android:id="@+id/editTextSum"
@@ -56,9 +59,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:layout_marginTop="5dp"
-        android:text="@string/comment" />
+        android:text="@string/comment"
+        android:layout_marginStart="5dp" />
 
     <EditText
         android:id="@+id/editTextComment"
@@ -68,7 +72,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="Введите комментарий"
+        android:hint="@string/enter_comment"
         android:inputType="textMultiLine" />
 
     <EditText
@@ -79,7 +83,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="Предоплата"
+        android:hint="@string/prepayment"
         android:inputType="numberDecimal" />
 
     <TextView
@@ -88,7 +92,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:text="Дата монтажа:" />
+        android:text="@string/date_mount"
+        android:layout_marginStart="5dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,7 +105,8 @@
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            app:srcCompat="@drawable/calendar" />
+            app:srcCompat="@drawable/calendar"
+            android:layout_marginStart="10dp" />
 
         <TextView
             android:id="@+id/textViewDate"
@@ -109,7 +115,8 @@
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:text="@string/select_date"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:layout_marginStart="10dp" />
 
     </LinearLayout>
     <LinearLayout
@@ -130,7 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="ОК" />
+            android:text="@string/ok" />
     </LinearLayout>
 
 </LinearLayout>

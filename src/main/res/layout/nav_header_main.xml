@@ -25,20 +25,15 @@
             app:srcCompat="@drawable/rectangle" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="     " />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:text="Замеры"
-            android:textSize="20dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:text="@string/measurements"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="20sp"
+            android:layout_marginStart="10dp" />
 
     </LinearLayout>
 
@@ -46,7 +41,7 @@
         android:id="@+id/textUserNameDrawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ss"
-        android:textSize="24dp" />
+        android:text="@string/name_first_last"
+        android:textSize="24sp" />
 
 </LinearLayout>

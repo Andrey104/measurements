@@ -22,15 +22,17 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:textSize="18dp"
-        android:text="@string/cause" />
+        android:textSize="18sp"
+        android:text="@string/cause"
+        android:layout_marginStart="10dp" />
 
     <RadioGroup
         android:layout_width="match_parent"
         android:id="@+id/radioGroupReject"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp">
 
         <RadioButton
             android:id="@+id/radioButtonAnother"
@@ -63,7 +65,7 @@
         android:layout_height="239dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="Введите комментарий"
+        android:hint="@string/enter_comment"
         android:inputType="textMultiLine" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -83,6 +85,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="ОК" />
+            android:text="@string/ok" />
     </LinearLayout>
 </LinearLayout>

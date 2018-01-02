@@ -1,7 +1,6 @@
 package com.addd.measurements.network
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.addd.measurements.MyApp
 import com.addd.measurements.modelAPI.Measurement
@@ -33,8 +32,7 @@ object NetworkControllerDeals {
 
         okHttpClient.networkInterceptors().add(interceptor)
         val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())).client(okHttpClient.build()).build()
-        val api = retrofit.create(MeasurementsAPI::class.java)
-        return api
+        return retrofit.create(MeasurementsAPI::class.java)
 
     }
 

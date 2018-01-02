@@ -37,8 +37,7 @@ object NetworkControllerProblem {
 
         okHttpClient.networkInterceptors().add(interceptor)
         val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())).client(okHttpClient.build()).build()
-        val api = retrofit.create(MeasurementsAPI::class.java)
-        return api
+        return retrofit.create(MeasurementsAPI::class.java)
     }
 
     fun addProblem(problem: ProblemRequest, id: String) {
@@ -62,7 +61,7 @@ object NetworkControllerProblem {
             override fun onResponse(call: Call<MyResultProblem>?, response: Response<MyResultProblem>?) {
                 if (response?.code() == 200) {
 
-                    problemListCallback?.resultProblemList(response.body()?.results ?: emptyList(), true,response.body().count ?: 1)
+                    problemListCallback?.resultProblemList(response.body()?.results ?: emptyList(), true,response.body()?.count ?: 1)
 
                 }
             }

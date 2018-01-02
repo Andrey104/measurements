@@ -21,7 +21,7 @@ class OnePhotoActivity : AppCompatActivity() {
         Glide.with(this)
                 .load(spacePhoto.getUrl())
                 .asBitmap()
-                .error(R.drawable.abc_ic_star_black_48dp)
+                .error(R.drawable.ic_crop_original_black_24dp)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(mImageView)
     }

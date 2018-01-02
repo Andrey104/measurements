@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Measurement
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -42,7 +41,7 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
                 } else {
                     viewHolder.workerName.text = measurement.workerName.toString()
                 }
-                setColorResponsible(measurement?.color ?: 0, viewHolder)
+                setColorResponsible(measurement.color ?: 0, viewHolder)
 
                 viewHolder.symbol.text = measurement.company?.symbol
 

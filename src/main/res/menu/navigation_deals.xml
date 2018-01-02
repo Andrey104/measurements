@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/allDeals"
-        android:title="ВСЕ" />
+        android:title="@string/all" />
     <item
         android:id="@+id/calendarDeals"
         android:icon="@drawable/calendar"

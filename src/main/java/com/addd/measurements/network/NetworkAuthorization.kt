@@ -1,8 +1,8 @@
 package com.addd.measurements.network
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import com.addd.measurements.MyApp
 import com.addd.measurements.modelAPI.Authorization
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,7 +16,7 @@ object NetworkAuthorization {
     private val APP_TOKEN = "token"
     var callback: MyCallback? = null
 
-    fun authorization(login: String, password: String, context: Context) {
+    fun authorization(login: String, password: String) {
         val call = serviceAPI.authorization(login, password)
 
         call.enqueue(object : Callback<Authorization> {
@@ -25,9 +25,9 @@ object NetworkAuthorization {
                     when {
                         response.code() != 200 -> callback?.resultAuth(400)
                         response.code() == 200 -> {
-                            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
                             val editor: SharedPreferences.Editor = mSettings.edit()
-                            editor.putString(APP_TOKEN, response.body().token)
+                            editor.putString(APP_TOKEN, response.body()?.token)
                             editor.apply()
                             callback?.resultAuth(200)
                         }

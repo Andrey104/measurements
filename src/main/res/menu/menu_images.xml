@@ -5,6 +5,6 @@
     <item
         android:id="@+id/images"
         android:icon="@drawable/images"
-        android:title="Фото"
+        android:title="@string/photo"
         app:showAsAction="always" />
 </menu>

@@ -10,15 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.addd.measurements.PaginationScrollListener
-import com.addd.measurements.R
+import com.addd.measurements.*
 import com.addd.measurements.activity.OneProblemActivity
 import com.addd.measurements.adapters.ProblemAdapter
-import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.MyProblem
 import com.addd.measurements.network.NetworkController
 import com.addd.measurements.network.NetworkControllerProblem
-import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.problems_fragment.*
 import kotlinx.android.synthetic.main.problems_fragment.view.*
 
@@ -48,7 +45,7 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
     override fun onItemClick(pos: Int) {
         val intent = Intent(context, OneProblemActivity::class.java)
         val json = gson.toJson(problems[pos])
-        intent.putExtra("problem", json)
+        intent.putExtra(PROBLEM_KEY, json)
 
         startActivityForResult(intent, 0)
     }
@@ -62,7 +59,7 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
         }
         if (listProblems.isEmpty()) {
             if (!result) {
-                Toast.makeText(context, getString(R.string.nothing_show), Toast.LENGTH_SHORT).show()
+               toast(R.string.nothing_show)
             }
         } else {
             if (result) {

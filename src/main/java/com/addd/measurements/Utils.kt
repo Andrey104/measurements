@@ -2,11 +2,17 @@ package com.addd.measurements
 
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.gson.Gson
 import java.util.*
 
 val gson = Gson()
+val DEAL_KEY = "deal"
+val MEASUREMENT_KEY = "measurement"
+val SYMBOL_KEY = "symbol"
+val PROBLEM_KEY = "problem"
+val ID_KEY = "id"
 val APP_TOKEN = "token"
 val STATUS_CURRENT = 0
 val STATUS_REJECT = 1
@@ -19,6 +25,7 @@ val APP_LIST_TOMORROW_CLOSED = "listTomorrowClosed"
 val APP_LIST_TODAY_REJECTED = "listTodayRejected"
 val APP_LIST_TOMORROW_REJECTED = "listTomorrowRejected"
 val APP_USER_INFO = "userInfo"
+val BASE_URL = "http://188.225.46.31/"
 fun getTodayDate(): String {
     val calendar = Calendar.getInstance()
     return String.format("%d-%02d-%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH))
@@ -36,4 +43,12 @@ fun Fragment.toast(s: String) {
 
 fun Fragment.toast(@StringRes r: Int) {
     Toast.makeText(activity, r, Toast.LENGTH_SHORT).show()
+}
+
+fun AppCompatActivity.toast(s: String) {
+    Toast.makeText(applicationContext, s, Toast.LENGTH_SHORT).show()
+}
+
+fun AppCompatActivity.toast(@StringRes r: Int) {
+    Toast.makeText(applicationContext, r, Toast.LENGTH_SHORT).show()
 }

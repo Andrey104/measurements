@@ -6,14 +6,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.addd.measurements.*
 import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.DataAdapter
@@ -111,22 +109,22 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         val intent = Intent(context, OneMeasurementActivity::class.java)
         var deal = fragmentListMeasurements[pos].deal
         val json = gson.toJson(fragmentListMeasurements[pos])
-        intent.putExtra("measurement", json)
-        intent.putExtra("id", deal)
-        intent.putExtra("symbol", fragmentListMeasurements[pos].company?.symbol?.length.toString())
+        intent.putExtra(MEASUREMENT_KEY, json)
+        intent.putExtra(ID_KEY, deal)
+        intent.putExtra(SYMBOL_KEY, fragmentListMeasurements[pos].company?.symbol?.length.toString())
         startActivityForResult(intent, 0)
     }
 
     override fun onItemLongClick(pos: Int) {
         val ad = android.app.AlertDialog.Builder(context)
-        ad.setTitle("Стать ответственным?")  // заголовок
+        ad.setTitle(R.string.become_response)  // заголовок
         var id = fragmentListMeasurements[pos].id
-        ad.setPositiveButton("Да") { dialog, arg1 ->
+        ad.setPositiveButton(R.string.yes) { dialog, arg1 ->
             if (id != null) {
                 NetworkController.becomeResponsible(id)
             }
         }
-        ad.setNegativeButton("Отмена") { dialog, arg1 -> }
+        ad.setNegativeButton(R.string.cancel) { dialog, arg1 -> }
 
         ad.setCancelable(true)
         ad.show()
@@ -178,9 +176,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         fragmentListMeasurements = listMeasurements
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
-                Toast.makeText(context, getString(R.string.no_save_data), Toast.LENGTH_SHORT).show()
+                toast(R.string.no_save_data)
             } else {
-                Toast.makeText(context, getString(R.string.nothing_show), Toast.LENGTH_SHORT).show()
+               toast(R.string.nothing_show)
             }
         } else {
             if (result == 0) {

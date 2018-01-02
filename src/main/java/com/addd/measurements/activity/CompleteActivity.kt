@@ -5,41 +5,34 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.widget.Toast
+import com.addd.measurements.DEAL_KEY
+import com.addd.measurements.ID_KEY
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Close
 import com.addd.measurements.network.NetworkController
+import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.activity_complete.*
 import java.util.*
 
 class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
-    private lateinit var id: String
+    private  var id: String = ""
     private var deal: Int = 0
     private lateinit var alert: AlertDialog
     private var serverDate: String? = null
-    private lateinit var intentIdKey: String
-    private lateinit var intentDealKey: String
     private var months = emptyArray<String>()
 
-    override fun onResume() {
-        NetworkController.registerCloseCallback(this)
-        super.onResume()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        intentDealKey = getString(R.string.deal)
-        intentIdKey = getString(R.string.id)
+        NetworkController.registerCloseCallback(this)
         months = resources.getStringArray(R.array.months)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete)
-        if (intent != null) {
-            if (intent.hasExtra(intentIdKey)) {
-                id = intent.getStringExtra(intentIdKey)
-            }
-            if (intent.hasExtra(intentDealKey)) {
-                deal = intent.getIntExtra(intentDealKey, 0)
-            }
-        }
+
+        id = intent?.getStringExtra(ID_KEY) ?: "0"
+        deal = intent?.getIntExtra(DEAL_KEY, 0) ?: throw IllegalStateException()
         textViewDeal.text = String.format("Договор %05d", deal)
+
         dateButton.setOnClickListener { datePick() }
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doCompleteRequest() }
@@ -77,9 +70,9 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         return true
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         NetworkController.registerCloseCallback(null)
-        super.onStop()
+        super.onDestroy()
     }
 
     private fun showDialog() {
@@ -94,12 +87,12 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     override fun resultClose(result: Boolean) {
         if (result) {
             setResult(200)
-            Toast.makeText(applicationContext, getString(R.string.measurement_closed), Toast.LENGTH_SHORT).show()
+            toast(R.string.measurement_closed)
             alert.dismiss()
             finish()
         } else {
             alert.dismiss()
-            Toast.makeText(applicationContext, getString(R.string.close_measurement_error), Toast.LENGTH_SHORT).show()
+           toast(R.string.close_measurement_error)
         }
     }
 }

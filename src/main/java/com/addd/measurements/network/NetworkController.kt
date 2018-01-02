@@ -46,8 +46,7 @@ object NetworkController {
 
         okHttpClient.networkInterceptors().add(interceptor)
         val retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(GsonBuilder().create())).client(okHttpClient.build()).build()
-        val api = retrofit.create(MeasurementsAPI::class.java)
-        return api
+        return retrofit.create(MeasurementsAPI::class.java)
 
     }
 
@@ -59,11 +58,11 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = response.body().results!!
+                    listMeasurements =it.results!!
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed, response?.body()?.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count ?: 0)
                 }
             }
 
@@ -86,11 +85,11 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = response.body().results!!
+                    listMeasurements = it.results!!
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed, response?.body()?.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count ?: 0)
 
                 }
             }
@@ -113,11 +112,11 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = response.body().results!!
+                    listMeasurements = it.results!!
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, response.body().count, response.body().myMeasurements, response.body().notDistributed, response?.body()?.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count ?: 0)
 
                 }
             }
@@ -259,7 +258,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = response.body().results!!
+                    listMeasurements = it.results!!
                     if (name != null) {
                         val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
                         buferList.addAll(listMeasurements)
@@ -281,7 +280,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = response.body().results!!
+                    listMeasurements = it.results!!
                     if (name != null) {
                         val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
                         buferList.addAll(listMeasurements)
@@ -303,7 +302,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = response.body().results!!
+                    listMeasurements = it.results!!
                     if (name != null) {
                         val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
                         buferList.addAll(listMeasurements)
@@ -363,7 +362,7 @@ object NetworkController {
         val prefsEditor = mPrefs.edit()
         val json = gson.toJson(list)
         prefsEditor.putString(name, json)
-        prefsEditor.commit()
+        prefsEditor.apply()
     }
 
     private fun loadSharedPreferencesList(name: String): List<Measurement> {
@@ -371,7 +370,7 @@ object NetworkController {
         val mSettings = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
         val json = mSettings.getString(name, "")
         if (json.isNullOrEmpty()) {
-            callLog = ArrayList<Measurement>()
+            callLog = ArrayList()
         } else {
             val type = object : TypeToken<List<Measurement>>() {
             }.type
@@ -389,7 +388,7 @@ object NetworkController {
                 response?.let {
                     val userInfo: User
                     if (response.code() == 200) {
-                        userInfo = response.body()
+                        userInfo = it.body()!!
                         saveUserInfo(userInfo)
                     } else {
                         userInfo = loadSharedPreferencesUser()
@@ -411,7 +410,7 @@ object NetworkController {
         val prefsEditor = mPrefs.edit()
         val json = gson.toJson(user)
         prefsEditor.putString(APP_USER_INFO, json)
-        prefsEditor.commit()
+        prefsEditor.apply()
     }
 
     private fun loadSharedPreferencesUser(): User {

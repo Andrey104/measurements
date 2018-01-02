@@ -34,8 +34,8 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
-        android:textSize="16dp"
+        android:text="@string/textview"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/answerProblem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewProblem"
@@ -50,7 +50,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
-        android:text="TextView"
+        android:text="@string/textview"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewProblem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewProblem" />
@@ -65,7 +65,7 @@
         android:layout_marginTop="8dp"
         android:maxLines="6"
         android:scrollbars="vertical"
-        android:text="TextView"
+        android:text="@string/textview"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +108,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/desctiptionProblem"
+                app:layout_constraintTop_toBottomOf="parent"
                 app:layout_constraintVertical_bias="0.517" />
         </android.support.constraint.ConstraintLayout>
 

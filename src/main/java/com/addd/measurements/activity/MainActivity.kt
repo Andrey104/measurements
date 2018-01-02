@@ -14,7 +14,6 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
 import com.addd.measurements.*
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.DealsFragment
@@ -28,12 +27,10 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
     private val bundle = Bundle()
 
-    override fun onResume() {
-        NetworkController.registerUserInfoCallBack(this)
-        super.onResume()
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
+        NetworkController.registerUserInfoCallBack(this)
         title = getString(R.string.measurements)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbarAst)
@@ -73,14 +70,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val searchView = searchMenuItem?.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                val param = query
-                Toast.makeText(applicationContext, param, Toast.LENGTH_SHORT).show()
+                toast(query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?) = true
         })
-        searchMenuItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 return true
             }
@@ -130,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 changeFragment(fragment, item, null)
             }
             R.id.nav_exit -> {
-                exitFromApp()
+                exitFromAccount()
             }
         }
 
@@ -140,7 +136,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun exitFromApp() {
+    private fun exitFromAccount() {
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setTitle(getString(R.string.exit_account))
                 .setMessage(getString(R.string.realy_exit_account))
@@ -160,7 +156,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun changeFragment(fragment: Fragment, item: MenuItem, bundle: Bundle?) {
-        fragment?.arguments = bundle
+        fragment.arguments = bundle
 
         // Вставляем фрагмент, заменяя текущий фрагмент
         val fragmentManager = supportFragmentManager

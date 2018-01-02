@@ -12,7 +12,7 @@ class Comment(
         val id: Int,
         @SerializedName("user")
         @Expose
-        val user: String,
+        val user: Int,
         @SerializedName("date")
         @Expose
         val date: String,

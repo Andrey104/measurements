@@ -9,32 +9,31 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.widget.Toast
-import com.addd.measurements.R
+import com.addd.measurements.*
 import com.addd.measurements.adapters.ImageGalleryAdapter
-import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.MeasurementPhoto
+import com.addd.measurements.modelAPI.Picture
 import com.addd.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_images.*
-import java.io.File
 
 
 class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCallback, NetworkControllerPicture.UpdatePicturesCallback {
-    private val PERMISSIONS_STORAGE = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
-    private val BASE_URL = "http://188.225.46.31/"
     private lateinit var measurement: Measurement
     private var arrayPhoto = ArrayList<MeasurementPhoto>()
-    private lateinit var recyclerPhotoList : RecyclerView
+    private lateinit var recyclerPhotoList: RecyclerView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerPicture.registerPictureCallback(this)
-       NetworkControllerPicture.registerUpdateCallback(this)
+        NetworkControllerPicture.registerUpdateCallback(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_images)
+
         getSavedMeasurement()
 
         val layoutManager = GridLayoutManager(this, 2)
@@ -46,10 +45,10 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
         displayPictures(recyclerPhotoList)
 
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             val openGalleryIntent = Intent(Intent.ACTION_PICK)
             openGalleryIntent.type = "image/*"
-            startActivityForResult(openGalleryIntent, 200)
+            startActivityForResult(openGalleryIntent, 1)
         }
     }
 
@@ -65,12 +64,10 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     private fun displayPictures(recyclerView: RecyclerView) {
-        if (measurement.pictures != null) {
-            arrayPhoto = ArrayList<MeasurementPhoto>()
-            for (photo in measurement.pictures!!) {
-                val photoUrl = photo.url
-//                photoUrl?.startsWith("media" true)
-                arrayPhoto.add(MeasurementPhoto(BASE_URL + photo.url!!, photo.id.toString()!!))
+        measurement.pictures.let {
+            arrayPhoto = ArrayList()
+            for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
+                arrayPhoto.add(MeasurementPhoto(BASE_URL + photo.url, photo.id.toString()))
             }
         }
 
@@ -80,7 +77,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
             NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
 //            val file = File(uri?.path)
@@ -89,30 +86,34 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     private fun getSavedMeasurement() {
-        if (intent != null && intent.hasExtra("measurement")) {
-            val json = intent.getStringExtra("measurement")
-            if (json.isEmpty()) {
-                measurement = Measurement()
-            } else {
-                val type = object : TypeToken<Measurement>() {
-                }.type
-                measurement = gson.fromJson(json, type)
-            }
+        val json = intent?.getStringExtra(MEASUREMENT_KEY)
+        measurement = if (json?.isEmpty() != false) {
+            Measurement()
+        } else {
+            val type = object : TypeToken<Measurement>() {
+            }.type
+            gson.fromJson(json, type)
         }
     }
 
     override fun resultPictureAdd(result: Boolean) {
         if (result) {
-            Toast.makeText(applicationContext, "Фотография добавлена", Toast.LENGTH_SHORT).show()
+            toast(R.string.photo_added)
             NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
             setResult(200)
         } else {
-            Toast.makeText(applicationContext, "При загрузке произошла ошибка", Toast.LENGTH_SHORT).show()
+            toast(R.string.error_add_photo)
         }
     }
 
     override fun resultUpdate(measurement: Measurement?) {
-            this.measurement = measurement!!
-            displayPictures(recyclerPhotoList)
+        this.measurement = measurement ?: Measurement()
+        displayPictures(recyclerPhotoList)
+}
+
+    override fun onDestroy() {
+        NetworkControllerPicture.registerPictureCallback(null)
+        NetworkControllerPicture.registerUpdateCallback(null)
+        super.onDestroy()
     }
 }

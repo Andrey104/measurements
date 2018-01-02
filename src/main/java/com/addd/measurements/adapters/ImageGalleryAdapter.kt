@@ -35,12 +35,12 @@ class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<Measure
 
         Glide.with(mContext)
                 .load(spacePhoto?.getUrl())
-                .placeholder(R.drawable.abc_ic_star_black_36dp)
+                .placeholder(R.drawable.ic_crop_original_black_24dp)
                 .into(imageView)
     }
 
     override fun getItemCount(): Int {
-        return mMeasurementPhotos!!.size
+        return mMeasurementPhotos?.size ?: 0
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
