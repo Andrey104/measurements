@@ -86,7 +86,14 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
         address.text = measurement.address.toString()
         time.text = measurement.time.toString()
-        date.text = measurement.date.toString()
+        val strBuilder = StringBuilder(measurement.date.toString())
+        var index = -1
+        for (char in strBuilder) {
+            index++
+            if (char == 'T' || char == 'Т') break
+        }
+        strBuilder.delete(index, strBuilder.length)
+        date.text = strBuilder.toString()
         if (measurement.workerName == null) {
             worker_name.text = getString(R.string.not_distributed)
         } else {

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.addd.measurements.MEASUREMENT_PHOTO
 import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.addd.measurements.R
 import com.addd.measurements.activity.OnePhotoActivity
@@ -58,7 +59,7 @@ class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<Measure
             if (position != RecyclerView.NO_POSITION) {
                 val spacePhoto = mMeasurementPhotos?.get(position)
                 val intent = Intent(mContext, OnePhotoActivity::class.java)
-                intent.putExtra("MEASUREMENT_PHOTO", spacePhoto)
+                intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
                 ContextCompat.startActivity(mContext, intent, null)
             }
         }

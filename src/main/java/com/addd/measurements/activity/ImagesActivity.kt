@@ -4,7 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -17,11 +19,22 @@ import com.addd.measurements.modelAPI.Picture
 import com.addd.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_images.*
+import android.provider.MediaStore
+import android.support.v7.app.AlertDialog
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCallback, NetworkControllerPicture.UpdatePicturesCallback {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
+    private val REQUEST_CAMERA = 1
+    private val REQUEST_GALERY = 2
+
+    var photoFile: File? = null
+    var mCurrentPhotoPath = ""
     private lateinit var measurement: Measurement
     private var arrayPhoto = ArrayList<MeasurementPhoto>()
     private lateinit var recyclerPhotoList: RecyclerView
@@ -46,10 +59,42 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         displayPictures(recyclerPhotoList)
 
         fab.setOnClickListener {
-            val openGalleryIntent = Intent(Intent.ACTION_PICK)
-            openGalleryIntent.type = "image/*"
-            startActivityForResult(openGalleryIntent, 1)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Что использовать?")
+                    .setCancelable(true)
+                    .setPositiveButton("Новое фото")
+                    { dialog, id ->
+                        getPhotoFromCamera()
+                    }
+                    .setNegativeButton("Из галереи..") { dialog, id -> getPhotoFromGalery() }
+            val alert = builder.create()
+            alert.show()
         }
+    }
+
+    private fun getPhotoFromCamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            // Create the File where the photo should go
+            try {
+                photoFile = createImageFile()
+            } catch (ex: IOException) {
+                toast(getString(R.string.itis_error))
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile))
+                startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+            }
+        }
+    }
+
+    private fun getPhotoFromGalery() {
+        val openGalleryIntent = Intent(Intent.ACTION_PICK)
+        openGalleryIntent.type = "image/*"
+        startActivityForResult(openGalleryIntent, REQUEST_GALERY)
     }
 
     private fun getPermission() {
@@ -66,8 +111,26 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     private fun displayPictures(recyclerView: RecyclerView) {
         measurement.pictures.let {
             arrayPhoto = ArrayList()
+            var strBuilder = StringBuilder()
+            var count = 0
+            var index = 0
             for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
-                arrayPhoto.add(MeasurementPhoto(BASE_URL + photo.url, photo.id.toString()))
+                strBuilder.append(photo.url)
+                strBuilder.reverse()
+                for (char in strBuilder) {
+                    index++
+                    if (char == '/') count++
+                    if (count == 3) {
+                        index--
+                        break
+                    }
+                }
+                strBuilder.delete(index, strBuilder.length)
+                strBuilder.reverse()
+                arrayPhoto.add(MeasurementPhoto(BASE_URL + strBuilder.toString(), photo.id.toString()))
+                count = 0
+                index = 0
+                strBuilder.delete(0, strBuilder.length)
             }
         }
 
@@ -77,12 +140,43 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            val uri = data?.data
-            NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
-//            val file = File(uri?.path)
-//            Toast.makeText(applicationContext, file.path, Toast.LENGTH_SHORT).show()
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            galleryAddPic()
+            toast(photoFile?.path ?: "pffff")
+            NetworkControllerPicture.addPictureFile(measurement.id.toString(), photoFile)
         }
+        if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
+            val uri = data?.data
+            val file = File(uri?.path)
+            toast(file.path)
+            NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
+        }
+    }
+
+
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES)
+        val image = File.createTempFile(
+                imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir      /* directory */
+        )
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.absolutePath
+        return image
+    }
+
+    private fun galleryAddPic() {
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val f = File(mCurrentPhotoPath)
+        val contentUri = Uri.fromFile(f)
+        mediaScanIntent.data = contentUri
+        this.sendBroadcast(mediaScanIntent)
     }
 
     private fun getSavedMeasurement() {
@@ -109,7 +203,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     override fun resultUpdate(measurement: Measurement?) {
         this.measurement = measurement ?: Measurement()
         displayPictures(recyclerPhotoList)
-}
+    }
 
     override fun onDestroy() {
         NetworkControllerPicture.registerPictureCallback(null)

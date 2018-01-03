@@ -19,7 +19,7 @@ import java.io.File
  * Created by addd on 26.12.2017.
  */
 object NetworkControllerPicture {
-    var callbackPictureAdd : PictureCallback? = null
+    var callbackPictureAdd: PictureCallback? = null
     var updatePicturesOneMeasurement: UpdatePicturesCallback? = null
     private val BASE_URL = "http://188.225.46.31/api/"
     private val api: MeasurementsAPI by lazy { init(MyApp.instance) }
@@ -40,7 +40,14 @@ object NetworkControllerPicture {
 
     fun addPicture(id: String, fileUri: Uri?) {
         val path = fileUri?.path
-        val newPath = path?.slice(5 until path.length)
+        var newPath = ""
+        if (path != null) {
+            newPath = if (path.startsWith("/raw")) {
+                path.slice(5 until path.length)
+            } else {
+                path
+            }
+        }
         val file = File(newPath)
         Toast.makeText(MyApp.instance, file.path, Toast.LENGTH_LONG).show()
 
@@ -55,11 +62,34 @@ object NetworkControllerPicture {
                     callbackPictureAdd?.resultPictureAdd(false)
                 }
             }
+
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
                 callbackPictureAdd?.resultPictureAdd(false)
             }
         })
 
+    }
+
+    fun addPictureFile(id: String, file: File?) {
+        if (file != null) {
+            Toast.makeText(MyApp.instance, file.path, Toast.LENGTH_LONG).show()
+            val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
+            val body = MultipartBody.Part.createFormData("url", file.name, requestFile)
+            val call = api.addPicture(id, body)
+            call.enqueue(object : retrofit2.Callback<Void> {
+                override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                    if (response?.code() == 200) {
+                        callbackPictureAdd?.resultPictureAdd(true)
+                    } else {
+                        callbackPictureAdd?.resultPictureAdd(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                    callbackPictureAdd?.resultPictureAdd(false)
+                }
+            })
+        }
     }
 
     fun getOneMeasurement(id: String) {
@@ -86,7 +116,7 @@ object NetworkControllerPicture {
         fun resultPictureAdd(result: Boolean)
     }
 
-    fun registerPictureCallback(callback:PictureCallback?) {
+    fun registerPictureCallback(callback: PictureCallback?) {
         callbackPictureAdd = callback
     }
 

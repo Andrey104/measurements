@@ -27,7 +27,18 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
                 holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin))
             }
         }
-        holder.date.text = mCommentsList[position].date
+        val strBuilder = StringBuilder(mCommentsList[position].date)
+        strBuilder.replace(10,11," ")
+        strBuilder.delete(16,strBuilder.length)
+        val newStrBuilder = StringBuilder()
+        for (i in 11..15) {
+            newStrBuilder.append(strBuilder[i])
+        }
+        newStrBuilder.append(" ")
+        for (i in 0..10) {
+            newStrBuilder.append(strBuilder[i])
+        }
+        holder.date.text = newStrBuilder.toString()
         holder.text.text = mCommentsList[position].text
 
     }

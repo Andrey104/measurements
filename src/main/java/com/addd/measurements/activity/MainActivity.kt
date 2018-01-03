@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
     private val bundle = Bundle()
+    private lateinit var item: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUserInfoCallBack(this)
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val menuItem = nav_view.menu.findItem(R.id.nav_current)
         menuItem.isChecked = true
 
-        var fragment  = MeasurementsFragment()
+        var fragment = MeasurementsFragment()
         bundle.putInt(CHECK, 0)
         startFragment(fragment, bundle)
         informationUser()
@@ -53,14 +54,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle(R.string.exit_app)
-                    .setMessage(getString(R.string.realy_exit_app))
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.yes)) { dialog, id -> finish() }
-                    .setNegativeButton(getString(R.string.no)) { dialog, id -> dialog.cancel() }
-            val alert = builder.create()
-            alert.show()
+            val menuItem = nav_view.menu.findItem(R.id.nav_current)
+            if (menuItem.isChecked) {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(R.string.exit_app)
+                        .setMessage(getString(R.string.realy_exit_app))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.yes)) { dialog, id -> finish() }
+                        .setNegativeButton(getString(R.string.no)) { dialog, id -> dialog.cancel() }
+                val alert = builder.create()
+                alert.show()
+            } else {
+                this.item.isChecked = false
+                menuItem.isChecked = true
+                var fragment = MeasurementsFragment()
+                bundle.putInt(CHECK, 0)
+                startFragment(fragment, bundle)
+            }
         }
     }
 
@@ -138,10 +148,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun exitFromAccount() {
         val builder = AlertDialog.Builder(this@MainActivity)
-        builder.setTitle(getString(R.string.exit_account))
-                .setMessage(getString(R.string.realy_exit_account))
+        builder.setTitle(R.string.exit_account)
+                .setMessage(R.string.realy_exit_account)
                 .setCancelable(false)
-                .setPositiveButton(getString(R.string.yes))
+                .setPositiveButton(R.string.yes)
                 { dialog, id ->
                     val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
                     val editor = mSettings.edit()
@@ -150,13 +160,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     startActivity(Intent(applicationContext, LoginActivity::class.java))
                     finish()
                 }
-                .setNegativeButton(getString(R.string.no)) { dialog, id -> dialog.cancel() }
+                .setNegativeButton(R.string.no) { dialog, id -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
     }
 
     private fun changeFragment(fragment: Fragment, item: MenuItem, bundle: Bundle?) {
         fragment.arguments = bundle
+        this.item = item
 
         // Вставляем фрагмент, заменяя текущий фрагмент
         val fragmentManager = supportFragmentManager

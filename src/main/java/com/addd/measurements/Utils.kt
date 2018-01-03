@@ -12,6 +12,7 @@ val DEAL_KEY = "deal"
 val MEASUREMENT_KEY = "measurement"
 val SYMBOL_KEY = "symbol"
 val PROBLEM_KEY = "problem"
+val MEASUREMENT_PHOTO = "MEASUREMENT_PHOTO"
 val ID_KEY = "id"
 val APP_TOKEN = "token"
 val STATUS_CURRENT = 0

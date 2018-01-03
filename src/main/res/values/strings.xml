@@ -120,4 +120,6 @@
     <string name="all">ВСЕ</string>
     <string name="enter_comment_sym">Введите комментарий:</string>
     <string name="update_data">Обновление данных</string>
+    <string name="itis_error">Произошла ошибка</string>
+    <string name="without_internet">Нет подключения к интернету</string>
 </resources>

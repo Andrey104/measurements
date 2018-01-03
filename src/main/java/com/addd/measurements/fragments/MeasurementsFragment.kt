@@ -174,6 +174,18 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             (count / 20) + 1
         }
         fragmentListMeasurements = listMeasurements
+
+        val toolbar = (activity as AppCompatActivity).supportActionBar
+        if (this.arguments.getInt(CHECK) == STATUS_CURRENT) {
+            toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
+        }
+        if (this.arguments.getInt(CHECK) == STATUS_REJECT) {
+            toolbar?.title = getString(R.string.rejected)
+        }
+        if (this.arguments.getInt(CHECK) == STATUS_CLOSE) {
+            toolbar?.title = getString(R.string.closed)
+        }
+
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
                 toast(R.string.no_save_data)
@@ -184,18 +196,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             if (result == 0) {
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
+                if(this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
                 toast(R.string.no_internet)
             }
-        }
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        if (this.arguments.getInt(CHECK) == STATUS_CURRENT) {
-            toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
-        }
-        if (this.arguments.getInt(CHECK) == STATUS_REJECT) {
-            toolbar?.title = "Отклоненные"
-        }
-        if (this.arguments.getInt(CHECK) == STATUS_CLOSE) {
-            toolbar?.title = "Закрытые"
         }
         adapter = DataAdapter(listMeasurements as ArrayList, this)
         recyclerList.adapter = adapter
