@@ -51,8 +51,12 @@
         <activity
             android:name=".activity.OneProblemActivity"
             android:label="@string/title_activity_one_problem" />
-        <activity android:name=".activity.ImagesActivity" />
-        <activity android:name=".activity.OnePhotoActivity"></activity>
+        <activity
+            android:name=".activity.ImagesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OnePhotoActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

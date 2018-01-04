@@ -1,6 +1,7 @@
 package com.addd.measurements.network
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.preference.PreferenceManager
 import android.widget.Toast
@@ -38,39 +39,6 @@ object NetworkControllerPicture {
         return retrofit.create(MeasurementsAPI::class.java)
     }
 
-    fun addPicture(id: String, fileUri: Uri?) {
-        val inputStream = MyApp.instance.contentResolver.openInputStream(fileUri)
-        val path = fileUri?.path
-        var newPath = ""
-        if (path != null) {
-            newPath = if (path.startsWith("/raw")) {
-                path.slice(5 until path.length)
-            } else {
-                path
-            }
-        }
-        val file = File(newPath)
-        Toast.makeText(MyApp.instance, file.path, Toast.LENGTH_LONG).show()
-
-        val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
-        val body = MultipartBody.Part.createFormData("url", file.name, requestFile)
-        val call = api.addPicture(id, body)
-        call.enqueue(object : retrofit2.Callback<Void> {
-            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-                if (response?.code() == 200) {
-                    callbackPictureAdd?.resultPictureAdd(true)
-                } else {
-                    callbackPictureAdd?.resultPictureAdd(false)
-                }
-            }
-
-            override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                callbackPictureAdd?.resultPictureAdd(false)
-            }
-        })
-
-    }
-
     fun addPictureFile(id: String, file: File?) {
         if (file != null) {
             Toast.makeText(MyApp.instance, file.path, Toast.LENGTH_LONG).show()
@@ -79,6 +47,9 @@ object NetworkControllerPicture {
             val call = api.addPicture(id, body)
             call.enqueue(object : retrofit2.Callback<Void> {
                 override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                    if (response?.code() == 413) {
+                        //слишком большой
+                    }
                     if (response?.code() == 200) {
                         callbackPictureAdd?.resultPictureAdd(true)
                     } else {

@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -22,6 +24,8 @@ import kotlinx.android.synthetic.main.activity_images.*
 import android.provider.MediaStore
 import android.support.v7.app.AlertDialog
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,6 +36,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALERY = 2
+    private lateinit var file: File
 
     var photoFile: File? = null
     var mCurrentPhotoPath = ""
@@ -63,10 +68,10 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
             builder.setTitle("Что использовать?")
                     .setCancelable(true)
                     .setPositiveButton("Новое фото")
-                    { dialog, id ->
+                    { _, _ ->
                         getPhotoFromCamera()
                     }
-                    .setNegativeButton("Из галереи..") { dialog, id -> getPhotoFromGalery() }
+                    .setNegativeButton("Из галереи..") { _, _ -> getPhotoFromGallery() }
             val alert = builder.create()
             alert.show()
         }
@@ -91,7 +96,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         }
     }
 
-    private fun getPhotoFromGalery() {
+    private fun getPhotoFromGallery() {
         val openGalleryIntent = Intent(Intent.ACTION_PICK)
         openGalleryIntent.type = "image/*"
         startActivityForResult(openGalleryIntent, REQUEST_GALERY)
@@ -140,19 +145,50 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
         if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             galleryAddPic()
-            toast(photoFile?.path ?: "pffff")
-            NetworkControllerPicture.addPictureFile(measurement.id.toString(), photoFile)
+            postPictureFile(file)
         }
         if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
-//            val file = File(uri?.path)
-            toast(uri!!.encodedPath)
-//            NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
+            postPictureUri(file, uri)
         }
     }
 
+    private fun postPictureFile(file: File) {
+        try {
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                val inputStream = FileInputStream(photoFile)
+                val selectedImage = BitmapFactory.decodeStream(inputStream)
+                selectedImage.compress(Bitmap.CompressFormat.JPEG, 20, fos)
+            } finally {
+                if (fos != null) fos.close()
+            }
+        } catch (e: Exception) {
+            toast(R.string.error)
+        }
+        NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
+    }
+
+    private fun postPictureUri(file: File, uri: Uri?) {
+        try {
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                val inputStream = MyApp.instance.contentResolver.openInputStream(uri)
+                val selectedImage = BitmapFactory.decodeStream(inputStream)
+                selectedImage.compress(Bitmap.CompressFormat.JPEG, 20, fos)
+            } finally {
+                if (fos != null) fos.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
+    }
 
     private fun createImageFile(): File {
         // Create an image file name
@@ -191,6 +227,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     override fun resultPictureAdd(result: Boolean) {
+        file.delete()
         if (result) {
             toast(R.string.photo_added)
             NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
