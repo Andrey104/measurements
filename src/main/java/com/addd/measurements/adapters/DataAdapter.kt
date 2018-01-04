@@ -59,12 +59,12 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
      */
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val v: View
-        if (viewType == ITEM) {
+        return if (viewType == ITEM) {
             v = LayoutInflater.from(viewGroup.context).inflate(R.layout.list_item_measurement, viewGroup, false)
-            return ViewHolder(v, listener)
+            ViewHolder(v, listener)
         } else {
             v = LayoutInflater.from(viewGroup.context).inflate(R.layout.progressbar_item, viewGroup, false)
-            return LoadingVH(v)
+            LoadingVH(v)
         }
     }
 

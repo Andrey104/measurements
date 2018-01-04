@@ -16,6 +16,9 @@ interface MeasurementsAPI {
     @GET("measurements/{id}")
     fun getOneMeasurement(@Path("id") id: String): Call<Measurement>
 
+    @GET("deals/{id}")
+    fun getOneDeal(@Path("id") id: String): Call<Deal>
+
     @GET("measurements/current")
     fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
 
@@ -53,12 +56,24 @@ interface MeasurementsAPI {
     @POST("measurements/{id}/image_upload/")
     fun addPicture(@Path("id") id: String, @Part file : MultipartBody.Part ) : Call<Void>
 
-//    @GET("measurements/current")
-//    fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
-//
-//    @GET("measurements/rejected")
-//    fun getRejectedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
-//
-//    @GET("measurements/closed")
-//    fun getClosedMeasurement(@Query("date") date: String,@Query("page") page: Int): Call<MyResultMeasurements>
+    @GET("deals/current")
+    fun getCurrentDeals(@Query("date") date: String,@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("deals/rejected")
+    fun getRejectedDeals(@Query("date") date: String,@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("deals/closed")
+    fun getClosedDeals(@Query("date") date: String,@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("deals/current")
+    fun getCurrentDeals(@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("deals/rejected")
+    fun getRejectedDeals(@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("deals/closed")
+    fun getClosedDeals(@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("deals")
+    fun getAllDeals(@Query("page") page: Int): Call<MyResultDeals>
 }

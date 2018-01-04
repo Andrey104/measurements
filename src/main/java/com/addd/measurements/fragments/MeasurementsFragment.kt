@@ -132,9 +132,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun datePick() {
         val bundle = this.arguments
-        currentPage = 1
-        isLastPage = false
         val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            currentPage = 1
+            isLastPage = false
             date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             adapter = DataAdapter(emptyList, this)
             recyclerList.adapter = adapter
@@ -190,17 +190,21 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             if (result == 1) {
                 toast(R.string.no_save_data)
             } else {
-               toast(R.string.nothing_show)
+                toast(R.string.nothing_show)
             }
         } else {
             if (result == 0) {
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
-                if(this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
+                if (this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
                 toast(R.string.no_internet)
             }
         }
-        adapter = DataAdapter(listMeasurements as ArrayList, this)
+        adapter = if (listMeasurements.isEmpty()) {
+            DataAdapter(this.emptyList, this)
+        } else {
+            DataAdapter(listMeasurements as ArrayList, this)
+        }
         recyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerList.layoutManager = layoutManager

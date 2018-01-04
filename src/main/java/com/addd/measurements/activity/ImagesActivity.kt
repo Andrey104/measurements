@@ -147,9 +147,9 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         }
         if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
-            val file = File(uri?.path)
-            toast(file.path)
-            NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
+//            val file = File(uri?.path)
+            toast(uri!!.encodedPath)
+//            NetworkControllerPicture.addPicture(measurement.id.toString(), uri)
         }
     }
 

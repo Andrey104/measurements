@@ -39,6 +39,7 @@ object NetworkControllerPicture {
     }
 
     fun addPicture(id: String, fileUri: Uri?) {
+        val inputStream = MyApp.instance.contentResolver.openInputStream(fileUri)
         val path = fileUri?.path
         var newPath = ""
         if (path != null) {
