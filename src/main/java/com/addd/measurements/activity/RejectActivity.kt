@@ -45,15 +45,12 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
     fun onRadioButtonClick(view: View) {
         val checked = (view as RadioButton).isChecked
         // Получаем нажатый переключатель
-        when (view.getId()) {
-            R.id.radioButtonAnother -> if (checked) {
-                cause = 1
-            }
-            R.id.radioButtonWrongGauger -> if (checked) {
-                cause = 2
-            }
-            R.id.radioButtonWrongManager -> if (checked) {
-                cause = 3
+        if (checked) {
+            when (view.getId()) {
+                R.id.radioButtonAnother -> cause = 1
+                R.id.radioButtonWrongGauger -> cause = 2
+                R.id.radioButtonWrongManager -> cause = 3
+
             }
         }
     }

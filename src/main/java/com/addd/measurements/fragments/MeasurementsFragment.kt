@@ -119,12 +119,12 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         val ad = android.app.AlertDialog.Builder(context)
         ad.setTitle(R.string.become_response)  // заголовок
         var id = fragmentListMeasurements[pos].id
-        ad.setPositiveButton(R.string.yes) { dialog, arg1 ->
+        ad.setPositiveButton(R.string.yes) { _, _ ->
             if (id != null) {
                 NetworkController.becomeResponsible(id)
             }
         }
-        ad.setNegativeButton(R.string.cancel) { dialog, arg1 -> }
+        ad.setNegativeButton(R.string.cancel) { _, _ -> }
 
         ad.setCancelable(true)
         ad.show()
@@ -132,7 +132,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     private fun datePick() {
         val bundle = this.arguments
-        val myCallBack = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        val myCallBack = OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             currentPage = 1
             isLastPage = false
             date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)

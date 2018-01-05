@@ -2,6 +2,7 @@ package com.addd.measurements.fragments
 
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import com.addd.measurements.*
+import com.addd.measurements.activity.OneDealActivity
 import com.addd.measurements.adapters.DealAdapter
 import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.network.NetworkControllerDeals
@@ -80,7 +82,11 @@ class DealsFragment : Fragment(),
     }
 
     override fun onItemClick(pos: Int) {
-        toast("Собака $pos")
+        val intent = Intent(context, OneDealActivity::class.java)
+        val json = gson.toJson(deals[pos])
+        intent.putExtra(DEAL_KEY, json)
+        startActivityForResult(intent, 0)
+//        toast("${deals[pos].id}")
     }
 
 

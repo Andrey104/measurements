@@ -85,7 +85,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
             try {
                 photoFile = createImageFile()
             } catch (ex: IOException) {
-                toast(getString(R.string.itis_error))
+                toast(R.string.itis_error)
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -217,7 +217,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
     private fun getSavedMeasurement() {
         val json = intent?.getStringExtra(MEASUREMENT_KEY)
-        measurement = if (json?.isEmpty() != false) {
+        measurement = if (json.isNullOrEmpty()) {
             Measurement()
         } else {
             val type = object : TypeToken<Measurement>() {

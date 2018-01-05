@@ -58,10 +58,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (menuItem.isChecked) {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle(R.string.exit_app)
-                        .setMessage(getString(R.string.realy_exit_app))
+                        .setMessage(R.string.realy_exit_app)
                         .setCancelable(false)
-                        .setPositiveButton(getString(R.string.yes)) { dialog, id -> finish() }
-                        .setNegativeButton(getString(R.string.no)) { dialog, id -> dialog.cancel() }
+                        .setPositiveButton(R.string.yes) { _, _ -> finish() }
+                        .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
                 val alert = builder.create()
                 alert.show()
             } else {
@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .setMessage(R.string.realy_exit_account)
                 .setCancelable(false)
                 .setPositiveButton(R.string.yes)
-                { dialog, id ->
+                { _, _ ->
                     val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
                     val editor = mSettings.edit()
                     editor.clear()
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     startActivity(Intent(applicationContext, LoginActivity::class.java))
                     finish()
                 }
-                .setNegativeButton(R.string.no) { dialog, id -> dialog.cancel() }
+                .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
     }

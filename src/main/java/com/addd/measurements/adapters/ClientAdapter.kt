@@ -66,7 +66,7 @@ class ClientAdapter(notesList: List<Clients>) : RecyclerView.Adapter<ClientAdapt
                     val builder = AlertDialog.Builder(v.context)
                     builder.setTitle("Выберите номер")
                     var strings = Array(arrayList.size, init = { index -> arrayList[index] })
-                    builder.setItems(strings, { dialog, which ->
+                    builder.setItems(strings, { _, which ->
                         intent.data = Uri.parse("tel:${arrayList[which]}")
                         v.context.startActivity(intent)
                     })

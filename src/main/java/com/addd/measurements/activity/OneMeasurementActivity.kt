@@ -63,7 +63,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     private fun getSavedMeasurement(): Measurement {
         val json = intent?.getStringExtra(MEASUREMENT_KEY)
-        measurement = if (json?.isEmpty() != false) {
+        measurement = if (json.isNullOrEmpty()) {
             Measurement()
         } else {
             val type = object : TypeToken<Measurement>() {

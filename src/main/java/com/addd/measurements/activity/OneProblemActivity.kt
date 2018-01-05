@@ -64,7 +64,7 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
 
     private fun getSavedProblem() {
             val json = intent.getStringExtra(PROBLEM_KEY)
-        problem = if (json?.isEmpty() != false) {
+        problem = if (json.isNullOrEmpty()) {
             MyProblem(0, "0", "0", "0", 0, "0", "0", 0, null)
         } else {
             val type = object : TypeToken<MyProblem>() {
@@ -81,11 +81,11 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
         val input = EditText(this)
         alert.setView(input)
 
-        alert.setPositiveButton(R.string.okay) { dialog, whichButton ->
+        alert.setPositiveButton(R.string.okay) { _, _ ->
             NetworkControllerComment.addComment(CommentRequest(input.text.toString()), problem.id.toString())
         }
 
-        alert.setNegativeButton(R.string.cancel) { dialog, whichButton ->
+        alert.setNegativeButton(R.string.cancel) { _, _ ->
             // Canceled.
         }
 
@@ -104,12 +104,12 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
 
     override fun addCommentResult(result: Boolean) {
         if (result) {
-            toast(getString(R.string.comment_added))
+            toast(R.string.comment_added)
             progressBar2.visibility = View.VISIBLE
             NetworkControllerProblem.getOneProblem(problem.id.toString())
             setResult(200)
         } else {
-            toast(getString(R.string.error_add_comment))
+            toast(R.string.error_add_comment)
         }
     }
 

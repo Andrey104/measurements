@@ -50,13 +50,13 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
     private fun doCompleteRequest(): Boolean {
         if (editTextSum.text.isEmpty() && editTextComment.text.isEmpty()) {
-            Toast.makeText(applicationContext, getString(R.string.enter_sum_comment), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_sum_comment)
             return false
         } else if (editTextSum.text.isEmpty()) {
-            Toast.makeText(applicationContext, getString(R.string.enter_sum), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_sum)
             return false
         } else if (editTextComment.text.isEmpty()) {
-            Toast.makeText(applicationContext, getString(R.string.enter_comment), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_comment)
             return false
         }
 
