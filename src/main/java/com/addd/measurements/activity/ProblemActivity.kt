@@ -39,6 +39,7 @@ class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblem
     override fun resultAddProblem(result: Boolean) {
         if (result) {
             toast(R.string.problem_added)
+            setResult(200)
             finish()
         } else {
             toast(R.string.error)

@@ -74,6 +74,9 @@ interface MeasurementsAPI {
     @GET("deals/closed")
     fun getClosedDeals(@Query("page") page: Int): Call<MyResultDeals>
 
-    @GET("deals")
-    fun getAllDeals(@Query("page") page: Int): Call<MyResultDeals>
+    @GET("deals/measurements/{id}")
+    fun getMeasurementsDeal(@Path("id") id: String): Call<List<Measurement>>
+
+    @GET("deals/discussions/{id}")
+    fun getDiscussionsDeal(@Path("id") id: String): Call<List<MyProblem>>
 }

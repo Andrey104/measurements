@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_complete.*
 import java.util.*
 
 class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
-    private  var id: String = ""
+    private var id: String = ""
     private var deal: Int = 0
     private lateinit var alert: AlertDialog
     private var serverDate: String? = null
@@ -85,14 +85,13 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     }
 
     override fun resultClose(result: Boolean) {
+        alert.dismiss()
         if (result) {
             setResult(200)
             toast(R.string.measurement_closed)
-            alert.dismiss()
             finish()
         } else {
-            alert.dismiss()
-           toast(R.string.close_measurement_error)
+            toast(R.string.close_measurement_error)
         }
     }
 }

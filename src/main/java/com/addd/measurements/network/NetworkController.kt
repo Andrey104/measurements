@@ -29,6 +29,7 @@ object NetworkController {
     var responsible: ResponsibleCallback? = null
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
+    var callbackMeasurementsDealCallback: MeasurementsDealCallback? = null
     var callbackPaginationListMeasurements: PaginationCallback? = null
     private lateinit var listMeasurements: List<Measurement>
     private lateinit var mSettings: SharedPreferences
@@ -51,6 +52,28 @@ object NetworkController {
     }
 
     //------------------------------запросы------------------------------------------
+    fun getMeasurementsDeals(id: String) {
+        val call = api.getMeasurementsDeal(id)
+        call.enqueue(object : retrofit2.Callback<List<Measurement>> {
+            override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
+                response?.body()?.let {
+                    if (response.isSuccessful) {
+                        callbackMeasurementsDealCallback?.resultMeasurementsDeal(listMeasurements, true)
+                    }
+                }
+                if (!(response?.isSuccessful ?: true)) {
+                    callbackMeasurementsDealCallback?.resultMeasurementsDeal(emptyList(), false)
+                }
+
+            }
+
+            override fun onFailure(call: Call<List<Measurement>>?, t: Throwable?) {
+                callbackMeasurementsDealCallback?.resultMeasurementsDeal(emptyList(), false)
+            }
+
+        })
+    }
+
     fun getCurrentMeasurements(date: String, nameSave: String?) {
         this.date = date
         status = "current"
@@ -58,7 +81,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements =it.results!!
+                    listMeasurements = it.results!!
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
@@ -345,6 +368,8 @@ object NetworkController {
                 response?.let {
                     if (response.code() == 200) {
                         closeCallback?.resultClose(true)
+                    } else {
+                        closeCallback?.resultClose(false)
                     }
                 }
             }
@@ -494,4 +519,11 @@ object NetworkController {
         NetworkController.callbackPaginationListMeasurements = callback
     }
 
+    interface MeasurementsDealCallback {
+        fun resultMeasurementsDeal(listMeasurements: List<Measurement>, result: Boolean)
+    }
+
+    fun registerMeasurementsDealCallback(callback: MeasurementsDealCallback?) {
+        NetworkController.callbackMeasurementsDealCallback = callback
+    }
 }

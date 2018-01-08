@@ -10,6 +10,7 @@ import java.util.*
 val gson = Gson()
 val DEAL_KEY = "deal"
 val MEASUREMENT_KEY = "measurement"
+val MEASUREMENT_EXPANDED= "expanded"
 val SYMBOL_KEY = "symbol"
 val PROBLEM_KEY = "problem"
 val MEASUREMENT_PHOTO = "MEASUREMENT_PHOTO"

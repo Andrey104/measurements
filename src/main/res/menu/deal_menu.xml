@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/mainDeal"
+        android:icon="@drawable/ic_today_white_24dp"
+        android:title="@string/main" />
+    <item
         android:id="@+id/measurement"
         android:icon="@drawable/today_calendar"
-        android:title="@string/measurement" />
+        android:title="@string/measurements" />
     <item
         android:id="@+id/problems"
         android:icon="@drawable/tomorrow_calendar"
@@ -14,10 +18,6 @@
         android:title="@string/recalculation" />
     <item
         android:id="@+id/mount"
-        android:icon="@drawable/ic_today_white_24dp"
-        android:title="@string/mount" />
-    <item
-        android:id="@+id/something"
         android:icon="@drawable/ic_today_white_24dp"
         android:title="@string/mount" />
 </menu>

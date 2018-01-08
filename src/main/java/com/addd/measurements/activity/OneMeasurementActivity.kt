@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_measurement.*
 import kotlinx.android.synthetic.main.content_one_measurement.*
 import java.util.*
+import android.widget.LinearLayout
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement {
@@ -30,19 +31,20 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUpdateOneMeasurementCallback(this)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_measurement)
         setSupportActionBar(toolbarAst)
+        if (!intent.hasExtra(MEASUREMENT_EXPANDED)) {
+            measurement = getSavedMeasurement()
+            displayMeasurement(measurement)
+        } else {
+            showDialog()
+            NetworkController.getOneMeasurement(intent.getIntExtra(ID_KEY, 0).toString())
+        }
 
-        measurement = getSavedMeasurement()
-        displayMeasurement(measurement)
 
         fab.setOnClickListener { view ->
             showPopupMenu(view)
-        }
-        if (measurement.color != 2) {
-            fab.hide()
         }
     }
 
@@ -74,9 +76,27 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     private fun displayMeasurement(measurement: Measurement) {
+        if (measurement.color != 2) {
+            fab.hide()
+        }
+
         title = String.format("Замер %05d", measurement.deal)
         setStatus(measurement)
 
+        val mainLayout = findViewById<LinearLayout>(R.id.linearLayoutOneMeasurement)
+        val textViewSum = TextView(applicationContext)
+        val textViewPrep = TextView(applicationContext)
+        val textViewLayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        if (measurement.sum != null) {
+            textViewSum.text = "Сумма " + measurement.sum.toString()
+            textViewSum.layoutParams = textViewLayoutParams
+            mainLayout.addView(textViewSum)
+        }
+        if (measurement.prepayment != null) {
+            textViewPrep.text = "Предоплата " + measurement.prepayment.toString()
+            textViewPrep.layoutParams = textViewLayoutParams
+            mainLayout.addView(textViewPrep)
+        }
 
         if (measurement.company?.symbol?.length == 1) {
             symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30F)
@@ -228,7 +248,11 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
-        val viewAlert = layoutInflater.inflate(R.layout.update_dialog, null)
+        var viewAlert: View = if (intent.hasExtra(MEASUREMENT_EXPANDED)) {
+            layoutInflater.inflate(R.layout.get_one_dialog, null)
+        } else {
+            layoutInflater.inflate(R.layout.update_dialog, null)
+        }
         builder.setView(viewAlert)
                 .setCancelable(false)
         alert = builder.create()
@@ -240,7 +264,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             this.measurement = measurement
             displayMeasurement(measurement)
         } else {
-           toast(R.string.update_error)
+            toast(R.string.update_error)
         }
         alert.dismiss()
     }

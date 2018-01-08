@@ -60,7 +60,11 @@
         <activity
             android:name=".activity.OneDealActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".activity.OneMeasurementExpanded"
+            android:label="@string/title_activity_one_measurement_expanded"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".activity.ProblemsActivity"></activity>
     </application>
 
 </manifest>

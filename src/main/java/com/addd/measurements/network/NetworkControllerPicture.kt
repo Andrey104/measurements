@@ -41,7 +41,6 @@ object NetworkControllerPicture {
 
     fun addPictureFile(id: String, file: File?) {
         if (file != null) {
-            Toast.makeText(MyApp.instance, file.path, Toast.LENGTH_LONG).show()
             val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body = MultipartBody.Part.createFormData("url", file.name, requestFile)
             val call = api.addPicture(id, body)

@@ -22,6 +22,7 @@ object NetworkControllerProblem {
     var problemListCallback : ProblemListCallback? = null
     var problemPaginationResultCallback : ProblemPaginationList? = null
     var oneProblemCallback : OneProblem? = null
+    var dealProblemsCallback : DealProblems? = null
 
 
 
@@ -105,6 +106,23 @@ object NetworkControllerProblem {
         })
     }
 
+    fun getDealProblem(id: String) {
+        val call = api.getDiscussionsDeal(id)
+        call.enqueue(object : retrofit2.Callback<List<MyProblem>> {
+            override fun onResponse(call: Call<List<MyProblem>>?, response: Response<List<MyProblem>>?) {
+                if (response?.code() == 200) {
+                    dealProblemsCallback?.resultGetProblems(response.body(), true)
+                } else {
+                    dealProblemsCallback?.resultGetProblems(emptyList(), false)
+                }
+            }
+
+            override fun onFailure(call: Call<List<MyProblem>>?, t: Throwable?) {
+                dealProblemsCallback?.resultGetProblems(emptyList(), false)
+            }
+        })
+    }
+
 
 
     interface AddProblemCallback {
@@ -138,5 +156,13 @@ object NetworkControllerProblem {
 
     fun registerGetOneProblemCallback(callback: OneProblem?) {
         oneProblemCallback = callback
+    }
+
+    interface DealProblems {
+        fun resultGetProblems(listProblems: List<MyProblem>?, boolean: Boolean)
+    }
+
+    fun registerDealProblemsCallback(callback: DealProblems?) {
+        dealProblemsCallback = callback
     }
 }

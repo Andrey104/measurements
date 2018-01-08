@@ -44,6 +44,7 @@ class DealsFragment : Fragment(),
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        (activity as AppCompatActivity).supportActionBar?.show()
         NetworkControllerDeals.registerCallBack(this)
         NetworkControllerDeals.registerPaginationCallback(this)
         val view = inflater?.inflate(R.layout.my_deals_fragment, container, false) ?: View(context)
@@ -132,6 +133,7 @@ class DealsFragment : Fragment(),
 
         datePikerDialog.show()
     }
+
     override fun resultList(listDeals: List<Deal>, result: Int, date: String, count: Int) {
         TOTAL_PAGES = if (count % 20 == 0) {
             count / 20
@@ -140,14 +142,16 @@ class DealsFragment : Fragment(),
         }
 
         deals = listDeals
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        if (deals.isEmpty()) {
-            if (result == 0) {
-                if (deals.isEmpty()) toast("По данному запросу ничего не найдено")
+        if ((activity as AppCompatActivity).supportActionBar != null) {
+            val toolbar = (activity as AppCompatActivity).supportActionBar
+            if (deals.isEmpty()) {
+                if (result == 0) {
+                    if (deals.isEmpty()) toast("По данному запросу ничего не найдено")
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
-            } else {
-                if (this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
-                toast(R.string.no_internet)
+                } else {
+                    if (this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
+                    toast(R.string.no_internet)
+                }
             }
         }
         adapter = if (deals.isEmpty()) {
