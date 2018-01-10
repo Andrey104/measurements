@@ -3,18 +3,18 @@ package com.addd.measurements.activity
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.addd.measurements.*
-import com.addd.measurements.fragments.ListMeasurementsFragment
-import com.addd.measurements.fragments.MainDealFragment
-import com.addd.measurements.fragments.ProblemDealFragment
+import com.addd.measurements.fragments.*
 import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.network.NetworkControllerDeals
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_deal.*
 
 class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallback {
-    private lateinit var deal : Deal
-    private lateinit var json : String
+    private lateinit var deal: Deal
+    private lateinit var json: String
+    private lateinit var dealID: String
+    private var fragmentName = MAIN_NAME
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerDeals.registerOneDealCallback(this)
@@ -22,7 +22,7 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
         setContentView(R.layout.activity_one_deal)
         setSupportActionBar(toolbarDeal)
         onClickMenu(bottomNavigation)
-        mainDealFragment()
+        getDeal()
     }
 
     private fun onClickMenu(bottomNavigationView: BottomNavigationView) {
@@ -55,59 +55,75 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                     }
                 }
                 R.id.recalculation -> {
-                    toast("перерасчет")
+                    fragmentName = RECALCULATION_NAME
+                    val fragment = LoadFragment()
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    getDeal()
                 }
                 R.id.mount -> {
-                    toast("монтаж")
+                    fragmentName = MOUNT_NAME
+                    val fragment = LoadFragment()
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    getDeal()
                 }
                 R.id.mainDeal -> {
-                    mainDealFragment()
+                    supportActionBar?.title = String.format("Объект %05d", deal.id)
+                    fragmentName = MAIN_NAME
+                    val fragment = LoadFragment()
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    getDeal()
                 }
             }
             true
         }
     }
 
-    private fun mainDealFragment() {
+    private fun getDeal() {
         supportActionBar?.show()
-        val bundle = Bundle()
-        if (intent.hasExtra(DEAL_KEY)) {
-            json =  intent.getStringExtra(DEAL_KEY)
+        if (intent.hasExtra(DEAL_ID)) {
+            dealID = intent.getStringExtra(DEAL_ID)
+            supportActionBar?.title = String.format("Объект %05d", dealID.toInt())
+            NetworkControllerDeals.getOneDeal(dealID)
+        } else {
+            bottomNavigation.visibility = View.GONE
+            toast(R.string.error)
+        }
+    }
+
+    override fun resultOneDeal(deal: Deal?, boolean: Boolean) {
+        if (deal != null && boolean) {
+            json = gson.toJson(deal)
+            this.deal = deal
+            val bundle = Bundle()
             bundle.putString(DEAL_KEY, json)
-            getDeal(json)
-            val fragment = MainDealFragment()
-            fragment.arguments = bundle
-            val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-        } else {
-            if (intent.hasExtra(DEAL_ID)) {
-                NetworkControllerDeals.getOneDeal(intent.getStringExtra(DEAL_ID))
-            } else {
-                toast(R.string.error)
+            when (fragmentName) {
+                MAIN_NAME -> {
+                    val fragment = MainDealFragment()
+                    fragment.arguments = bundle
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                }
+
+                RECALCULATION_NAME -> {
+                    val fragment = RecalculationFragment()
+                    fragment.arguments = bundle
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                }
+
+                MOUNT_NAME -> {
+                    val fragment = MountFragment()
+                    fragment.arguments = bundle
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                }
             }
-        }
-    }
-
-    override fun resultOneDeal(deal: Deal?) {
-        json = gson.toJson(deal)
-        val bundle = Bundle()
-        bundle.putString(DEAL_KEY, json)
-        getDeal(json)
-        val fragment = MainDealFragment()
-        fragment.arguments = bundle
-        val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-    }
-
-    private fun getDeal(string: String): Deal {
-        deal = if (string.isNullOrEmpty()) {
-            Deal()
         } else {
-            val type = object : TypeToken<Deal>() {
-            }.type
-            gson.fromJson(string, type)
+            toast(R.string.error)
         }
-        return deal
+        progressBarOneDeal.visibility = View.GONE
     }
-
 }

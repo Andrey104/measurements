@@ -61,7 +61,7 @@ class Deal {
     val payments: List<Any>? = null
     @SerializedName("discounts")
     @Expose
-    val discounts: List<Any>? = null
+    val discounts: List<Recalculation>? = null
     @SerializedName("mounts")
     @Expose
     val mounts: List<Any>? = null

@@ -84,8 +84,7 @@ class DealsFragment : Fragment(),
 
     override fun onItemClick(pos: Int) {
         val intent = Intent(context, OneDealActivity::class.java)
-        val json = gson.toJson(deals[pos])
-        intent.putExtra(DEAL_KEY, json)
+        intent.putExtra(DEAL_ID, deals[pos].id.toString())
         startActivityForResult(intent, 0)
     }
 

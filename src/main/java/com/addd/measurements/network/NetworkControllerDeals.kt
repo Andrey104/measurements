@@ -268,17 +268,19 @@ object NetworkControllerDeals {
         val call = api.getOneDeal(id)
         call.enqueue(object : retrofit2.Callback<Deal> {
             override fun onResponse(call: Call<Deal>?, response: Response<Deal>?) {
-                var measurement: Deal? = null
+                var deal: Deal? = null
                 response?.body().let {
                     if (response?.code() == 200) {
-                        measurement = response.body()
+                        deal = response.body()
+                        callbackOneDeal?.resultOneDeal(deal, true)
+                    } else {
+                        callbackOneDeal?.resultOneDeal(deal, false)
                     }
-                    callbackOneDeal?.resultOneDeal(measurement)
                 }
             }
 
             override fun onFailure(call: Call<Deal>?, t: Throwable?) {
-                callbackOneDeal?.resultOneDeal(null)
+                callbackOneDeal?.resultOneDeal(null, false)
             }
 
         })
@@ -303,7 +305,7 @@ object NetworkControllerDeals {
     }
 
     interface OneDealCallback {
-        fun resultOneDeal(deal: Deal?)
+        fun resultOneDeal(deal: Deal?, boolean: Boolean)
     }
 
     fun registerOneDealCallback(callback: OneDealCallback?) {

@@ -18,7 +18,6 @@ import com.addd.measurements.modelAPI.Action
 import com.addd.measurements.modelAPI.Deal
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.main_deal_fragment.view.*
-import kotlinx.android.synthetic.main.measurements_list_fragment.view.*
 
 /**
  * Created by addd on 08.01.2018.
@@ -28,6 +27,7 @@ class MainDealFragment : Fragment() {
     private lateinit var deal: Deal
     private lateinit var bundle: Bundle
     var emptyList: ArrayList<Action> = ArrayList(emptyList())
+    private lateinit var actions : List<Action>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater?.inflate(R.layout.main_deal_fragment, container, false) ?: View(context)
@@ -39,17 +39,17 @@ class MainDealFragment : Fragment() {
     }
 
     private fun displayDeal(view: View) {
-        (activity as AppCompatActivity).supportActionBar?.title = String.format("Объект %05d", deal.id)
         view.symbol.text = deal.company?.symbol
         view.address.text = deal.address
 
         if (deal.sum == null) {
-            view.textViewSum.text = "Не оплачено"
+            view.textViewSumR.text = getString(R.string.unpaid)
         } else {
-            view.textViewSum.text = "Сумма - " + deal.sum
+            view.textViewSumR.text = "Сумма - " + deal.sum
         }
         setColorCompany(deal.company?.id ?: 1, view)
-        val adapter = ActionAdapter(deal.actions?.reversed() as ArrayList)
+        actions = deal.actions ?: emptyList
+        val adapter = ActionAdapter(actions as ArrayList)
         view.actionRecyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         view.actionRecyclerList.layoutManager = layoutManager

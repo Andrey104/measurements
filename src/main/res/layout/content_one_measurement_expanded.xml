@@ -86,7 +86,7 @@
             android:text="@string/textview" />
 
         <TextView
-            android:id="@+id/textViewSum"
+            android:id="@+id/textViewSumR"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

@@ -234,4 +234,5 @@
     <string name="deal_complete">Завершено</string>
     <string name="deal_reject">Отклонено</string>
     <string name="status_deal">Статус сделки</string>
+    <string name="unpaid">Не оплачено</string>
 </resources>
