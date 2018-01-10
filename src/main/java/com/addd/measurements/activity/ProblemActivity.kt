@@ -30,6 +30,7 @@ class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblem
             toast(R.string.enter_description)
             return false
         }
+        buttonOk.isEnabled = false
         val problem = ProblemRequest(editTextHeader.text.toString(), editTextDescription.text.toString())
         NetworkControllerProblem.addProblem(problem, intent?.getStringExtra(DEAL_KEY) ?: "0")
 
@@ -43,6 +44,7 @@ class ProblemActivity : AppCompatActivity(), NetworkControllerProblem.AddProblem
             finish()
         } else {
             toast(R.string.error)
+            buttonOk.isEnabled = true
         }
     }
 

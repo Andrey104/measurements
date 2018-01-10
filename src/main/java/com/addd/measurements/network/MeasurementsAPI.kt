@@ -79,4 +79,7 @@ interface MeasurementsAPI {
 
     @GET("deals/{id}/discussions")
     fun getDiscussionsDeal(@Path("id") id: String): Call<List<MyProblem>>
+
+    @POST("deals/{id}/discount/")
+    fun addRecalculation(@Body recalculation: RecalculationRequest, @Path("id") id: String): Call<Void>
 }

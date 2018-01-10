@@ -55,6 +55,7 @@
     <string name="added_client">Добавлен клиент</string>
     <string name="change_manager">Изменение менеджера</string>
     <string name="add_discussion">Добавление обсуждения</string>
+    <string name="add_discount">Добавить</string>
     <string name="close_measurement_error">При завершении произошла ошибка</string>
     <string name="emty_login_or_password">Пустое поле Логин или Пароль</string>
     <string name="wrong_login_password">Неправильный логин или пароль</string>
@@ -235,4 +236,9 @@
     <string name="deal_reject">Отклонено</string>
     <string name="status_deal">Статус сделки</string>
     <string name="unpaid">Не оплачено</string>
+    <string name="commentSimple">Комментарий</string>
+    <string name="sum_after_discount">Сумма после перерасчета:</string>
+    <string name="enter_sum_after_discount">Введите сумму после перерасчета</string>
+    <string name="discount_added_successful">Перерасчет добавлен успешно</string>
+    <string name="error_add_discount">При добавлении произошла ошибка</string>
 </resources>

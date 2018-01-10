@@ -3,6 +3,7 @@ package com.addd.measurements.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -16,23 +17,24 @@ import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.modelAPI.Recalculation
 import com.addd.measurements.network.NetworkControllerDeals
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_one_deal.*
 import kotlinx.android.synthetic.main.recalculation_fragment.view.*
 
 /**
  * Created by addd on 10.01.2018.
  */
-class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback {
+class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallbackRecalc {
     private lateinit var mView: View
     private lateinit var bundle: Bundle
     private lateinit var deal: Deal
+    private lateinit var mFragmentManager: FragmentManager
     var emptyList: ArrayList<Recalculation> = ArrayList(emptyList())
     private lateinit var recalculations: List<Recalculation>
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        NetworkControllerDeals.registerOneDealCallback(this)
+        NetworkControllerDeals.registerOneDealRecalcCallback(this)
         bundle = this.arguments
+        mFragmentManager = (activity as AppCompatActivity).supportFragmentManager
         val view = inflater?.inflate(R.layout.recalculation_fragment, container, false) ?: View(context)
         mView = view
         deal = getSavedDeal()
@@ -65,23 +67,26 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
 
     private fun addRecalculation() {
         val intent = Intent(context, AddRecalculationActivity::class.java)
-        intent.putExtra(DEAL_ID, deal.id)
+        intent.putExtra(DEAL_ID, deal.id.toString())
         startActivityForResult(intent, 0)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
             val fragment = LoadFragment()
-            val fragmentManager = (activity as AppCompatActivity).supportFragmentManager
-            fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+            mFragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
             NetworkControllerDeals.getOneDeal(deal.id.toString())
         }
     }
 
-    override fun resultOneDeal(deal: Deal?, boolean: Boolean) {
+    override fun resultOneDealRecalc(deal: Deal?, boolean: Boolean) {
         if (deal != null && boolean) {
-            recalculations = deal.discounts ?: emptyList
-            displayRecalculations()
+            val fragment = RecalculationFragment()
+            val json = gson.toJson(deal)
+            val bundle = Bundle()
+            bundle.putString(DEAL_KEY, json)
+            fragment.arguments = bundle
+            mFragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
         } else {
             toast(R.string.error)
         }

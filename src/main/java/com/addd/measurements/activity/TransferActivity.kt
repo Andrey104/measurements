@@ -49,7 +49,7 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
             toast(R.string.select_cause)
             return false
         }
-
+        buttonOk.isEnabled = false
         val comment = editComment.text.toString()
         val transfer = Transfer(date, cause, if (comment.isEmpty()) null else comment)
         showDialog()
@@ -100,6 +100,7 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         } else {
             alert.dismiss()
             toast(R.string.transfer_error)
+            buttonOk.isEnabled = true
         }
     }
 

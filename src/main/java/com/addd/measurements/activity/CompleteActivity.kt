@@ -59,7 +59,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             toast(R.string.enter_comment)
             return false
         }
-
+        buttonOk.isEnabled = false
         val sum: Float = editTextSum.text.toString().toFloat()
 
         val close = Close(editTextComment.text.toString(),
@@ -92,6 +92,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             finish()
         } else {
             toast(R.string.close_measurement_error)
+            buttonOk.isEnabled = true
         }
     }
 }

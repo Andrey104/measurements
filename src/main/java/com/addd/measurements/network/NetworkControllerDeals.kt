@@ -5,6 +5,8 @@ import android.preference.PreferenceManager
 import com.addd.measurements.MyApp
 import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.modelAPI.MyResultDeals
+import com.addd.measurements.modelAPI.Recalculation
+import com.addd.measurements.modelAPI.RecalculationRequest
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -25,6 +27,8 @@ object NetworkControllerDeals {
     var callbackListDeals: CallbackListDeals? = null
     var callbackPaginationListDeals: PaginationCallback? = null
     var callbackOneDeal: OneDealCallback? = null
+    var addDiscountCallback: DiscountCallback? = null
+    var callbackOneDealRecalc: OneDealCallbackRecalc? = null
 
 
     private val BASE_URL = "http://188.225.46.31/api/"
@@ -286,6 +290,21 @@ object NetworkControllerDeals {
         })
     }
 
+    fun addDiscount(recalculation: RecalculationRequest, id: String) {
+        val call = api.addRecalculation(recalculation , id)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                if (response?.code() == 200) {
+                    addDiscountCallback?.resultAddDiscount(true)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                addDiscountCallback?.resultAddDiscount(false)
+            }
+        })
+    }
+
     //----------------------------------callbacks-----------------------------------
 
     interface CallbackListDeals {
@@ -311,4 +330,22 @@ object NetworkControllerDeals {
     fun registerOneDealCallback(callback: OneDealCallback?) {
         callbackOneDeal = callback
     }
+
+    interface DiscountCallback {
+        fun resultAddDiscount(boolean: Boolean)
+    }
+
+    fun registerDiscountCallback(callback: DiscountCallback?) {
+        addDiscountCallback = callback
+    }
+
+    interface OneDealCallbackRecalc {
+        fun resultOneDealRecalc(deal: Deal?, boolean: Boolean)
+    }
+
+    fun registerOneDealRecalcCallback(callback: OneDealCallbackRecalc?) {
+        callbackOneDealRecalc = callback
+    }
+
+
 }

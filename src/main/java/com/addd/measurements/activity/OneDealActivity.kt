@@ -101,24 +101,30 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
             bundle.putString(DEAL_KEY, json)
             when (fragmentName) {
                 MAIN_NAME -> {
-                    val fragment = MainDealFragment()
-                    fragment.arguments = bundle
-                    val fragmentManager = supportFragmentManager
-                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    if (bottomNavigation.selectedItemId == R.id.mainDeal) {
+                        val fragment = MainDealFragment()
+                        fragment.arguments = bundle
+                        val fragmentManager = supportFragmentManager
+                        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    }
                 }
 
                 RECALCULATION_NAME -> {
-                    val fragment = RecalculationFragment()
-                    fragment.arguments = bundle
-                    val fragmentManager = supportFragmentManager
-                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    if (bottomNavigation.selectedItemId == R.id.recalculation) {
+                        val fragment = RecalculationFragment()
+                        fragment.arguments = bundle
+                        val fragmentManager = supportFragmentManager
+                        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    }
                 }
 
                 MOUNT_NAME -> {
-                    val fragment = MountFragment()
-                    fragment.arguments = bundle
-                    val fragmentManager = supportFragmentManager
-                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    if (bottomNavigation.selectedItemId == R.id.mount) {
+                        val fragment = MountFragment()
+                        fragment.arguments = bundle
+                        val fragmentManager = supportFragmentManager
+                        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    }
                 }
             }
         } else {

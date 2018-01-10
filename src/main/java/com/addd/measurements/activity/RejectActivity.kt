@@ -34,6 +34,7 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
             toast(R.string.select_cause)
             return false
         }
+        buttonOk.isEnabled = false
         val comment = editComment.text.toString()
 
         val reject = Reject(cause, if (comment.isEmpty()) null else comment)
@@ -77,6 +78,7 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
             finish()
         } else {
             toast(R.string.error_measurement_reject)
+            buttonOk.isEnabled = true
             alert.dismiss()
         }
     }

@@ -14,7 +14,7 @@ import com.addd.measurements.modelAPI.Recalculation
  * Created by addd on 10.01.2018.
  */
 class RecalculationAdapter(notesList: List<Recalculation>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var mRecalculationsList: List<Recalculation> = notesList
+    private var mRecalculationsList: List<Recalculation> = notesList.reversed()
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
