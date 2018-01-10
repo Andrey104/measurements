@@ -4,16 +4,21 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.DEAL_KEY
 import com.addd.measurements.R
+import com.addd.measurements.adapters.ActionAdapter
 import com.addd.measurements.gson
+import com.addd.measurements.modelAPI.Action
 import com.addd.measurements.modelAPI.Deal
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.main_deal_fragment.view.*
+import kotlinx.android.synthetic.main.measurements_list_fragment.view.*
 
 /**
  * Created by addd on 08.01.2018.
@@ -22,6 +27,7 @@ import kotlinx.android.synthetic.main.main_deal_fragment.view.*
 class MainDealFragment : Fragment() {
     private lateinit var deal: Deal
     private lateinit var bundle: Bundle
+    var emptyList: ArrayList<Action> = ArrayList(emptyList())
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater?.inflate(R.layout.main_deal_fragment, container, false) ?: View(context)
@@ -43,6 +49,12 @@ class MainDealFragment : Fragment() {
             view.textViewSum.text = "Сумма - " + deal.sum
         }
         setColorCompany(deal.company?.id ?: 1, view)
+        val adapter = ActionAdapter(deal.actions?.reversed() as ArrayList)
+        view.actionRecyclerList.adapter = adapter
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        view.actionRecyclerList.layoutManager = layoutManager
+        val dividerItemDecoration = DividerItemDecoration(view.actionRecyclerList.context, layoutManager.orientation)
+        view.actionRecyclerList.addItemDecoration(dividerItemDecoration)
 
         view.progressBar3.visibility = View.GONE
     }

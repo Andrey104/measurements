@@ -58,7 +58,7 @@ object NetworkController {
             override fun onResponse(call: Call<List<Measurement>>?, response: Response<List<Measurement>>?) {
                 response?.body()?.let {
                     if (response.isSuccessful) {
-                        callbackMeasurementsDealCallback?.resultMeasurementsDeal(listMeasurements, true)
+                        callbackMeasurementsDealCallback?.resultMeasurementsDeal(it, true)
                     }
                 }
                 if (!(response?.isSuccessful ?: true)) {

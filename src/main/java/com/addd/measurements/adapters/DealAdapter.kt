@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Deal
 
@@ -24,7 +25,15 @@ class DealAdapter(notesList: ArrayList<Deal>, private val listener: CustomAdapte
                 var deal = mDealList[position]
                 viewHolder.deal.text = String.format("%05d", deal.id)
                 viewHolder.address.text = deal.address
-                viewHolder.timeMount.text = "Что-то про монтаж"
+                viewHolder.timeMount.text = when (deal.status) {
+                    0 -> MyApp.instance.getString(R.string.in_treatment)
+                    1 -> MyApp.instance.getString(R.string.measurement)
+                    2 -> MyApp.instance.getString(R.string.not_contract)
+                    3 -> MyApp.instance.getString(R.string.mount)
+                    4 -> MyApp.instance.getString(R.string.deal_complete)
+                    5 -> MyApp.instance.getString(R.string.deal_reject)
+                    else -> MyApp.instance.getString(R.string.status_deal)
+                }
 
                 viewHolder.symbol.text = deal.company?.symbol
 

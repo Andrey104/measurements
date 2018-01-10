@@ -37,6 +37,7 @@
     <string name="wrong_manager">Ошибка менеджера</string>
     <string name="search">Поиск</string>
     <string name="reject_measurement">Отказ от замера</string>
+    <string name="reject_deal">Отказ</string>
     <string name="complete_measurement">Завершение замера</string>
     <string name="offer_concluded">Договор заключен</string>
     <string name="sum">Сумма</string>
@@ -48,6 +49,12 @@
     <string name="enter_sum">Введите сумму</string>
     <string name="enter_comment">Введите комментарий</string>
     <string name="measurement_closed">Замер завершен</string>
+    <string name="measurement_added">Замер добавлен</string>
+    <string name="mount_added">Монтаж добавлен</string>
+    <string name="successful_reject">Успешное завершение</string>
+    <string name="added_client">Добавлен клиент</string>
+    <string name="change_manager">Изменение менеджера</string>
+    <string name="add_discussion">Добавление обсуждения</string>
     <string name="close_measurement_error">При завершении произошла ошибка</string>
     <string name="emty_login_or_password">Пустое поле Логин или Пароль</string>
     <string name="wrong_login_password">Неправильный логин или пароль</string>
@@ -222,4 +229,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_problem">Данный объект не имеет проблем</string>
+    <string name="in_treatment">В обработке</string>
+    <string name="not_contract">Не заключен договор</string>
+    <string name="deal_complete">Завершено</string>
+    <string name="deal_reject">Отклонено</string>
+    <string name="status_deal">Статус сделки</string>
 </resources>

@@ -87,7 +87,6 @@ class DealsFragment : Fragment(),
         val json = gson.toJson(deals[pos])
         intent.putExtra(DEAL_KEY, json)
         startActivityForResult(intent, 0)
-//        toast("${deals[pos].id}")
     }
 
 

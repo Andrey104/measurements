@@ -27,6 +27,7 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
     private lateinit var bundle: Bundle
     private lateinit var deal: Deal
     private lateinit var adapter: DataAdapter
+    var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
     private lateinit var measurements: List<Measurement>
     private lateinit var mView: View
 
@@ -46,13 +47,14 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
         val intent = Intent(context, OneMeasurementActivity::class.java)
         var id = measurements[pos].id
         intent.putExtra(ID_KEY, id)
+        intent.putExtra(FROM_DEAL, true)
         intent.putExtra(MEASUREMENT_EXPANDED, true)
         startActivityForResult(intent, 10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
-            adapter = DataAdapter(emptyList<Measurement>() as ArrayList<Measurement>, this)
+            adapter = DataAdapter(emptyList, this)
             mView.recyclerListMeasurements.adapter = adapter
             mView.progressBar4.visibility = View.VISIBLE
             NetworkController.getMeasurementsDeals(deal.id.toString())

@@ -192,7 +192,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             popupMenu.menu.findItem(R.id.complete).isVisible = false
             popupMenu.menu.findItem(R.id.shift).isVisible = false
             popupMenu.menu.findItem(R.id.reject).isVisible = false
-            popupMenu.menu.findItem(R.id.deal).isVisible = true
+            popupMenu.menu.findItem(R.id.deal).isVisible = !intent.hasExtra(FROM_DEAL)
         }
 
 
@@ -237,7 +237,9 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                     true
                 }
                 R.id.deal -> {
-                    toast("Собака")
+                    val intent = Intent(applicationContext, OneDealActivity::class.java)
+                    intent.putExtra(DEAL_ID, measurement.deal.toString())
+                    startActivityForResult(intent, 0)
                     true
                 }
                 else -> false

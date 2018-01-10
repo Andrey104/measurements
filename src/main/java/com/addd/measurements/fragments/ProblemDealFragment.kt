@@ -9,15 +9,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.addd.measurements.DEAL_KEY
-import com.addd.measurements.R
+import com.addd.measurements.*
+import com.addd.measurements.activity.OneProblemActivity
 import com.addd.measurements.activity.ProblemActivity
 import com.addd.measurements.adapters.ProblemAdapter
-import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.modelAPI.MyProblem
 import com.addd.measurements.network.NetworkControllerProblem
-import com.addd.measurements.toast
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.problems_deal_fragment.view.*
 
@@ -50,8 +48,8 @@ class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, Ne
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 30 && resultCode == 200) {
-            adapter = ProblemAdapter(emptyList<MyProblem>() as ArrayList<MyProblem>, this)
+        if (resultCode == 200) {
+            adapter = ProblemAdapter(emptyList, this)
             mView.recyclerList.adapter = adapter
             mView.progressBarMain.visibility = View.VISIBLE
             NetworkControllerProblem.getDealProblem(deal.id.toString())
@@ -71,7 +69,11 @@ class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, Ne
     }
 
     override fun onItemClick(pos: Int) {
+        val intent = Intent(context, OneProblemActivity::class.java)
+        val json = gson.toJson(problems[pos])
+        intent.putExtra(PROBLEM_KEY, json)
 
+        startActivityForResult(intent, 0)
     }
 
     override fun resultGetProblems(listProblems: List<MyProblem>?, boolean: Boolean) {
