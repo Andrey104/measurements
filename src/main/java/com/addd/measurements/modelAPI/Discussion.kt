@@ -28,5 +28,5 @@ class Discussion {
     val closed: Boolean? = null
     @SerializedName("user")
     @Expose
-    val user: Int? = null
+    val user: User? = null
 }

@@ -13,7 +13,7 @@ class Action {
     val id: Int? = null
     @SerializedName("user")
     @Expose
-    val user: String? = null
+    val user: User? = null
     @SerializedName("type")
     @Expose
     val type: Int? = null

@@ -11,6 +11,7 @@ import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.modelAPI.MyProblem
+import com.addd.measurements.modelAPI.User
 
 /**
  * Created by addd on 22.12.2017.
@@ -83,7 +84,7 @@ class ProblemAdapter(notesList: ArrayList<MyProblem>, private val listener: Cust
 
     fun addLoadingFooter() {
         isLoadingAdded = true
-        add(MyProblem(0, "","0", "0", 0, "0", "0", 0, emptyList()))
+        add(MyProblem(0, "", User(), "0", 0, "0", "0", 0, emptyList()))
     }
 
     fun removeLoadingFooter() {

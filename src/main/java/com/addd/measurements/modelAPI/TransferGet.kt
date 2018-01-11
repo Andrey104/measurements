@@ -29,5 +29,5 @@ class TransferGet {
      val comment: Any? = null
     @SerializedName("user")
     @Expose
-     val user: Int? = null
+     val user: User? = null
 }

@@ -241,4 +241,5 @@
     <string name="enter_sum_after_discount">Введите сумму после перерасчета</string>
     <string name="discount_added_successful">Перерасчет добавлен успешно</string>
     <string name="error_add_discount">При добавлении произошла ошибка</string>
+    <string name="deal_dont_has_mounts">Данная сделка не имеет монтажей</string>
 </resources>

@@ -15,7 +15,7 @@ class MyProblem(
         val address: String?,
         @SerializedName("user")
         @Expose
-        val user: String,
+        val user: User,
         @SerializedName("date")
         @Expose
         val date: String,

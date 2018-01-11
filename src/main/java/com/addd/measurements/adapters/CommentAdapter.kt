@@ -20,7 +20,7 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
 
     override fun onBindViewHolder(holder: CommentAdapter.ViewHolder, position: Int) {
         holder.name.text = mCommentsList[position].user.toString()
-        if (mCommentsList[position].user == 5) {
+        if (mCommentsList[position]?.user?.type ?: 1 >= 3) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin, MyApp.instance.theme))
             } else {

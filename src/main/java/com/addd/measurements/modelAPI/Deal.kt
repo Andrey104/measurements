@@ -37,7 +37,7 @@ class Deal {
     val order: Any? = null
     @SerializedName("user")
     @Expose
-    val user: Int? = null
+    val user: User? = null
     @SerializedName("company")
     @Expose
     val company: Company? = null

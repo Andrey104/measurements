@@ -37,7 +37,7 @@ class Measurement(
         val prepayment: Any? = null,
         @SerializedName("worker")
         @Expose
-        val worker: Any? = null,
+        val worker: User? = null,
         @SerializedName("deal")
         @Expose
         val deal: Int? = null,
@@ -47,9 +47,6 @@ class Measurement(
         @SerializedName("color")
         @Expose
         val color: Int? = null,
-        @SerializedName("worker_name")
-        @Expose
-        val workerName: Any? = null,
         @SerializedName("deal_comment")
         @Expose
         val dealComment: Any? = null,

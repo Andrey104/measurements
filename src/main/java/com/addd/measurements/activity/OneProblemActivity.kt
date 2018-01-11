@@ -15,6 +15,7 @@ import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Comment
 import com.addd.measurements.modelAPI.CommentRequest
 import com.addd.measurements.modelAPI.MyProblem
+import com.addd.measurements.modelAPI.User
 import com.addd.measurements.network.NetworkControllerComment
 import com.addd.measurements.network.NetworkControllerProblem
 import com.addd.measurements.toast
@@ -65,7 +66,7 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
     private fun getSavedProblem() {
             val json = intent.getStringExtra(PROBLEM_KEY)
         problem = if (json.isNullOrEmpty()) {
-            MyProblem(0, "0", "0", "0", 0, "0", "0", 0, null)
+            MyProblem(0, "0", User(), "0", 0, "0", "0", 0, null)
         } else {
             val type = object : TypeToken<MyProblem>() {
             }.type

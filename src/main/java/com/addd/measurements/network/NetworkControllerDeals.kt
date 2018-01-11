@@ -3,10 +3,7 @@ package com.addd.measurements.network
 import android.content.Context
 import android.preference.PreferenceManager
 import com.addd.measurements.MyApp
-import com.addd.measurements.modelAPI.Deal
-import com.addd.measurements.modelAPI.MyResultDeals
-import com.addd.measurements.modelAPI.Recalculation
-import com.addd.measurements.modelAPI.RecalculationRequest
+import com.addd.measurements.modelAPI.*
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -29,6 +26,7 @@ object NetworkControllerDeals {
     var callbackOneDeal: OneDealCallback? = null
     var addDiscountCallback: DiscountCallback? = null
     var callbackOneDealRecalc: OneDealCallbackRecalc? = null
+    var callbackMountsDeal: MountsDealCallback? = null
 
 
     private val BASE_URL = "http://188.225.46.31/api/"
@@ -305,6 +303,28 @@ object NetworkControllerDeals {
         })
     }
 
+    fun getMountsDeal(id: String){
+        val call = api.getMountsDeal(id)
+        call.enqueue(object : retrofit2.Callback<List<Mount>> {
+            override fun onResponse(call: Call<List<Mount>>?, response: Response<List<Mount>>?) {
+                var mounts: List<Mount>? = null
+                response?.body().let {
+                    if (response?.code() == 200) {
+                        mounts = response.body()
+                        callbackMountsDeal?.resultMountsDeal(mounts, true)
+                    } else {
+                        callbackMountsDeal?.resultMountsDeal(mounts, false)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<Mount>>?, t: Throwable?) {
+                callbackMountsDeal?.resultMountsDeal(null, false)
+            }
+
+        })
+    }
+
     //----------------------------------callbacks-----------------------------------
 
     interface CallbackListDeals {
@@ -345,6 +365,14 @@ object NetworkControllerDeals {
 
     fun registerOneDealRecalcCallback(callback: OneDealCallbackRecalc?) {
         callbackOneDealRecalc = callback
+    }
+
+    interface MountsDealCallback {
+        fun resultMountsDeal(listMounts : List<Mount>?, boolean: Boolean)
+    }
+
+    fun registerMountsDealCallback(callback: MountsDealCallback?) {
+        callbackMountsDeal = callback
     }
 
 

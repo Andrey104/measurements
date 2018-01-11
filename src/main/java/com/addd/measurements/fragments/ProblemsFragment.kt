@@ -59,7 +59,7 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
         }
         if (listProblems.isEmpty()) {
             if (!result) {
-               toast(R.string.nothing_show)
+                toast(R.string.nothing_show)
             }
         } else {
             if (result) {
@@ -68,7 +68,11 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
                 toast(R.string.no_internet)
             }
         }
-        adapter = ProblemAdapter(listProblems as ArrayList, this)
+        adapter = if (listProblems.isEmpty()) {
+            ProblemAdapter(emptyList, this)
+        } else {
+            ProblemAdapter(listProblems as ArrayList, this)
+        }
         recyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerList.layoutManager = layoutManager
@@ -126,6 +130,7 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
         progressBarMain.visibility = View.VISIBLE
         NetworkControllerProblem.getProblems(1)
     }
+
     override fun problemPaginationResult(list: List<MyProblem>, result: Boolean) {
         if (!adapter.isEmpty()) {
             adapter.removeLoadingFooter()
