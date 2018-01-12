@@ -1,5 +1,6 @@
 package com.addd.measurements.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -8,13 +9,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.addd.measurements.DEAL_ID
-import com.addd.measurements.DEAL_KEY
-import com.addd.measurements.R
+import com.addd.measurements.*
+import com.addd.measurements.activity.OneMountActivity
 import com.addd.measurements.adapters.MountAdapter
 import com.addd.measurements.modelAPI.Mount
 import com.addd.measurements.network.NetworkControllerDeals
-import com.addd.measurements.toast
 import kotlinx.android.synthetic.main.mount_fragment.view.*
 
 /**
@@ -24,17 +23,19 @@ class MountFragment : Fragment(), NetworkControllerDeals.MountsDealCallback, Mou
     private lateinit var adapter: MountAdapter
     private lateinit var mView: View
     private lateinit var bundle: Bundle
-    private lateinit var idDeal:String
-    private lateinit var mounts : List<Mount>
+    private lateinit var idDeal: String
+    private lateinit var mounts: List<Mount>
     var emptyList: ArrayList<Mount> = ArrayList(emptyList())
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         NetworkControllerDeals.registerMountsDealCallback(this)
         val view = inflater?.inflate(R.layout.mount_fragment, container, false) ?: View(context)
         mView = view
+        bundle = this.arguments
         idDeal = bundle.getString(DEAL_ID)
         bundle = this.arguments
         if (bundle.containsKey(DEAL_ID)) {
+            (activity as AppCompatActivity).supportActionBar?.title = String.format("Монтажи %05d", bundle.getString(DEAL_ID).toInt())
             mView.progressBarMount.visibility = View.VISIBLE
             NetworkControllerDeals.getMountsDeal(idDeal)
         } else {
@@ -55,29 +56,24 @@ class MountFragment : Fragment(), NetworkControllerDeals.MountsDealCallback, Mou
     }
 
     override fun onItemClick(pos: Int) {
-        val bundle = Bundle()
-        val fragment = ProblemDealFragment()
-        fragment.arguments = bundle
-        bundle.putString(DEAL_KEY, idDeal)
-        val fragmentManager = (activity as AppCompatActivity).supportFragmentManager
-        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-        toast(pos)
+        val json = gson.toJson(mounts[pos])
+        val intent = Intent(context, OneMountActivity::class.java)
+        intent.putExtra(MOUNT_NAME, json)
+        startActivityForResult(intent, 1)
     }
 
     override fun resultMountsDeal(listMounts: List<Mount>?, boolean: Boolean) {
         if (listMounts != null && boolean) {
-            if (listMounts.size > 1) {
-                mounts = listMounts
-                displayMounts(listMounts)
-            } else {
-                //откроем фрагмент на один монтаж
-            }
+            mounts = listMounts
+            displayMounts(listMounts)
         }
-        if (listMounts == null && boolean) {
+        if (listMounts?.isEmpty() != false && boolean) {
             toast(R.string.deal_dont_has_mounts)
+            mView.progressBarMount.visibility = View.GONE
         }
         if (listMounts == null && !boolean) {
             toast(R.string.error)
+            mView.progressBarMount.visibility = View.GONE
         }
     }
 }

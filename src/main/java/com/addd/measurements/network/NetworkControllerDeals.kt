@@ -313,7 +313,7 @@ object NetworkControllerDeals {
                         mounts = response.body()
                         callbackMountsDeal?.resultMountsDeal(mounts, true)
                     } else {
-                        callbackMountsDeal?.resultMountsDeal(mounts, false)
+                        callbackMountsDeal?.resultMountsDeal(null, false)
                     }
                 }
             }

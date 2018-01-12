@@ -14,7 +14,7 @@ class Stage {
     val id: Int? = null
     @SerializedName("installers")
     @Expose
-    val installers: List<Installer>? = null
+    val installers: List<Installers>? = null
     @SerializedName("actions")
     @Expose
     val actions: List<Action>? = null
@@ -35,7 +35,7 @@ class Stage {
     val status: Int? = null
     @SerializedName("comment")
     @Expose
-    val comment: Any? = null
+    val comment: String? = null
     @SerializedName("mount")
     @Expose
     val mount: Int? = null

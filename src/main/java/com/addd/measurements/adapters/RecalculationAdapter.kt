@@ -21,7 +21,7 @@ class RecalculationAdapter(notesList: List<Recalculation>) : RecyclerView.Adapte
         val recalculation = mRecalculationsList[position]
         val viewHolder = holder as ViewHolder
 
-        viewHolder.textViewFio.text = recalculation.user.toString()
+        viewHolder.textViewFio.text = recalculation.user?.firstName + " " + recalculation.user?.lastName
         viewHolder.textViewSum.text = "${recalculation.before} -> ${recalculation.after}"
         viewHolder.textViewComment.text = recalculation.comment
 

@@ -1,5 +1,6 @@
 package com.addd.measurements.adapters
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
@@ -18,8 +19,9 @@ import com.addd.measurements.modelAPI.Comment
 class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
     private var mCommentsList: List<Comment> = notesList
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: CommentAdapter.ViewHolder, position: Int) {
-        holder.name.text = mCommentsList[position].user.toString()
+        holder.name.text = mCommentsList[position].user.firstName + " " + mCommentsList[position].user.lastName
         if (mCommentsList[position]?.user?.type ?: 1 >= 3) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin, MyApp.instance.theme))

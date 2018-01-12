@@ -43,7 +43,7 @@ class Deal {
     val company: Company? = null
     @SerializedName("worker")
     @Expose
-    val worker: Int? = null
+    val worker: User? = null
     @SerializedName("clients")
     @Expose
     val clients: List<Clients>? = null

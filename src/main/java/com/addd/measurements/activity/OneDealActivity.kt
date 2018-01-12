@@ -22,7 +22,7 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
         setContentView(R.layout.activity_one_deal)
         setSupportActionBar(toolbarDeal)
         onClickMenu(bottomNavigation)
-        getDeal()
+        getDeal(true)
     }
 
     private fun onClickMenu(bottomNavigationView: BottomNavigationView) {
@@ -55,18 +55,22 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                     }
                 }
                 R.id.recalculation -> {
+                    supportActionBar?.title = String.format("Перерасчеты %05d", dealID.toInt())
                     fragmentName = RECALCULATION_NAME
                     val fragment = LoadFragment()
                     val fragmentManager = supportFragmentManager
                     fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-                    getDeal()
+                    getDeal(false)
                 }
                 R.id.mount -> {
-                    fragmentName = MOUNT_NAME
-                    val fragment = LoadFragment()
-                    val fragmentManager = supportFragmentManager
-                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-                    getDeal()
+                    if (intent.hasExtra(DEAL_ID)) {
+                        val bundle = Bundle()
+                        val fragment = MountFragment()
+                        fragment.arguments = bundle
+                        bundle.putString(DEAL_ID, intent.getStringExtra(DEAL_ID))
+                        val fragmentManager = supportFragmentManager
+                        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    }
                 }
                 R.id.mainDeal -> {
                     supportActionBar?.title = String.format("Объект %05d", deal.id)
@@ -74,18 +78,20 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                     val fragment = LoadFragment()
                     val fragmentManager = supportFragmentManager
                     fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-                    getDeal()
+                    getDeal(true)
                 }
             }
             true
         }
     }
 
-    private fun getDeal() {
+    private fun getDeal(check: Boolean) {
         supportActionBar?.show()
         if (intent.hasExtra(DEAL_ID)) {
             dealID = intent.getStringExtra(DEAL_ID)
-            supportActionBar?.title = String.format("Объект %05d", dealID.toInt())
+            if (check) {
+                supportActionBar?.title = String.format("Объект %05d", dealID.toInt())
+            }
             NetworkControllerDeals.getOneDeal(dealID)
         } else {
             bottomNavigation.visibility = View.GONE
@@ -121,6 +127,7 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                 MOUNT_NAME -> {
                     if (bottomNavigation.selectedItemId == R.id.mount) {
                         val fragment = MountFragment()
+                        bundle.putString(DEAL_ID, dealID)
                         fragment.arguments = bundle
                         val fragmentManager = supportFragmentManager
                         fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()

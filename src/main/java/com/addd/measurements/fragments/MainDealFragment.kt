@@ -27,7 +27,7 @@ class MainDealFragment : Fragment() {
     private lateinit var deal: Deal
     private lateinit var bundle: Bundle
     var emptyList: ArrayList<Action> = ArrayList(emptyList())
-    private lateinit var actions : List<Action>
+    private lateinit var actions: List<Action>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater?.inflate(R.layout.main_deal_fragment, container, false) ?: View(context)
@@ -56,6 +56,15 @@ class MainDealFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(view.actionRecyclerList.context, layoutManager.orientation)
         view.actionRecyclerList.addItemDecoration(dividerItemDecoration)
 
+        view.textViewStatusDeal.text = when (deal.status) {
+            0 -> getString(R.string.in_treatment)
+            1 -> getString(R.string.measurement)
+            2 -> getString(R.string.not_contract)
+            3 -> getString(R.string.mount)
+            4 -> getString(R.string.deal_complete)
+            5 -> getString(R.string.deal_reject)
+            else -> getString(R.string.status_deal)
+        }
         view.progressBar3.visibility = View.GONE
     }
 

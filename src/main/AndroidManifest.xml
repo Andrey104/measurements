@@ -65,7 +65,9 @@
             android:label="@string/title_activity_one_measurement_expanded"
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.ProblemsActivity" />
-        <activity android:name=".activity.AddRecalculationActivity"></activity>
+        <activity android:name=".activity.AddRecalculationActivity" />
+        <activity android:name=".activity.OneMountActivity" />
+        <activity android:name=".activity.OneStageActivity"></activity>
     </application>
 
 </manifest>

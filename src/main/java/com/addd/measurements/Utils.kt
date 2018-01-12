@@ -9,6 +9,8 @@ import java.util.*
 
 val gson = Gson()
 val DEAL_KEY = "deal"
+val STAGE_KEY = "stage"
+val STAGE_COUNT = "stageCount"
 val MEASUREMENT_KEY = "measurement"
 val MEASUREMENT_EXPANDED= "expanded"
 val SYMBOL_KEY = "symbol"

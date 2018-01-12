@@ -242,4 +242,14 @@
     <string name="discount_added_successful">Перерасчет добавлен успешно</string>
     <string name="error_add_discount">При добавлении произошла ошибка</string>
     <string name="deal_dont_has_mounts">Данная сделка не имеет монтажей</string>
+    <string name="stage_added">Стадия добавлена</string>
+    <string name="date_added">Добавлена дата</string>
+    <string name="mount_close_successful">Монтаж закрыт успешно</string>
+    <string name="reject_stage">Отказ</string>
+    <string name="status">Статус</string>
+    <string name="comment_empty">Комментарий отсутствует</string>
+    <string name="stages">Этапы:</string>
+    <string name="mount_installers">Монтажники</string>
+    <string name="in_proccess">В процессе</string>
+    <string name="stage_completed">Этап завершен</string>
 </resources>
