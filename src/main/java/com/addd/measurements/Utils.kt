@@ -11,6 +11,7 @@ val gson = Gson()
 val DEAL_KEY = "deal"
 val STAGE_KEY = "stage"
 val STAGE_COUNT = "stageCount"
+val IS_IT_SEARCH = "IS_IT_SEARCH"
 val MEASUREMENT_KEY = "measurement"
 val MEASUREMENT_EXPANDED= "expanded"
 val SYMBOL_KEY = "symbol"

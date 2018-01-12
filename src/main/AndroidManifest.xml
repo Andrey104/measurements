@@ -67,7 +67,8 @@
         <activity android:name=".activity.ProblemsActivity" />
         <activity android:name=".activity.AddRecalculationActivity" />
         <activity android:name=".activity.OneMountActivity" />
-        <activity android:name=".activity.OneStageActivity"></activity>
+        <activity android:name=".activity.OneStageActivity" />
+        <activity android:name=".activity.SearchMeasurementsActivity"></activity>
     </application>
 
 </manifest>

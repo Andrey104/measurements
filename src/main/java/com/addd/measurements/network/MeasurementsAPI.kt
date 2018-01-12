@@ -85,4 +85,7 @@ interface MeasurementsAPI {
 
     @POST("deals/{id}/discount/")
     fun addRecalculation(@Body recalculation: RecalculationRequest, @Path("id") id: String): Call<Void>
+
+    @GET("measurements/search")
+    fun searchMeasurement(@Query("text") date: String,@Query("page") page: Int): Call<MySearchResultMeasurement>
 }

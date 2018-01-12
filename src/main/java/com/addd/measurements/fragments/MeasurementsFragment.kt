@@ -17,8 +17,8 @@ import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
-import kotlinx.android.synthetic.main.measurements_fragment.*
-import kotlinx.android.synthetic.main.measurements_fragment.view.*
+import kotlinx.android.synthetic.main.activity_search_measurements.*
+import kotlinx.android.synthetic.main.activity_search_measurements.view.*
 import java.util.Calendar
 import kotlin.collections.ArrayList
 
@@ -27,7 +27,9 @@ import kotlin.collections.ArrayList
  * Created by addd on 03.12.2017.
  */
 
-class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements, DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback, NetworkController.PaginationCallback {
+class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements,
+        DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback,
+        NetworkController.PaginationCallback {
     private lateinit var date: String
     var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
     lateinit var fragmentListMeasurements: List<Measurement>
@@ -35,6 +37,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private var isLastPage = false
     private var currentPage = 1
     private var TOTAL_PAGES = 4
+    private lateinit var bundle: Bundle
     private lateinit var adapter: DataAdapter
 
 
@@ -50,7 +53,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
         onClickMenu(bottomNavigationView)
 
-        val bundle = this.arguments
+        bundle = this.arguments
         date = getTodayDate()
         adapter = DataAdapter(emptyList, this)
         view.recyclerList.adapter = adapter

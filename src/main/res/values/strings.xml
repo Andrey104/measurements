@@ -252,4 +252,5 @@
     <string name="mount_installers">Монтажники</string>
     <string name="in_proccess">В процессе</string>
     <string name="stage_completed">Этап завершен</string>
+    <string name="result_search">Результаты поиска</string>
 </resources>

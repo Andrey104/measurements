@@ -80,7 +80,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val searchView = searchMenuItem?.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                toast(query)
+                val intent = Intent(applicationContext, SearchMeasurementsActivity::class.java)
+                intent.putExtra(IS_IT_SEARCH, query)
+                startActivity(intent)
                 return true
             }
 
