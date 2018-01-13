@@ -68,7 +68,8 @@
         <activity android:name=".activity.AddRecalculationActivity" />
         <activity android:name=".activity.OneMountActivity" />
         <activity android:name=".activity.OneStageActivity" />
-        <activity android:name=".activity.SearchMeasurementsActivity"></activity>
+        <activity android:name=".activity.SearchMeasurementsActivity" />
+        <activity android:name=".activity.SearchDealsActivity"></activity>
     </application>
 
 </manifest>

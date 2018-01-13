@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
         val menuItem = nav_view.menu.findItem(R.id.nav_current)
+        item = menuItem
         menuItem.isChecked = true
 
         var fragment = MeasurementsFragment()
@@ -80,9 +81,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val searchView = searchMenuItem?.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                val intent = Intent(applicationContext, SearchMeasurementsActivity::class.java)
-                intent.putExtra(IS_IT_SEARCH, query)
-                startActivity(intent)
+                val intentMeasurement = Intent(applicationContext, SearchMeasurementsActivity::class.java)
+                intentMeasurement.putExtra(IS_IT_SEARCH, query)
+                if (item.itemId == R.id.nav_current || item.itemId == R.id.nav_rejected || item.itemId == R.id.nav_closed) {
+                    startActivityForResult(intentMeasurement, 1)
+                }
+                val intentDeal = Intent(applicationContext, SearchDealsActivity::class.java)
+                intentDeal.putExtra(IS_IT_SEARCH, query)
+                if (item.itemId == R.id.nav_currentDeal || item.itemId == R.id.nav_rejectDeal || item.itemId == R.id.nav_closeDeal) {
+                    startActivityForResult(intentDeal, 1)
+                }
                 return true
             }
 

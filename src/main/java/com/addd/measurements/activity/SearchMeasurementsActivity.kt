@@ -9,10 +9,10 @@ import android.view.View
 import com.addd.measurements.*
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
-import com.addd.measurements.network.NetworkController
+import com.addd.measurements.network.NetworkControllerSearchMeasurements
 import kotlinx.android.synthetic.main.activity_search_measurements.*
 
-class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.PaginationCallback, NetworkController.CallbackListMeasurements, DataAdapter.CustomAdapterCallback {
+class SearchMeasurementsActivity : AppCompatActivity(), NetworkControllerSearchMeasurements.PaginationCallback, NetworkControllerSearchMeasurements.CallbackListMeasurements, DataAdapter.CustomAdapterCallback {
     private lateinit var search: String
     var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
     lateinit var fragmentListMeasurements: List<Measurement>
@@ -23,8 +23,8 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.Pagina
     private lateinit var adapter: DataAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        NetworkController.registerCallBack(this)
-        NetworkController.registerPaginationCallback(this)
+        NetworkControllerSearchMeasurements.registerCallBack(this)
+        NetworkControllerSearchMeasurements.registerPaginationCallback(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_measurements)
@@ -36,7 +36,7 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.Pagina
             "0"
         }
 
-        NetworkController.search(search)
+        NetworkControllerSearchMeasurements.search(search)
     }
 
     override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
@@ -50,7 +50,7 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.Pagina
 
         if (listMeasurements.isEmpty()) {
             if (result == 1) {
-                toast(R.string.no_save_data)
+                toast(R.string.check_internet)
             } else {
                 toast(R.string.nothing_show)
             }
@@ -59,7 +59,7 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.Pagina
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
             } else {
                 supportActionBar?.title = getString(R.string.without_internet)
-                toast(R.string.no_internet)
+                toast(R.string.check_internet)
             }
         }
         adapter = if (listMeasurements.isEmpty()) {
@@ -108,19 +108,19 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.Pagina
 
 
     override fun onResume() {
-        NetworkController.registerCallBack(this)
-        NetworkController.registerPaginationCallback(this)
+        NetworkControllerSearchMeasurements.registerCallBack(this)
+        NetworkControllerSearchMeasurements.registerPaginationCallback(this)
         super.onResume()
     }
 
     override fun onDestroy() {
-        NetworkController.registerCallBack(null)
-        NetworkController.registerPaginationCallback(null)
+        NetworkControllerSearchMeasurements.registerCallBack(null)
+        NetworkControllerSearchMeasurements.registerPaginationCallback(null)
         super.onDestroy()
     }
 
     private fun loadNextPage() {
-        NetworkController.pagination(currentPage, search)
+        NetworkControllerSearchMeasurements.pagination(currentPage, search)
     }
 
     override fun resultPaginationClose(listMeasurements: List<Measurement>, result: Int) {
@@ -151,13 +151,13 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkController.Pagina
     override fun onItemLongClick(pos: Int) {
 
     }
-    fun updateList() {
+    private fun updateList() {
         currentPage = 1
         isLastPage = false
         adapter = DataAdapter(emptyList, this)
         recyclerList.adapter = adapter
         progressBarMain.visibility = View.VISIBLE
-        NetworkController.updateListInFragment()
+        NetworkControllerSearchMeasurements.search(search)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {

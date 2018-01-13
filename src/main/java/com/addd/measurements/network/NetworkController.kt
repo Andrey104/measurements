@@ -20,7 +20,8 @@ import kotlin.collections.ArrayList
  */
 object NetworkController {
     private lateinit var date: String
-    private lateinit var status: String
+    lateinit var status: String
+    private lateinit var search: String
 
     var callbackListMeasurements: CallbackListMeasurements? = null
     var userCallback: UserInfoCallback? = null
@@ -276,23 +277,6 @@ object NetworkController {
 
     }
 
-    fun pagination(page: Int, search: String) {
-        val call = api.searchMeasurement(search, page)
-        call.enqueue(object : retrofit2.Callback<MySearchResultMeasurement> {
-            override fun onResponse(call: Call<MySearchResultMeasurement>?, response: Response<MySearchResultMeasurement>?) {
-                response?.body()?.let {
-                    listMeasurements = it.results!!
-                    callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
-                }
-            }
-
-            override fun onFailure(call: Call<MySearchResultMeasurement>?, t: Throwable?) {
-                callbackPaginationListMeasurements?.resultPaginationClose(emptyList(), 1)
-            }
-
-        })
-    }
-
     private fun paginationCurrentRequest(page: Int, name: String?) {
         val call = api.getCurrentMeasurement(date, page)
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
@@ -397,24 +381,6 @@ object NetworkController {
         })
     }
 
-    fun search(search: String) {
-        status = "search"
-        date = getTodayDate()
-        val call = api.searchMeasurement(search, 1)
-        call.enqueue(object : retrofit2.Callback<MySearchResultMeasurement> {
-            override fun onResponse(call: Call<MySearchResultMeasurement>?, response: Response<MySearchResultMeasurement>?) {
-                response?.body()?.let {
-                    listMeasurements = it.results!!
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count,0, 0, it.count ?: 0)
-                }
-            }
-
-            override fun onFailure(call: Call<MySearchResultMeasurement>?, t: Throwable?) {
-                callbackListMeasurements?.resultList(emptyList(),1,date,0,0,0,0)
-            }
-
-        })
-    }
 
 //----------------------------------внутренние функции класса------------------------------------------
 
