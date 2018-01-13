@@ -26,7 +26,7 @@ class TransferGet {
      val autoDate: String? = null
     @SerializedName("comment")
     @Expose
-     val comment: Any? = null
+     val comment: String? = null
     @SerializedName("user")
     @Expose
      val user: User? = null

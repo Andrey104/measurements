@@ -34,7 +34,7 @@ class Deal {
     val taskDate: String? = null
     @SerializedName("order")
     @Expose
-    val order: Any? = null
+    val order: Int? = null
     @SerializedName("user")
     @Expose
     val user: User? = null
@@ -58,7 +58,7 @@ class Deal {
     val measurements: List<Measurement>? = null
     @SerializedName("payments")
     @Expose
-    val payments: List<Any>? = null
+    val payments: List<Payment>? = null
     @SerializedName("discounts")
     @Expose
     val discounts: List<Recalculation>? = null

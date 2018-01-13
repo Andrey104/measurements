@@ -44,9 +44,13 @@ object NetworkControllerSearchMeasurements {
         val call = api.searchMeasurement(search, 1)
         call.enqueue(object : retrofit2.Callback<MySearchResultMeasurement> {
             override fun onResponse(call: Call<MySearchResultMeasurement>?, response: Response<MySearchResultMeasurement>?) {
-                response?.body()?.let {
-                    listMeasurements = it.results!!
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, 0, 0, it.count ?: 0)
+                if (response?.code() == 200) {
+                    response?.body()?.let {
+                        listMeasurements = it.results ?: emptyList()
+                        callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, 0, 0, it.count ?: 0)
+                    }
+                } else {
+                    callbackListMeasurements?.resultList(emptyList(), 0, date, 0, 0, 0, 0)
                 }
             }
 
@@ -62,7 +66,7 @@ object NetworkControllerSearchMeasurements {
         call.enqueue(object : retrofit2.Callback<MySearchResultMeasurement> {
             override fun onResponse(call: Call<MySearchResultMeasurement>?, response: Response<MySearchResultMeasurement>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     callbackPaginationListMeasurements?.resultPaginationClose(listMeasurements, 0)
                 }
             }

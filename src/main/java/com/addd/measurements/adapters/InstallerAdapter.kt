@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Installers
-import com.addd.measurements.modelAPI.Mount
 
 /**
  * Created by addd on 12.01.2018.

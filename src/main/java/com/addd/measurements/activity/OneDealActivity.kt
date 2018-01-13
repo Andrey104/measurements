@@ -11,8 +11,8 @@ import com.addd.measurements.network.NetworkControllerDeals
 import kotlinx.android.synthetic.main.activity_one_deal.*
 
 class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallback {
-    private lateinit var deal: Deal
-    private lateinit var json: String
+    private var deal = Deal()
+    private var json = ""
     private lateinit var dealID: String
     private var fragmentName = MAIN_NAME
 
@@ -30,8 +30,9 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
             when (item.itemId) {
                 R.id.measurement -> {
                     supportActionBar?.show()
+                    supportActionBar?.title = String.format("Замеры %05d", dealID.toInt())
                     val bundle = Bundle()
-                    if (!json.isNullOrEmpty()) {
+                    if (!json.isEmpty()) {
                         bundle.putString(DEAL_KEY, json)
                         val fragment = ListMeasurementsFragment()
                         fragment.arguments = bundle
@@ -45,13 +46,16 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                 }
 
                 R.id.problems -> {
-                    if (!json.isNullOrEmpty()) {
+                    supportActionBar?.title = String.format("Проблемы %05d", dealID.toInt())
+                    if (!json.isEmpty()) {
                         val bundle = Bundle()
                         val fragment = ProblemDealFragment()
                         fragment.arguments = bundle
                         bundle.putString(DEAL_KEY, json)
                         val fragmentManager = supportFragmentManager
                         fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    }  else {
+                        toast(R.string.error)
                     }
                 }
                 R.id.recalculation -> {
@@ -135,6 +139,9 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                 }
             }
         } else {
+            val fragment = EmptyFragment()
+            val fragmentManager = supportFragmentManager
+            fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
             toast(R.string.error)
         }
         progressBarOneDeal.visibility = View.GONE

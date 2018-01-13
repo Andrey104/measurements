@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Mount
 
@@ -22,15 +23,15 @@ class MountAdapter(notesList: List<Mount>, private val listener: CustomAdapterCa
 
 
         when (mount.status) {
-            0 -> viewHolder.textViewMountStatus.text = "Не обработан"
-            1 -> viewHolder.textViewMountStatus.text = "Стадия добавлена"
-            2 -> viewHolder.textViewMountStatus.text = "Закрыт успешно"
-            3 -> viewHolder.textViewMountStatus.text = "Закрыт не успешно"
-            else -> viewHolder.textViewMountStatus.text = "Не обработан"
+            0 -> viewHolder.textViewMountStatus.text = MyApp.instance.getString(R.string.not_processed)
+            1 -> viewHolder.textViewMountStatus.text = MyApp.instance.getString(R.string.stage_added)
+            2 -> viewHolder.textViewMountStatus.text = MyApp.instance.getString(R.string.closed_successful)
+            3 -> viewHolder.textViewMountStatus.text =MyApp.instance.getString(R.string.closed_not_successful)
+            else -> viewHolder.textViewMountStatus.text = MyApp.instance.getString(R.string.not_processed)
         }
 
         if (mount.date == null) {
-            viewHolder.textViewMountDate.text = "Монтаж по звонку"
+            viewHolder.textViewMountDate.text = MyApp.instance.getString(R.string.mount_for_phone)
         } else {
             val strBuilder = StringBuilder(mount.date)
             strBuilder.replace(10, 11, " ")

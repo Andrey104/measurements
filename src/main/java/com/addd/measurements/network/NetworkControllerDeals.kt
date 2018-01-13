@@ -53,7 +53,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackListDeals?.resultList(listDeals, 0, "all", it?.count ?: 1)
                 }
             }
@@ -72,7 +72,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackListDeals?.resultList(listDeals, 0, "all", it?.count ?: 1)
                 }
             }
@@ -91,7 +91,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackListDeals?.resultList(listDeals, 0, "all", it?.count ?: 1)
                 }
             }
@@ -111,7 +111,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackListDeals?.resultList(listDeals, 0, date, it?.count ?: 1)
                 }
             }
@@ -131,7 +131,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackListDeals?.resultList(listDeals, 0, date, it?.count ?: 1)
                 }
             }
@@ -151,7 +151,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackListDeals?.resultList(listDeals, 0, date, it?.count ?: 1)
                 }
             }
@@ -209,7 +209,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackPaginationListDeals?.resultPagination(listDeals, 0)
                 }
             }
@@ -231,7 +231,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackPaginationListDeals?.resultPagination(listDeals, 0)
                 }
             }
@@ -253,7 +253,7 @@ object NetworkControllerDeals {
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackPaginationListDeals?.resultPagination(listDeals, 0)
                 }
             }
@@ -289,7 +289,7 @@ object NetworkControllerDeals {
     }
 
     fun addDiscount(recalculation: RecalculationRequest, id: String) {
-        val call = api.addRecalculation(recalculation , id)
+        val call = api.addRecalculation(recalculation, id)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 if (response?.code() == 200) {
@@ -303,7 +303,7 @@ object NetworkControllerDeals {
         })
     }
 
-    fun getMountsDeal(id: String){
+    fun getMountsDeal(id: String) {
         val call = api.getMountsDeal(id)
         call.enqueue(object : retrofit2.Callback<List<Mount>> {
             override fun onResponse(call: Call<List<Mount>>?, response: Response<List<Mount>>?) {
@@ -368,7 +368,7 @@ object NetworkControllerDeals {
     }
 
     interface MountsDealCallback {
-        fun resultMountsDeal(listMounts : List<Mount>?, boolean: Boolean)
+        fun resultMountsDeal(listMounts: List<Mount>?, boolean: Boolean)
     }
 
     fun registerMountsDealCallback(callback: MountsDealCallback?) {

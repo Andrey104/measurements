@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import com.addd.measurements.MEASUREMENT_PHOTO
 import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.addd.measurements.R
 import com.bumptech.glide.Glide
@@ -16,7 +17,7 @@ class OnePhotoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_one_photo)
 
         val mImageView = findViewById<View>(R.id.image) as ImageView
-        val spacePhoto = intent.getParcelableExtra<MeasurementPhoto>("MEASUREMENT_PHOTO")
+        val spacePhoto = intent.getParcelableExtra<MeasurementPhoto>(MEASUREMENT_PHOTO)
 
         Glide.with(this)
                 .load(spacePhoto.getUrl())

@@ -16,5 +16,5 @@ class Phone(
         val number: String? = null,
         @SerializedName("comment")
         @Expose
-        val comment: Any? = null
+        val comment: String? = null
 )

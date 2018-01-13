@@ -80,11 +80,14 @@ class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, Ne
         if (listProblems != null) {
             if (listProblems.isEmpty() && boolean) {
                 toast(R.string.no_problem)
+                mView.fab2.visibility = View.VISIBLE
                 adapter = ProblemAdapter(emptyList, this)
             } else if (listProblems.isEmpty() && !boolean) {
                 toast(R.string.error)
+                mView.fab2.visibility = View.GONE
                 adapter = ProblemAdapter(emptyList, this)
             } else {
+                mView.fab2.visibility = View.VISIBLE
                 problems = listProblems as ArrayList
                 adapter = ProblemAdapter(problems as ArrayList, this)
                 mView.recyclerList.adapter = adapter
@@ -94,8 +97,14 @@ class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, Ne
                 mView.recyclerList.addItemDecoration(dividerItemDecoration)
             }
         } else {
+            mView.fab2.visibility = View.GONE
             toast(R.string.error)
         }
         mView.progressBarMain.visibility = View.GONE
+    }
+
+    override fun onDestroy() {
+        NetworkControllerProblem.registerDealProblemsCallback(null)
+        super.onDestroy()
     }
 }

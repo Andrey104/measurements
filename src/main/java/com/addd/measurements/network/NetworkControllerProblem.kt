@@ -145,9 +145,8 @@ object NetworkControllerProblem {
         fun problemPaginationResult(list: List<MyProblem>, result: Boolean)
     }
 
-    fun registerProblemPagination(callback: ProblemPaginationList) {
+    fun registerProblemPagination(callback: ProblemPaginationList?) {
         problemPaginationResultCallback = callback
-
     }
 
     interface OneProblem {

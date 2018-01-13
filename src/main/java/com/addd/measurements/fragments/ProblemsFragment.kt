@@ -9,12 +9,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.addd.measurements.*
 import com.addd.measurements.activity.OneProblemActivity
 import com.addd.measurements.adapters.ProblemAdapter
 import com.addd.measurements.modelAPI.MyProblem
-import com.addd.measurements.network.NetworkController
 import com.addd.measurements.network.NetworkControllerProblem
 import kotlinx.android.synthetic.main.problems_fragment.*
 import kotlinx.android.synthetic.main.problems_fragment.view.*
@@ -144,5 +142,11 @@ class ProblemsFragment : Fragment(), NetworkControllerProblem.ProblemListCallbac
                 isLastPage = true
         }
         isLoading = false
+    }
+
+    override fun onDestroy() {
+        NetworkControllerProblem.registerProblemListCallback(null)
+        NetworkControllerProblem.registerProblemPagination(null)
+        super.onDestroy()
     }
 }

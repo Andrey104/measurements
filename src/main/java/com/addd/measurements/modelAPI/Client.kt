@@ -16,7 +16,7 @@ class Client(
         val fio: String? = null,
         @SerializedName("email")
         @Expose
-        val email: Any? = null,
+        val email: String? = null,
         @SerializedName("phones")
         @Expose
         val phones: List<Phone>? = null

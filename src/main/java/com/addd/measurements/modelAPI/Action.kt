@@ -19,13 +19,16 @@ class Action {
     val type: Int? = null
     @SerializedName("cause")
     @Expose
-    val cause: Any? = null
+    val cause: Int? = null
     @SerializedName("auto_date")
     @Expose
     val autoDate: String? = null
     @SerializedName("comment")
     @Expose
     val comment: String? = null
+    @SerializedName("action")
+    @Expose
+    val action: String? = null
     @SerializedName("deal")
     @Expose
     val deal: Int? = null

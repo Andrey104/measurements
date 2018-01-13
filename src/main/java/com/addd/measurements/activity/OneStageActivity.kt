@@ -34,7 +34,7 @@ class OneStageActivity : AppCompatActivity() {
     }
 
     private fun getSaveStage() {
-        countStage = intent?.getStringExtra(STAGE_COUNT) ?: "Этап"
+        countStage = intent?.getStringExtra(STAGE_COUNT) ?: getString(R.string.stage)
         val json = intent?.getStringExtra(STAGE_KEY)
         stage = if (json.isNullOrEmpty()) {
             Stage()

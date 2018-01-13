@@ -1,5 +1,6 @@
 package com.addd.measurements.adapters
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,22 +16,20 @@ import com.addd.measurements.modelAPI.Action
 class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mActionsList: List<Action> = notesList.reversed()
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val action = mActionsList[position]
         val viewHolder = holder as ViewHolder
-        viewHolder.status.text = when (action.type) {
-            0 -> MyApp.instance.getString(R.string.reject_deal)
-            1 -> MyApp.instance.getString(R.string.measurement_added)
-            2 -> MyApp.instance.getString(R.string.mount_added)
-            3 -> MyApp.instance.getString(R.string.successful_reject)
-            4 -> MyApp.instance.getString(R.string.added_client)
-            5 -> MyApp.instance.getString(R.string.change_manager)
-            6 -> MyApp.instance.getString(R.string.add_discussion)
-            else -> "Статус"
+        viewHolder.status.text = action.action
+        if (action.user?.firstName.isNullOrEmpty() && action.user?.lastName.isNullOrEmpty()) {
+            viewHolder.textViewFio.text = MyApp.instance.getString(R.string.without_name)
+        } else {
+            viewHolder.textViewFio.text = action.user?.firstName + " " + action.user?.lastName
         }
+        viewHolder.textViewCommentAction.text = action.comment
         val strBuilder = StringBuilder(action.autoDate)
-        strBuilder.replace(10,11," ")
-        strBuilder.delete(16,strBuilder.length)
+        strBuilder.replace(10, 11, " ")
+        strBuilder.delete(16, strBuilder.length)
         val newStrBuilder = StringBuilder()
         for (i in 11..15) {
             newStrBuilder.append(strBuilder[i])
@@ -39,10 +38,8 @@ class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<Recycle
         for (i in 0..10) {
             newStrBuilder.append(strBuilder[i])
         }
-        viewHolder.timeAction.text =newStrBuilder.toString()
+        viewHolder.timeAction.text = newStrBuilder.toString()
     }
-
-
 
 
     override fun getItemCount(): Int {
@@ -59,10 +56,14 @@ class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<Recycle
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var status: TextView
         var timeAction: TextView
+        var textViewFio: TextView
+        var textViewCommentAction: TextView
 
         init {
             status = itemView.findViewById(R.id.status_deal)
             timeAction = itemView.findViewById(R.id.timeAction)
+            textViewFio = itemView.findViewById(R.id.textViewFioAction)
+            textViewCommentAction = itemView.findViewById(R.id.textViewCommentAction)
         }
     }
 }
