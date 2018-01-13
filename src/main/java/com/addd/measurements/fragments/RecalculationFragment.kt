@@ -91,4 +91,9 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
             toast(R.string.error)
         }
     }
+
+    override fun onDestroy() {
+        NetworkControllerDeals.registerOneDealRecalcCallback(null)
+        super.onDestroy()
+    }
 }

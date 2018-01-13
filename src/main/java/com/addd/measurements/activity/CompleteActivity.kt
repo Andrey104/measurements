@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.widget.Toast
 import com.addd.measurements.DEAL_KEY
 import com.addd.measurements.ID_KEY
 import com.addd.measurements.R

@@ -76,4 +76,9 @@ class MountFragment : Fragment(), NetworkControllerDeals.MountsDealCallback, Mou
             mView.progressBarMount.visibility = View.GONE
         }
     }
+
+    override fun onDestroy() {
+        NetworkControllerDeals.registerMountsDealCallback(null)
+        super.onDestroy()
+    }
 }

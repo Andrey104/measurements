@@ -31,10 +31,10 @@ class Measurement(
         val time: String? = null,
         @SerializedName("sum")
         @Expose
-        val sum: Any? = null,
+        val sum: Float? = null,
         @SerializedName("prepayment")
         @Expose
-        val prepayment: Any? = null,
+        val prepayment: Float? = null,
         @SerializedName("worker")
         @Expose
         val worker: User? = null,

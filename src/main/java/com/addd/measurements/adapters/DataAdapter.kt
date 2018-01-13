@@ -39,7 +39,7 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
                 if (measurement.worker == null) {
                     viewHolder.workerName.text = "Не распределено"
                 } else {
-                    viewHolder.workerName.text = measurement.worker?.firstName + measurement.worker?.lastName
+                    viewHolder.workerName.text = measurement.worker?.firstName + " " + measurement.worker?.lastName
                 }
                 setColorResponsible(measurement.color ?: 0, viewHolder)
 

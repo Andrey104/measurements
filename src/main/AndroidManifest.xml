@@ -13,7 +13,7 @@
     <application
         android:name=".MyApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -61,15 +61,20 @@
             android:name=".activity.OneDealActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.OneMeasurementExpanded"
-            android:label="@string/title_activity_one_measurement_expanded"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".activity.ProblemsActivity" />
-        <activity android:name=".activity.AddRecalculationActivity" />
-        <activity android:name=".activity.OneMountActivity" />
-        <activity android:name=".activity.OneStageActivity" />
-        <activity android:name=".activity.SearchMeasurementsActivity" />
-        <activity android:name=".activity.SearchDealsActivity"></activity>
+            android:name=".activity.AddRecalculationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OneMountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OneStageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SearchMeasurementsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SearchDealsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

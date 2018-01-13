@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Clients
 
@@ -64,7 +65,7 @@ class ClientAdapter(notesList: List<Clients>) : RecyclerView.Adapter<ClientAdapt
                     v.context.startActivity(intent)
                 } else {
                     val builder = AlertDialog.Builder(v.context)
-                    builder.setTitle("Выберите номер")
+                    builder.setTitle(MyApp.instance.getString(R.string.select_number))
                     var strings = Array(arrayList.size, init = { index -> arrayList[index] })
                     builder.setItems(strings, { _, which ->
                         intent.data = Uri.parse("tel:${arrayList[which]}")

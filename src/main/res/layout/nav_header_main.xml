@@ -22,7 +22,7 @@
             android:layout_width="59dp"
             android:layout_height="64dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@drawable/rectangle" />
+            app:srcCompat="@drawable/tape_in_circle" />
 
         <TextView
             android:layout_width="match_parent"

@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,5 +88,10 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
             mView.recyclerListMeasurements.addItemDecoration(dividerItemDecoration)
         }
             mView.progressBar4.visibility = View.GONE
+    }
+
+    override fun onDestroy() {
+        NetworkController.registerMeasurementsDealCallback(null)
+        super.onDestroy()
     }
 }

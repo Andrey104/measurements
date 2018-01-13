@@ -30,7 +30,7 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         adapter = mount.stages?.let { StageAdapter(it, this) }
 
         if (mount.date == null) {
-            textViewDateStage.text = "Монтаж по звонку"
+            textViewDateStage.text = getString(R.string.mount_for_phone)
         } else {
             val strBuilder = StringBuilder(mount.date)
             strBuilder.replace(10, 11, " ")
@@ -44,11 +44,11 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         }
 
         when (mount.status) {
-            0 -> textViewStatusMount.text = "Не обработан"
-            1 -> textViewStatusMount.text = "Стадия добавлена"
-            2 -> textViewStatusMount.text = "Закрыт успешно"
-            3 -> textViewStatusMount.text = "Закрыт не успешно"
-            else -> textViewStatusMount.text = "Не обработан"
+            0 -> textViewStatusMount.text = getString(R.string.not_processed)
+            1 -> textViewStatusMount.text = getString(R.string.stage_added)
+            2 -> textViewStatusMount.text = getString(R.string.closed_successful)
+            3 -> textViewStatusMount.text = getString(R.string.closed_not_successful)
+            else -> textViewStatusMount.text = getString(R.string.not_processed)
         }
         textViewCommentStage.movementMethod = ScrollingMovementMethod()
         if (!mount.comment.isNullOrEmpty()) {

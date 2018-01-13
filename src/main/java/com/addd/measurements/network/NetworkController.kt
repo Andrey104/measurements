@@ -82,7 +82,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
@@ -109,7 +109,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
@@ -136,7 +136,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
@@ -282,7 +282,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     if (name != null) {
                         val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
                         buferList.addAll(listMeasurements)
@@ -304,7 +304,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     if (name != null) {
                         val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
                         buferList.addAll(listMeasurements)
@@ -326,7 +326,7 @@ object NetworkController {
         call.enqueue(object : retrofit2.Callback<MyResultMeasurements> {
             override fun onResponse(call: Call<MyResultMeasurements>?, response: Response<MyResultMeasurements>?) {
                 response?.body()?.let {
-                    listMeasurements = it.results!!
+                    listMeasurements = it.results ?: emptyList()
                     if (name != null) {
                         val buferList = loadSharedPreferencesList(name) as ArrayList<Measurement>
                         buferList.addAll(listMeasurements)
@@ -415,7 +415,7 @@ object NetworkController {
                 response?.let {
                     val userInfo: User
                     if (response.code() == 200) {
-                        userInfo = it.body()!!
+                        userInfo = it.body() ?: User()
                         saveUserInfo(userInfo)
                     } else {
                         userInfo = loadSharedPreferencesUser()

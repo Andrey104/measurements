@@ -23,7 +23,7 @@ class Picture {
     val url: String? = null
     @SerializedName("name")
     @Expose
-    val name: Any? = null
+    val name: String? = null
     @SerializedName("measurement")
     @Expose
     val measurement: Int? = null

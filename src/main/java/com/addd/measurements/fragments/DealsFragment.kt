@@ -144,11 +144,11 @@ class DealsFragment : Fragment(),
             val toolbar = (activity as AppCompatActivity).supportActionBar
             if (deals.isEmpty()) {
                 if (result == 0) {
-                    if (deals.isEmpty()) toast("По данному запросу ничего не найдено")
+                    if (deals.isEmpty()) toast(R.string.nothing_to_show)
 //                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
                 } else {
                     if (this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
-                    toast(R.string.no_internet)
+                    toast(R.string.nothing_to_show)
                 }
             }
         }
@@ -200,6 +200,12 @@ class DealsFragment : Fragment(),
 
     private fun loadNextPage() {
         NetworkControllerDeals.pagination(currentPage)
+    }
+
+    override fun onDestroy() {
+        NetworkControllerDeals.registerCallBack(null)
+        NetworkControllerDeals.registerPaginationCallback(null)
+        super.onDestroy()
     }
 
     override fun resultPagination(listDeals: List<Deal>, result: Int) {

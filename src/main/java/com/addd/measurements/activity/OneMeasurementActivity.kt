@@ -117,7 +117,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         if (measurement.worker == null) {
             worker_name.text = getString(R.string.not_distributed)
         } else {
-            worker_name.text = measurement.worker.firstName + measurement.worker.lastName
+            worker_name.text = measurement.worker.firstName + " " + measurement.worker.lastName
         }
         setColorWorker(measurement)
         comment.text = measurement.managerComment.toString()

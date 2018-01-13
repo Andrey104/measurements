@@ -65,13 +65,13 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
         fab.setOnClickListener {
             val builder = AlertDialog.Builder(this)
-            builder.setTitle("Что использовать?")
+            builder.setTitle(R.string.what_use)
                     .setCancelable(true)
-                    .setPositiveButton("Новое фото")
+                    .setPositiveButton(R.string.new_photo)
                     { _, _ ->
                         getPhotoFromCamera()
                     }
-                    .setNegativeButton("Из галереи..") { _, _ -> getPhotoFromGallery() }
+                    .setNegativeButton(R.string.from_gallery) { _, _ -> getPhotoFromGallery() }
             val alert = builder.create()
             alert.show()
         }

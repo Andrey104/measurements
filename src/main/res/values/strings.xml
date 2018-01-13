@@ -242,7 +242,6 @@
     <string name="discount_added_successful">Перерасчет добавлен успешно</string>
     <string name="error_add_discount">При добавлении произошла ошибка</string>
     <string name="deal_dont_has_mounts">Данная сделка не имеет монтажей</string>
-    <string name="stage_added">Стадия добавлена</string>
     <string name="date_added">Добавлена дата</string>
     <string name="mount_close_successful">Монтаж закрыт успешно</string>
     <string name="reject_stage">Отказ</string>
@@ -254,4 +253,16 @@
     <string name="stage_completed">Этап завершен</string>
     <string name="result_search">Результаты поиска</string>
     <string name="check_internet">Проверьте подключение к интернету</string>
+    <string name="what_use">Что использовать?</string>
+    <string name="new_photo">Новое фото</string>
+    <string name="from_gallery">Из галереи..</string>
+    <string name="not_processed">Не обработан</string>
+    <string name="stage_added">Стадия добавлена</string>
+    <string name="closed_successful">Закрыт успешно</string>
+    <string name="closed_not_successful">Закрыт не успешно</string>
+    <string name="mount_for_phone">Монтаж по звонку</string>
+    <string name="stage">Этап</string>
+    <string name="select_number">Выберите номер</string>
+    <string name="nothing_to_show">По данному запросу ничего не найдено</string>
+    <string name="without_name">Нет имени</string>
 </resources>

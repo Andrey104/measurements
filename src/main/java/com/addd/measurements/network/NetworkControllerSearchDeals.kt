@@ -17,10 +17,10 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by addd on 13.01.2018.
  */
 object NetworkControllerSearchDeals {
-    private lateinit var search : String
+    private lateinit var search: String
     private lateinit var listDeals: List<Deal>
-    private var callbackListDeals: CallbackListDeals?= null
-    private var callbackPaginationListDeals: PaginationCallback?= null
+    private var callbackListDeals: CallbackListDeals? = null
+    private var callbackPaginationListDeals: PaginationCallback? = null
 
     private val BASE_URL = "http://188.225.46.31/api/"
     private val api: MeasurementsAPI by lazy { init(MyApp.instance) }
@@ -38,30 +38,34 @@ object NetworkControllerSearchDeals {
 
     }
 
-    fun search(search : String) {
+    fun search(search: String) {
         this.search = search
-        val call = api.searchDeal(search,1)
+        val call = api.searchDeal(search, 1)
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
-                response?.body()?.let {
-                    listDeals = it.results!!
-                    callbackListDeals?.resultList(listDeals, 0,  it?.count ?: 1)
+                if (response?.code() == 200) {
+                    response?.body()?.let {
+                        listDeals = it.results ?: emptyList()
+                        callbackListDeals?.resultList(listDeals, 0, it?.count ?: 1)
+                    }
+                } else {
+                    callbackListDeals?.resultList(emptyList(), 0, 0)
                 }
             }
 
             override fun onFailure(call: Call<MyResultDeals>?, t: Throwable?) {
-                callbackListDeals?.resultList(emptyList(), 1,  0)
+                callbackListDeals?.resultList(emptyList(), 1, 0)
             }
 
         })
     }
 
     fun pagination(page: Int) {
-        val call = api.searchDeal(search,page)
+        val call = api.searchDeal(search, page)
         call.enqueue(object : retrofit2.Callback<MyResultDeals> {
             override fun onResponse(call: Call<MyResultDeals>?, response: Response<MyResultDeals>?) {
                 response?.body()?.let {
-                    listDeals = it.results!!
+                    listDeals = it.results ?: emptyList()
                     callbackPaginationListDeals?.resultPagination(listDeals, 0)
                 }
             }
