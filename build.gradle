@@ -7,10 +7,10 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         config {
-            keyAlias 'AppForGoodPeople'
-            keyPassword '77181258asce'
-            storeFile file('C:/Users/addd/Desktop/my_key_store/my_key_store.jks')
-            storePassword '77181258asce'
+            keyAlias 'natcomKey'
+            keyPassword '77181258'
+            storeFile file('C:/Users/addd/Desktop/natcom_key_store/natcom_key.jks')
+            storePassword '77181258'
         }
     }
     compileSdkVersion 26
