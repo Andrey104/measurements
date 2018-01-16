@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.gson.Gson
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 val gson = Gson()
@@ -13,7 +15,7 @@ val STAGE_KEY = "stage"
 val STAGE_COUNT = "stageCount"
 val IS_IT_SEARCH = "IS_IT_SEARCH"
 val MEASUREMENT_KEY = "measurement"
-val MEASUREMENT_EXPANDED= "expanded"
+val MEASUREMENT_EXPANDED = "expanded"
 val SYMBOL_KEY = "symbol"
 val PROBLEM_KEY = "problem"
 val MEASUREMENT_PHOTO = "MEASUREMENT_PHOTO"
@@ -61,4 +63,26 @@ fun AppCompatActivity.toast(s: String) {
 
 fun AppCompatActivity.toast(@StringRes r: Int) {
     Toast.makeText(applicationContext, r, Toast.LENGTH_SHORT).show()
+}
+
+val backendDateFormat = SimpleDateFormat("yyyy-MM-dd")
+private val normalDateFormat = SimpleDateFormat("dd.MM.yyyy")
+fun formatDate(date: String): String {
+    return try {
+        normalDateFormat.format(backendDateFormat.parse(date))
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        "8888.88.88"
+    }
+}
+
+val backendDateFormatTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ")
+private val normalDateFormatTime = SimpleDateFormat("HH:mm dd.MM.yyyy")
+fun formatDateTime(date: String): String {
+    return try {
+        normalDateFormatTime.format(backendDateFormatTime.parse(date))
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        "8888.88.88"
+    }
 }

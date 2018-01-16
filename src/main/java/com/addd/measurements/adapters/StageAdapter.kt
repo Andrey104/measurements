@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.MyApp
 import com.addd.measurements.R
+import com.addd.measurements.formatDate
 import com.addd.measurements.modelAPI.Stage
 
 /**
@@ -25,22 +26,10 @@ class StageAdapter(notesList: List<Stage>, private val listener: CustomAdapterCa
         viewHolder.textViewStageCount.text = (position + 1).toString()
 
 
-        val strBuilder = StringBuilder(stage.date)
-        strBuilder.replace(10, 11, " ")
-        strBuilder.delete(16, strBuilder.length)
-        val newStrBuilder = StringBuilder()
-        for (i in 0..10) {
-            newStrBuilder.append(strBuilder[i])
-        }
-        viewHolder.textViewStageDate.text = newStrBuilder.toString()
 
-        when (stage.status) {
-            1 -> viewHolder.textViewStageStatus.text = MyApp.instance.getString(R.string.stage_added)
-            2 -> viewHolder.textViewStageStatus.text = MyApp.instance.getString(R.string.date_added)
-            3 -> viewHolder.textViewStageStatus.text = MyApp.instance.getString(R.string.mount_close_successful)
-            4 -> viewHolder.textViewStageStatus.text = MyApp.instance.getString(R.string.reject_stage)
-            else -> viewHolder.textViewStageStatus.text = MyApp.instance.getString(R.string.status)
-        }
+        viewHolder.textViewStageDate.text = formatDate(stage.date ?: "2000-20-20")
+
+        viewHolder.textViewStageStatus.text = if(stage.status == 0) MyApp.instance.getString(R.string.in_proccess) else MyApp.instance.getString(R.string.stage_completed)
 
     }
 

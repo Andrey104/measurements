@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.MyApp
 import com.addd.measurements.R
+import com.addd.measurements.formatDateTime
 import com.addd.measurements.modelAPI.Comment
 
 
@@ -29,33 +30,19 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
                 holder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin))
             }
         }
-        val strBuilder = StringBuilder(mCommentsList[position].date)
-        strBuilder.replace(10,11," ")
-        strBuilder.delete(16,strBuilder.length)
-        val newStrBuilder = StringBuilder()
-        for (i in 11..15) {
-            newStrBuilder.append(strBuilder[i])
-        }
-        newStrBuilder.append(" ")
-        for (i in 0..10) {
-            newStrBuilder.append(strBuilder[i])
-        }
-        holder.date.text = newStrBuilder.toString()
+        holder.date.text = formatDateTime(mCommentsList[position].date)
         holder.text.text = mCommentsList[position].text
 
     }
 
     override fun getItemCount(): Int {
-       return mCommentsList.size
+        return mCommentsList.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CommentAdapter.ViewHolder {
         var v = LayoutInflater.from(parent?.context).inflate(R.layout.list_item_comment_problem, parent, false)
         return CommentAdapter.ViewHolder(v)
     }
-
-
-
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -66,7 +53,7 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<CommentAda
         var constraintLayout: ConstraintLayout
 
         init {
-            date =itemView.findViewById(R.id.dateComment)
+            date = itemView.findViewById(R.id.dateComment)
             name = itemView.findViewById(R.id.nameComment)
             text = itemView.findViewById(R.id.textComment)
             constraintLayout = itemView.findViewById(R.id.constraintLayout)

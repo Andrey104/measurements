@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.text.method.ScrollingMovementMethod
-import com.addd.measurements.R
-import com.addd.measurements.STAGE_COUNT
-import com.addd.measurements.STAGE_KEY
+import com.addd.measurements.*
 import com.addd.measurements.adapters.InstallerAdapter
-import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Installers
 import com.addd.measurements.modelAPI.Stage
 import com.google.gson.reflect.TypeToken
@@ -46,21 +43,14 @@ class OneStageActivity : AppCompatActivity() {
     }
 
     private fun displayStage() {
-        val strBuilder = StringBuilder(stage.date)
-        strBuilder.replace(10, 11, " ")
-        strBuilder.delete(16, strBuilder.length)
-        val newStrBuilder = StringBuilder()
-        for (i in 0..10) {
-            newStrBuilder.append(strBuilder[i])
-        }
-        textViewDateStage.text = newStrBuilder.toString()
+        textViewDateStage.text = formatDate(stage.date ?: "2000-20-20")
 
         if (!stage.comment.isNullOrEmpty()) {
             textViewCommentStage.text = stage.comment
         } else {
             textViewCommentStage.text = getString(R.string.comment_empty)
         }
-        textViewStatusStage.text = if(stage.status == 0) getString(R.string.in_proccess) else getString(R.string.stage_completed)
+        textViewStatusStage.text = if (stage.status == 0) getString(R.string.in_proccess) else getString(R.string.stage_completed)
         adapter = InstallerAdapter(stage.installers ?: emptyList)
         recyclerViewInstallers.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)

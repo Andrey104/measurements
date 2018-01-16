@@ -154,7 +154,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         datePikerDialog.show()
     }
 
-    fun updateList() {
+    private fun updateList() {
         currentPage = 1
         isLastPage = false
         adapter = DataAdapter(emptyList, this)
@@ -180,7 +180,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
         val toolbar = (activity as AppCompatActivity).supportActionBar
         if (this.arguments.getInt(CHECK) == STATUS_CURRENT) {
-            toolbar?.title = "$date В:$allMeasurements Н:$notDistributed M:$myMeasurements"
+            toolbar?.title = "${formatDate(date)} В:$allMeasurements Н:$notDistributed M:$myMeasurements"
         }
         if (this.arguments.getInt(CHECK) == STATUS_REJECT) {
             toolbar?.title = getString(R.string.rejected)

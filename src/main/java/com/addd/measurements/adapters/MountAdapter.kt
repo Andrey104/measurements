@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.MyApp
 import com.addd.measurements.R
+import com.addd.measurements.formatDate
 import com.addd.measurements.modelAPI.Mount
 
 /**
@@ -33,15 +34,7 @@ class MountAdapter(notesList: List<Mount>, private val listener: CustomAdapterCa
         if (mount.date == null) {
             viewHolder.textViewMountDate.text = MyApp.instance.getString(R.string.mount_for_phone)
         } else {
-            val strBuilder = StringBuilder(mount.date)
-            strBuilder.replace(10, 11, " ")
-            strBuilder.delete(16, strBuilder.length)
-            val newStrBuilder = StringBuilder()
-            newStrBuilder.append(" ")
-            for (i in 0..10) {
-                newStrBuilder.append(strBuilder[i])
-            }
-            viewHolder.textViewMountDate.text = newStrBuilder.toString()
+            viewHolder.textViewMountDate.text = formatDate(mount.date)
         }
     }
 

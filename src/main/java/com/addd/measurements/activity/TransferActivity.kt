@@ -70,7 +70,7 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
 
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            date = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
+            date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             textViewDate.text = "$dayOfMonth ${months[monthOfYear]} $year года"
             userDate = "$dayOfMonth ${months[monthOfYear]} $year года"
             textViewDate.text = userDate

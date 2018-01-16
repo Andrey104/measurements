@@ -32,15 +32,7 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         if (mount.date == null) {
             textViewDateStage.text = getString(R.string.mount_for_phone)
         } else {
-            val strBuilder = StringBuilder(mount.date)
-            strBuilder.replace(10, 11, " ")
-            strBuilder.delete(16, strBuilder.length)
-            val newStrBuilder = StringBuilder()
-            newStrBuilder.append(" ")
-            for (i in 0..10) {
-                newStrBuilder.append(strBuilder[i])
-            }
-            textViewDateStage.text = newStrBuilder.toString()
+            textViewDateStage.text = formatDate(mount.date ?: "2000-20-20")
         }
 
         when (mount.status) {

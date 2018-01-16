@@ -106,14 +106,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
         address.text = measurement.address.toString()
         time.text = measurement.time.toString()
-        val strBuilder = StringBuilder(measurement.date.toString())
-        var index = -1
-        for (char in strBuilder) {
-            index++
-            if (char == 'T' || char == 'Т') break
-        }
-        strBuilder.delete(index, strBuilder.length)
-        date.text = strBuilder.toString()
+        date.text = formatDate(measurement.date ?: "2000-20-20")
         if (measurement.worker == null) {
             worker_name.text = getString(R.string.not_distributed)
         } else {
@@ -163,7 +156,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                 selectColorVersion(textViewStatus, R.color.red)
                 status = 2
             }
-            4 -> {
+            4, 5 -> {
                 textViewStatus.text = getString(R.string.measurement_reject)
                 selectColorVersion(textViewStatus, R.color.red)
                 status = 1

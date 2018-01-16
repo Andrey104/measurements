@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.View
 import com.addd.measurements.DEAL_KEY
 import com.addd.measurements.ID_KEY
 import com.addd.measurements.R
@@ -28,6 +29,16 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete)
 
+        checkBoxOffer.setOnClickListener {
+            if (checkBoxOffer.isChecked) {
+                textViewDateInstallation.visibility = View.VISIBLE
+                linearLayoutDateMount.visibility = View.VISIBLE
+            } else {
+                linearLayoutDateMount.visibility = View.GONE
+                textViewDateInstallation.visibility = View.GONE
+            }
+        }
+
         id = intent?.getStringExtra(ID_KEY) ?: "0"
         deal = intent?.getIntExtra(DEAL_KEY, 0) ?: throw IllegalStateException()
         textViewDeal.text = String.format("Договор %05d", deal)
@@ -39,7 +50,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            serverDate = String.format("$year-%02d-%02dT00:00", monthOfYear + 1, dayOfMonth)
+            serverDate = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             textViewDate.text = "$dayOfMonth ${months[monthOfYear]} $year года"
         }
         val calendar = Calendar.getInstance()
