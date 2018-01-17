@@ -5,9 +5,13 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.method.ScrollingMovementMethod
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.TextView
 import com.addd.measurements.PROBLEM_KEY
 import com.addd.measurements.R
 import com.addd.measurements.adapters.CommentAdapter
@@ -24,22 +28,20 @@ import kotlinx.android.synthetic.main.activity_one_problem.*
 import kotlinx.android.synthetic.main.content_one_problem.*
 
 
-class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddCommentCallback, NetworkControllerProblem.OneProblem {
+class OneProblemActivity : AppCompatActivity(),
+        NetworkControllerComment.AddCommentCallback,
+        TextView.OnEditorActionListener {
     private lateinit var problem: MyProblem
     private lateinit var commentRequest: CommentRequest
     private lateinit var adapter: CommentAdapter
+    private lateinit var recycler: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerComment.registerProblemPagination(this)
-        NetworkControllerProblem.registerGetOneProblemCallback(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_problem)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener {
-            showAlert()
-        }
 
         getSavedProblem()
         displayProblem()
@@ -55,11 +57,31 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
         }
 
         adapter = CommentAdapter(problem.comments as ArrayList<Comment>)
+        recycler = recyclerViewComments
         recyclerViewComments.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         recyclerViewComments.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(recyclerViewComments.context, layoutManager.orientation)
         recyclerViewComments.addItemDecoration(dividerItemDecoration)
+
+        editTextCommentProblem.setOnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER,
+                    KeyEvent.KEYCODE_ENTER -> {
+                        if (editTextCommentProblem.text.isEmpty()) {
+                            toast(R.string.enter_comment)
+                        } else {
+                            editTextCommentProblem.setText(R.string.empty)
+                            commentRequest = CommentRequest(editTextCommentProblem.text.toString())
+                            NetworkControllerComment.addComment(commentRequest, problem.id.toString())
+                            adapter.addLoadingFooter()
+                        }
+                    }
+                }
+            }
+            false
+        }
 
         desctiptionProblem.text = problem.description
         desctiptionProblem.movementMethod = ScrollingMovementMethod()
@@ -76,55 +98,38 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
         }
     }
 
-    private fun showAlert() {
-        val alert = AlertDialog.Builder(this)
 
-        alert.setTitle(R.string.enter_comment)
-
-        val input = EditText(this)
-        alert.setView(input)
-
-        alert.setPositiveButton(R.string.okay) { _, _ ->
-            commentRequest = CommentRequest(input.text.toString())
-            NetworkControllerComment.addComment(commentRequest, problem.id.toString())
-            adapter.addLoadingFooter()
-        }
-
-        alert.setNegativeButton(R.string.cancel) { _, _ ->
-            // Canceled.
-        }
-
-        alert.show()
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+        commentRequest = CommentRequest(editTextCommentProblem.text.toString())
+        NetworkControllerComment.addComment(commentRequest, problem.id.toString())
+        adapter.addLoadingFooter()
+        return true
     }
 
-    override fun resultGetOneProblem(problem: MyProblem?) {
-        if (problem != null) {
-            this.problem = problem
-            displayProblem()
-        } else {
-            toast(R.string.update_error)
-        }
-        progressBar2.visibility = View.GONE
-    }
 
     override fun addCommentResult(result: Boolean, comment: Comment?) {
         when {
-            comment == null -> toast(R.string.error_add_comment)
+            comment == null -> {
+                adapter.removeLoadingFooter()
+                toast(R.string.error_add_comment)
+            }
             result -> {
                 toast(R.string.comment_added)
-//            NetworkControllerProblem.getOneProblem(problem.id.toString())
                 adapter.removeLoadingFooter()
                 adapter.add(comment)
+                recycler.smoothScrollToPosition(adapter.itemCount - 1)
                 setResult(200)
             }
-            else -> toast(R.string.error_add_comment)
+            else -> {
+                toast(R.string.error_add_comment)
+                adapter.removeLoadingFooter()
+            }
         }
     }
 
 
     override fun onDestroy() {
         NetworkControllerComment.registerProblemPagination(null)
-        NetworkControllerProblem.registerGetOneProblemCallback(null)
         super.onDestroy()
     }
 }

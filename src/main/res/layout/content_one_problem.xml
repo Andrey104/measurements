@@ -58,59 +58,44 @@
     <TextView
         android:id="@+id/desctiptionProblem"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="81dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:maxLines="6"
         android:scrollbars="vertical"
         android:text="@string/textview"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewProblem" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="370dp"
-        android:layout_height="319dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewComments"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:orientation="vertical"
+        android:layout_marginTop="8dp"
+        android:layout_weight="3"
+        app:layout_constraintBottom_toTopOf="@+id/editTextCommentProblem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/desctiptionProblem">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <EditText
+        android:id="@+id/editTextCommentProblem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/add_comment"
+        android:imeOptions="actionSend"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                android:id="@+id/progressBar2"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:visibility="gone"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/recyclerViewComments"
-                app:layout_constraintEnd_toEndOf="@+id/recyclerViewComments"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/recyclerViewComments" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerViewComments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintVertical_bias="0.517" />
-        </android.support.constraint.ConstraintLayout>
-
-    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

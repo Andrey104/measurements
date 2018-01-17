@@ -36,6 +36,8 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             } else {
                 linearLayoutDateMount.visibility = View.GONE
                 textViewDateInstallation.visibility = View.GONE
+                serverDate = null
+                textViewDate.text = getString(R.string.select_date)
             }
         }
 
@@ -46,8 +48,15 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         dateButton.setOnClickListener { datePick() }
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doCompleteRequest() }
+        imageButton.setOnClickListener {
+           deleteDateMount()
+        }
     }
 
+    private fun deleteDateMount() {
+        serverDate = null
+        textViewDate.text = getString(R.string.select_date)
+    }
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             serverDate = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
@@ -74,7 +83,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
         val close = Close(editTextComment.text.toString(),
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
-                sum, checkBoxOffer.isChecked, serverDate,checkBoxCash.isChecked)
+                sum, checkBoxOffer.isChecked, serverDate, checkBoxCash.isChecked)
         showDialog()
         NetworkController.closeMeasurement(close, id)
         return true

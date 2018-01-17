@@ -44,12 +44,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.CompleteActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ProblemActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.OneProblemActivity"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/title_activity_one_problem" />
         <activity
             android:name=".activity.ImagesActivity"
