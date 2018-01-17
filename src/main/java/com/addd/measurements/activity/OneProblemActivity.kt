@@ -26,6 +26,8 @@ import kotlinx.android.synthetic.main.content_one_problem.*
 
 class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddCommentCallback, NetworkControllerProblem.OneProblem {
     private lateinit var problem: MyProblem
+    private lateinit var commentRequest: CommentRequest
+    private lateinit var adapter: CommentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerComment.registerProblemPagination(this)
@@ -52,8 +54,8 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
             imageViewProblem.setImageResource(R.drawable.ic_check_black_24dp)
         }
 
-
-        recyclerViewComments.adapter = CommentAdapter(problem.comments as ArrayList<Comment>)
+        adapter = CommentAdapter(problem.comments as ArrayList<Comment>)
+        recyclerViewComments.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         recyclerViewComments.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(recyclerViewComments.context, layoutManager.orientation)
@@ -64,7 +66,7 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
     }
 
     private fun getSavedProblem() {
-            val json = intent.getStringExtra(PROBLEM_KEY)
+        val json = intent.getStringExtra(PROBLEM_KEY)
         problem = if (json.isNullOrEmpty()) {
             MyProblem(0, "0", User(), "0", 0, "0", "0", 0, null)
         } else {
@@ -83,7 +85,9 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
         alert.setView(input)
 
         alert.setPositiveButton(R.string.okay) { _, _ ->
-            NetworkControllerComment.addComment(CommentRequest(input.text.toString()), problem.id.toString())
+            commentRequest = CommentRequest(input.text.toString())
+            NetworkControllerComment.addComment(commentRequest, problem.id.toString())
+            adapter.addLoadingFooter()
         }
 
         alert.setNegativeButton(R.string.cancel) { _, _ ->
@@ -103,16 +107,20 @@ class OneProblemActivity : AppCompatActivity(), NetworkControllerComment.AddComm
         progressBar2.visibility = View.GONE
     }
 
-    override fun addCommentResult(result: Boolean) {
-        if (result) {
-            toast(R.string.comment_added)
-            progressBar2.visibility = View.VISIBLE
-            NetworkControllerProblem.getOneProblem(problem.id.toString())
-            setResult(200)
-        } else {
-            toast(R.string.error_add_comment)
+    override fun addCommentResult(result: Boolean, comment: Comment?) {
+        when {
+            comment == null -> toast(R.string.error_add_comment)
+            result -> {
+                toast(R.string.comment_added)
+//            NetworkControllerProblem.getOneProblem(problem.id.toString())
+                adapter.removeLoadingFooter()
+                adapter.add(comment)
+                setResult(200)
+            }
+            else -> toast(R.string.error_add_comment)
         }
     }
+
 
     override fun onDestroy() {
         NetworkControllerComment.registerProblemPagination(null)

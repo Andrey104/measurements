@@ -3,7 +3,9 @@ package com.addd.measurements.network
 import android.content.Context
 import android.preference.PreferenceManager
 import com.addd.measurements.MyApp
+import com.addd.measurements.modelAPI.Comment
 import com.addd.measurements.modelAPI.CommentRequest
+import com.addd.measurements.modelAPI.User
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -34,21 +36,21 @@ object NetworkControllerComment {
 
     fun addComment(text: CommentRequest, id: String) {
         val call = api.addComment(text, id)
-        call.enqueue(object : retrofit2.Callback<Void> {
-            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+        call.enqueue(object : retrofit2.Callback<Comment> {
+            override fun onResponse(call: Call<Comment>?, response: Response<Comment>?) {
                 if (response?.code() == 200) {
-                    addCommentCallback?.addCommentResult(true)
+                    addCommentCallback?.addCommentResult(true, response.body())
                 }
             }
 
-            override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                addCommentCallback?.addCommentResult(false)
+            override fun onFailure(call: Call<Comment>?, t: Throwable?) {
+                addCommentCallback?.addCommentResult(false, null)
             }
         })
     }
 
     interface AddCommentCallback {
-        fun addCommentResult(result: Boolean)
+        fun addCommentResult(result: Boolean, comment: Comment?)
     }
 
     fun registerProblemPagination(callback: AddCommentCallback?) {

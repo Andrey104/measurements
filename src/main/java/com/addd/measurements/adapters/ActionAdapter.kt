@@ -15,7 +15,7 @@ import com.addd.measurements.modelAPI.Action
  * Created by addd on 10.01.2018.
  */
 class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var mActionsList: List<Action> = notesList.reversed()
+    private var mActionsList: List<Action> = notesList
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
