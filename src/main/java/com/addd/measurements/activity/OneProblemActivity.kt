@@ -42,7 +42,7 @@ class OneProblemActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_problem)
         setSupportActionBar(toolbar)
-
+        imageButtonSend.setOnClickListener { sendComment() }
         getSavedProblem()
         displayProblem()
     }
@@ -64,19 +64,12 @@ class OneProblemActivity : AppCompatActivity(),
         val dividerItemDecoration = DividerItemDecoration(recyclerViewComments.context, layoutManager.orientation)
         recyclerViewComments.addItemDecoration(dividerItemDecoration)
 
-        editTextCommentProblem.setOnKeyListener { v, keyCode, event ->
+        editTextCommentProblem.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN) {
                 when (keyCode) {
                     KeyEvent.KEYCODE_DPAD_CENTER,
                     KeyEvent.KEYCODE_ENTER -> {
-                        if (editTextCommentProblem.text.isEmpty()) {
-                            toast(R.string.enter_comment)
-                        } else {
-                            editTextCommentProblem.setText(R.string.empty)
-                            commentRequest = CommentRequest(editTextCommentProblem.text.toString())
-                            NetworkControllerComment.addComment(commentRequest, problem.id.toString())
-                            adapter.addLoadingFooter()
-                        }
+                        sendComment()
                     }
                 }
             }
@@ -98,6 +91,16 @@ class OneProblemActivity : AppCompatActivity(),
         }
     }
 
+    private fun sendComment() {
+        if (editTextCommentProblem.text.isEmpty()) {
+            toast(R.string.enter_comment)
+        } else {
+            commentRequest = CommentRequest(editTextCommentProblem.text.toString())
+            NetworkControllerComment.addComment(commentRequest, problem.id.toString())
+            adapter.addLoadingFooter()
+            editTextCommentProblem.setText(R.string.empty)
+        }
+    }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         commentRequest = CommentRequest(editTextCommentProblem.text.toString())

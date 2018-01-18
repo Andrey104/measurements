@@ -21,6 +21,9 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
     private var userDate: String? = null
     private var cause: Int? = null
     private var months = emptyArray<String>()
+    private var daySave = -1
+    private var monthSave = -1
+    private var yearSave = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,9 +77,16 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
             textViewDate.text = "$dayOfMonth ${months[monthOfYear]} $year года"
             userDate = "$dayOfMonth ${months[monthOfYear]} $year года"
             textViewDate.text = userDate
+            yearSave = year
+            monthSave = monthOfYear
+            daySave = dayOfMonth
         }
         val calendar = Calendar.getInstance()
-        val datePicker = DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        val datePicker = if (yearSave == -1) {
+            DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        } else {
+            DatePickerDialog(this, myCallBack, yearSave, monthSave, daySave)
+        }
         datePicker.show()
 
     }

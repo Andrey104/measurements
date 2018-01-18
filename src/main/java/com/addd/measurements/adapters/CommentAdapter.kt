@@ -74,6 +74,10 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
         add(Comment(0, User(), "", "", 0))
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (position == mCommentsList.size - 1 && isLoadingAdded) LOADING else ITEM
+    }
+
     fun removeLoadingFooter() {
         isLoadingAdded = false
 

@@ -101,7 +101,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/dateButton"
@@ -129,15 +129,14 @@
 
             <ImageButton
                 android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_height="wrap_content"
+                android:layout_width="43dp"
+                android:layout_height="41dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/reject"
-                android:layout_marginRight="8dp" />
+                app:srcCompat="@drawable/reject" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

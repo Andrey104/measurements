@@ -73,6 +73,7 @@
         android:id="@+id/recyclerViewComments"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -86,16 +87,30 @@
 
     <EditText
         android:id="@+id/editTextCommentProblem"
-        android:layout_width="match_parent"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:ems="10"
         android:hint="@string/add_comment"
         android:imeOptions="actionSend"
+        android:inputType="textMultiLine"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSend"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/imageButtonSend"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="42dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/editTextCommentProblem"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_send_black_24dp"
+        tools:ignore="VectorDrawableCompat" />
 
 </android.support.constraint.ConstraintLayout>

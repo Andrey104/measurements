@@ -40,6 +40,8 @@ object NetworkControllerComment {
             override fun onResponse(call: Call<Comment>?, response: Response<Comment>?) {
                 if (response?.code() == 200) {
                     addCommentCallback?.addCommentResult(true, response.body())
+                } else {
+                    addCommentCallback?.addCommentResult(false, null)
                 }
             }
 

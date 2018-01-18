@@ -56,6 +56,7 @@ class LoginActivity : AppCompatActivity(), NetworkAuthorization.MyCallback, Text
                 startActivity(Intent(applicationContext, MainActivity::class.java))
                 finish()
             }
+            300 -> toast(R.string.account_error)
             400 -> toast(R.string.wrong_login_password)
             else -> toast(R.string.something_wrong)
         }

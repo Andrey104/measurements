@@ -20,6 +20,9 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     private lateinit var alert: AlertDialog
     private var serverDate: String? = null
     private var months = emptyArray<String>()
+    private var daySave = -1
+    private var monthSave = -1
+    private var yearSave = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,8 +39,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             } else {
                 linearLayoutDateMount.visibility = View.GONE
                 textViewDateInstallation.visibility = View.GONE
-                serverDate = null
-                textViewDate.text = getString(R.string.select_date)
+                deleteDateMount()
             }
         }
 
@@ -56,14 +58,25 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     private fun deleteDateMount() {
         serverDate = null
         textViewDate.text = getString(R.string.select_date)
+        yearSave = -1
+        monthSave = -1
+        daySave = 1
     }
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             serverDate = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             textViewDate.text = "$dayOfMonth ${months[monthOfYear]} $year года"
+            yearSave = year
+            monthSave = monthOfYear
+            daySave = dayOfMonth
         }
         val calendar = Calendar.getInstance()
-        val datePicker = DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        val datePicker = if (yearSave == -1) {
+            DatePickerDialog(this, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        } else {
+            DatePickerDialog(this, myCallBack, yearSave, monthSave, daySave)
+        }
+        datePicker.show()
         datePicker.show()
     }
 

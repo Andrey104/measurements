@@ -44,7 +44,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.CompleteActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ProblemActivity"

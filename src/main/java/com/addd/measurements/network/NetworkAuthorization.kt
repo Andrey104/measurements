@@ -25,11 +25,15 @@ object NetworkAuthorization {
                     when {
                         response.code() != 200 -> callback?.resultAuth(400)
                         response.code() == 200 -> {
-                            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
-                            val editor: SharedPreferences.Editor = mSettings.edit()
-                            editor.putString(APP_TOKEN, response.body()?.token)
-                            editor.apply()
-                            callback?.resultAuth(200)
+                            if (response.body()?.type != 1) {
+                                callback?.resultAuth(300)
+                            } else {
+                                val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApp.instance)
+                                val editor: SharedPreferences.Editor = mSettings.edit()
+                                editor.putString(APP_TOKEN, response.body()?.token)
+                                editor.apply()
+                                callback?.resultAuth(200)
+                            }
                         }
                         else -> {
                         }
