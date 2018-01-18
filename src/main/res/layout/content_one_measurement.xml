@@ -54,14 +54,14 @@
                         android:id="@+id/address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="2dp"
                         android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="2dp"
                         android:textSize="14sp" />
 
                     <TextView

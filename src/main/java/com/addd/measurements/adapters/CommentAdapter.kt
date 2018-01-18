@@ -37,6 +37,12 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
                     } else {
                         viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin))
                     }
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.white, MyApp.instance.theme))
+                    } else {
+                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.white))
+                    }
                 }
                 viewHolder.date.text = formatDateTime(mCommentsList[position].date)
                 viewHolder.text.text = mCommentsList[position].text
