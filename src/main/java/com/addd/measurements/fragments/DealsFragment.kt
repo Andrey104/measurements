@@ -41,7 +41,9 @@ class DealsFragment : Fragment(),
     private var isLastPage = false
     private var currentPage = 1
     private var TOTAL_PAGES = 4
-
+    private var daySave = -1
+    private var monthSave = -1
+    private var yearSave = -1
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         (activity as AppCompatActivity).supportActionBar?.show()
@@ -113,7 +115,10 @@ class DealsFragment : Fragment(),
     }
 
     private fun datePick() {
-        val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        val myCallBack = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            daySave = dayOfMonth
+            monthSave = monthOfYear
+            yearSave = year
             currentPage = 1
             isLastPage = false
             date = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
@@ -127,9 +132,12 @@ class DealsFragment : Fragment(),
             }
         }
         val calendar = Calendar.getInstance()
-        val datePikerDialog = DatePickerDialog(context, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-
-        datePikerDialog.show()
+        val datePickerDialog = if (yearSave == -1) {
+            DatePickerDialog(activity, myCallBack, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        } else {
+            DatePickerDialog(activity, myCallBack, yearSave, monthSave, daySave)
+        }
+        datePickerDialog.show()
     }
 
     override fun resultList(listDeals: List<Deal>, result: Int, date: String, count: Int) {
