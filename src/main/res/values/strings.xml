@@ -269,4 +269,5 @@
     <string name="without_name">Нет имени</string>
     <string name="cancel_mount">Отменить монтаж</string>
     <string name="account_error">Ваш аккаунт не подходит для работы с этим приложением</string>
+    <string name="enter">Войти</string>
 </resources>

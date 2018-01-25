@@ -23,7 +23,6 @@ class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.Dis
     }
 
     private fun doAddRecalculation(): Boolean {
-        buttonOk.isEnabled = false
         if (editTextHeader.text.isEmpty() && editTextDescription.text.isEmpty()) {
             toast(R.string.enter_sum_comment)
             return false
@@ -34,6 +33,7 @@ class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.Dis
             toast(R.string.enter_comment)
             return false
         }
+        buttonOk.isEnabled = false
         val discount = RecalculationRequest(editTextHeader.text.toString().toFloat(), editTextDescription.text.toString())
         NetworkControllerDeals.addDiscount(discount, dealId)
         return true
