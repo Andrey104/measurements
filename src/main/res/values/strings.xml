@@ -127,7 +127,7 @@
     <string name="description">Описание</string>
     <string name="photo">Фото</string>
     <string name="name_first_last">Имя Фамилия</string>
-    <string name="all">ВСЕ</string>
+    <string name="all">Все</string>
     <string name="enter_comment_sym">Введите комментарий:</string>
     <string name="update_data">Обновление данных</string>
     <string name="itis_error">Произошла ошибка</string>
@@ -270,4 +270,6 @@
     <string name="cancel_mount">Отменить монтаж</string>
     <string name="account_error">Ваш аккаунт не подходит для работы с этим приложением</string>
     <string name="enter">Войти</string>
+    <string name="free_measurements">Свободные</string>
+    <string name="my">Мои</string>
 </resources>

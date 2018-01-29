@@ -141,10 +141,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 bundle.putInt(CHECK, STATUS_CLOSE)
                 changeFragment(fragment, item, bundle)
             }
-            R.id.nav_problems -> {
-                val fragment = ProblemsFragment()
-                changeFragment(fragment, item, null)
-            }
             R.id.nav_exit -> {
                 exitFromAccount()
             }

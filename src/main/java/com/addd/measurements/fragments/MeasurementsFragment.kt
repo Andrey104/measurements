@@ -76,7 +76,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             val bundle = this.arguments
             when (item.itemId) {
-                R.id.today -> {
+                R.id.all -> {
                     date = getTodayDate()
                     adapter = DataAdapter(emptyList, this)
                     recyclerList.adapter = adapter
@@ -89,7 +89,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                         STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
                     }
                 }
-                R.id.tomorrow -> {
+                R.id.free -> {
                     date = getTomorrowDate()
                     adapter = DataAdapter(emptyList, this)
                     recyclerList.adapter = adapter
@@ -102,7 +102,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                         STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TOMORROW_CLOSED)
                     }
                 }
-                R.id.date -> {
+                R.id.my -> {
                     datePick()
 
                 }

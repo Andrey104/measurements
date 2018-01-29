@@ -1,14 +1,18 @@
 package com.addd.measurements.adapters
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Measurement
 import kotlin.collections.ArrayList
@@ -43,12 +47,15 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
                 }
                 setColorResponsible(measurement.color ?: 0, viewHolder)
 
-                viewHolder.symbol.text = measurement.company?.symbol
+                val mp = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.mp, null)
+                val n = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.n, null)
+                val b = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.b, null)
 
-                if (viewHolder.symbol.text.length == 1) {
-                    viewHolder.symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30F)
+                when (measurement.company?.id) {
+                    1 -> viewHolder.symbol.background = mp
+                    2 -> viewHolder.symbol.background = b
+                    3 -> viewHolder.symbol.background = n
                 }
-                setColorCompany(measurement.company?.id ?: 0, viewHolder)
             }
             LOADING -> {
             }
@@ -115,21 +122,12 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
         selectColorVersion(viewHolder.workerName, when (color) {
             1 -> R.color.red
             2 -> R.color.green
-            3 -> R.color.blue
-            else -> R.color.blue
+            3 -> R.color.gray
+            else -> R.color.gray
         }, viewHolder.itemView.context)
 
     }
 
-    private fun setColorCompany(color: Int, viewHolder: ViewHolder) {
-        selectColorVersion(viewHolder.symbol, when (color) {
-            1 -> R.color.green
-            2 ->R.color.orange
-            3 ->  R.color.blue
-            else -> R.color.blue
-        }, viewHolder.itemView.context)
-
-    }
 
     private fun selectColorVersion(item: TextView, color: Int, context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -154,7 +152,7 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
             listener.onItemClick(adapterPosition)
         }
 
-        var symbol: TextView
+        var symbol: ImageView
         var deal: TextView
         var address: TextView
         var time: TextView
@@ -165,7 +163,7 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
             address = itemView.findViewById(R.id.address)
             time = itemView.findViewById(R.id.time)
             workerName = itemView.findViewById(R.id.worker_name)
-            symbol = itemView.findViewById(R.id.symbol)
+            symbol = itemView.findViewById(R.id.imageViewSymbol)
             this.listener = listener
             this.itemView.setOnClickListener(this)
             this.itemView.setOnLongClickListener(this)

@@ -1,51 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+
     <item
         android:id="@+id/uncheckableMes"
-        android:title="@string/measurements">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/nav_current"
-                    android:title="@string/current" />
-                <item
-                    android:id="@+id/nav_rejected"
-                    android:title="@string/rejected" />
-                <item
-                    android:id="@+id/nav_closed"
-                    android:title="@string/closed" />
+        android:checkable="false"
+        android:enabled="false"
+        android:title=""
+        android:visible="true"
+        app:actionLayout="@layout/nav_header_measurements" />
 
-            </group>
-        </menu>
 
-    </item>
-
-        <item
-            android:id="@+id/uncheckableDeal"
-            android:title="@string/my_objects">
-            <menu>
-                <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/nav_currentDeal"
-                    android:title="@string/current" />
-                <item
-                    android:id="@+id/nav_rejectDeal"
-                    android:title="@string/rejected" />
-                <item
-                    android:id="@+id/nav_closeDeal"
-                    android:title="@string/closed" />
-                </group>
-            </menu>
-        </item>
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_problems"
-            android:title="@string/problems" />
+            android:id="@+id/nav_current"
+            android:title="@string/current" />
         <item
-            android:id="@+id/nav_exit"
-            android:title="@string/exit_from_account" />
+            android:id="@+id/nav_rejected"
+            android:title="@string/rejected" />
+        <item
+            android:id="@+id/nav_closed"
+            android:title="@string/closed" />
     </group>
+
+
+    <item
+        android:id="@+id/uncheckableDeals"
+        android:checkable="false"
+        android:enabled="false"
+        android:title=""
+        android:visible="true"
+        app:actionLayout="@layout/nav_header_deals" />
+
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_currentDeal"
+            android:title="@string/current" />
+        <item
+            android:id="@+id/nav_rejectDeal"
+            android:title="@string/rejected" />
+        <item
+            android:id="@+id/nav_closeDeal"
+            android:title="@string/closed" />
+    </group>
+
+    <group android:id="@+id/exit_from_account" android:checkableBehavior="single">
+            <item
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:id="@+id/nav_exit"
+                android:title="@string/exit_from_account" />
+    </group>
+
 </menu>
