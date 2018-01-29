@@ -2,6 +2,7 @@ package com.addd.measurements.adapters
 
 import android.content.Context
 import android.os.Build
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -35,12 +36,15 @@ class DealAdapter(notesList: ArrayList<Deal>, private val listener: CustomAdapte
                     else -> MyApp.instance.getString(R.string.status_deal)
                 }
 
-                viewHolder.symbol.text = deal.company?.symbol
+                val mp = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.mp, null)
+                val n = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.n, null)
+                val b = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.b, null)
 
-                if (viewHolder.symbol.text.length == 1) {
-                    viewHolder.symbol.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30F)
+                when (deal.company?.id) {
+                    1 -> viewHolder.symbol.background = mp
+                    2 -> viewHolder.symbol.background = b
+                    3 -> viewHolder.symbol.background = n
                 }
-                setColorCompany(deal.company?.id ?: 0, viewHolder)
             }
             LOADING -> {
             }
@@ -105,23 +109,6 @@ class DealAdapter(notesList: ArrayList<Deal>, private val listener: CustomAdapte
         return mDealList[position]
     }
 
-    private fun setColorCompany(color: Int, viewHolder: ViewHolder) {
-        selectColorVersion(viewHolder.symbol, when (color) {
-            1 -> R.color.green
-            2 ->R.color.orange
-            3 ->  R.color.blue
-            else -> R.color.blue
-        }, viewHolder.itemView.context)
-
-    }
-
-    private fun selectColorVersion(item: TextView, color: Int, context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            item.setTextColor(context.resources.getColor(color, context.theme))
-        } else {
-            item.setTextColor(context.resources.getColor(color))
-        }
-    }
 
     class ViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
         private val listener: DealAdapter.CustomAdapterCallback
@@ -132,13 +119,13 @@ class DealAdapter(notesList: ArrayList<Deal>, private val listener: CustomAdapte
         var address: TextView
         var deal: TextView
         var timeMount: TextView
-        var symbol : TextView
+        var symbol : ImageView
 
         constructor(itemView: View, listener: DealAdapter.CustomAdapterCallback) : super(itemView) {
             deal = itemView.findViewById(R.id.deal)
             address = itemView.findViewById(R.id.address)
             timeMount = itemView.findViewById(R.id.time)
-            symbol = itemView.findViewById(R.id.symbol)
+            symbol = itemView.findViewById(R.id.imageViewSymbol)
             this.listener = listener
             this.itemView.setOnClickListener(this)
         }

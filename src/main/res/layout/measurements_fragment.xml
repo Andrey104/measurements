@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/measurementsLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
 
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
@@ -52,7 +53,7 @@
         </android.support.v7.widget.RecyclerView>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab4"
+            android:id="@+id/fabMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -65,12 +66,27 @@
             tools:ignore="VectorDrawableCompat"
             android:layout_marginRight="16dp" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabMainClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_close_white_24dp"
+            tools:ignore="VectorDrawableCompat"
+            android:layout_marginRight="16dp" />
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
             android:adjustViewBounds="true"
+            android:background="@color/colorPrimary"
             android:orientation="horizontal"
             android:showDividers="middle"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -79,36 +95,81 @@
 
             <Button
                 android:id="@+id/buttonAll"
-                android:textSize="16sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textAllCaps="false"
                 android:background="@color/colorPrimary"
                 android:text="@string/all"
-                android:textColor="@color/white" />
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
             <Button
                 android:id="@+id/buttonFree"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textAllCaps="false"
                 android:background="@color/colorPrimary"
                 android:text="@string/free_measurements"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/buttonMy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
                 android:text="@string/my"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
         </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/fabMain"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/today"
+            tools:ignore="VectorDrawableCompat" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabTomorrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/fabToday"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/tomorrow"
+            tools:ignore="VectorDrawableCompat" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/fabTomorrow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/calendar_white"
+            tools:ignore="VectorDrawableCompat" />
+
 
     </android.support.constraint.ConstraintLayout>
 

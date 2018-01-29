@@ -3,20 +3,18 @@ package com.addd.measurements.fragments
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
-import android.widget.TextView
 import com.addd.measurements.*
 import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.DataAdapter
@@ -48,7 +46,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private var monthSave = -1
     private var yearSave = -1
 
+    private lateinit var fabOpen: Animation
+    private lateinit var fabClose: Animation
+    private var isFabOpen = false
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as AppCompatActivity).supportActionBar?.show()
         NetworkController.registerCallBack(this)
@@ -56,13 +58,24 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         NetworkController.registerPaginationCallback(this)
         val view: View = inflater.inflate(R.layout.measurements_fragment, container, false)
                 ?: View(context)
+        fabOpen = AnimationUtils.loadAnimation(context, R.anim.fab_open)
+        fabClose = AnimationUtils.loadAnimation(context, R.anim.fab_close)
+
+        view.fabMain.setOnClickListener { showFubs() }
+        view.fabMainClose.setOnClickListener { hideFub() }
+        view.fabToday.setOnClickListener { todayFab() }
+        view.fabTomorrow.setOnClickListener { tomorrowFab() }
+        view.fabDate.setOnClickListener { dateFab() }
+        view.recyclerList.setOnTouchListener { v, event ->
+            hideFub()
+            false
+        }
 
         selectColorVersion(view.buttonAll, R.color.colorPrimaryDark)
 
         view.buttonAll.setOnClickListener {
             allMeasurements()
         }
-
         view.buttonFree.setOnClickListener {
             freeMeasurements()
         }
@@ -86,21 +99,39 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         return view
     }
 
-    private fun selectColorVersion(item: Button, color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            item.setBackgroundColor(context.resources.getColor(color, context.theme))
-        } else {
-            item.setBackgroundColor(context.resources.getColor(color))
+    private fun hideFub() {
+        if (isFabOpen) {
+            fabToday.startAnimation(fabClose)
+            fabMainClose.startAnimation(fabClose)
+            fabTomorrow.startAnimation(fabClose)
+            fabDate.startAnimation(fabClose)
+            fabMain.startAnimation(fabOpen)
+            fabToday.isClickable = false
+            fabMainClose.isClickable = false
+            fabTomorrow.isClickable = false
+            fabDate.isClickable = false
+            fabMain.isClickable = true
+            isFabOpen = false
         }
     }
 
-    private fun allMeasurements() {
-        buttonAll.textSize = 16.0F
-        buttonFree.textSize = 14.0F
-        buttonMy.textSize = 14.0F
-        selectColorVersion(buttonAll,R.color.colorPrimaryDark )
-        selectColorVersion(buttonFree,R.color.colorPrimary )
-        selectColorVersion(buttonMy,R.color.colorPrimary )
+    private fun showFubs() {
+        fabMain.isClickable = false
+        fabMain.startAnimation(fabClose)
+        fabMainClose.startAnimation(fabOpen)
+        fabToday.startAnimation(fabOpen)
+        fabTomorrow.startAnimation(fabOpen)
+        fabDate.startAnimation(fabOpen)
+        fabToday.isClickable = true
+        fabMainClose.isClickable = true
+        fabTomorrow.isClickable = true
+        fabDate.isClickable = true
+        isFabOpen = true
+
+    }
+
+    private fun todayFab() {
+        hideFub()
         date = getTodayDate()
         adapter = DataAdapter(emptyList, this)
         recyclerList.adapter = adapter
@@ -114,13 +145,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         }
     }
 
-    private fun freeMeasurements() {
-        buttonFree.textSize = 16.0F
-        buttonAll.textSize = 14.0F
-        buttonMy.textSize = 14.0F
-        selectColorVersion(buttonFree, R.color.colorPrimaryDark)
-        selectColorVersion(buttonAll, R.color.colorPrimary)
-        selectColorVersion(buttonMy, R.color.colorPrimary)
+    private fun tomorrowFab() {
+        hideFub()
         date = getTomorrowDate()
         adapter = DataAdapter(emptyList, this)
         recyclerList.adapter = adapter
@@ -134,16 +160,54 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         }
     }
 
+    private fun dateFab() {
+        hideFub()
+        datePick()
+    }
+
+    private fun selectColorVersion(item: Button, color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            item.setBackgroundColor(context.resources.getColor(color, context.theme))
+        } else {
+            item.setBackgroundColor(context.resources.getColor(color))
+        }
+    }
+
+    private fun allMeasurements() {
+        hideFub()
+        buttonAll.textSize = 16.0F
+        buttonFree.textSize = 14.0F
+        buttonMy.textSize = 14.0F
+        selectColorVersion(buttonAll, R.color.colorPrimaryDark)
+        selectColorVersion(buttonFree, R.color.colorPrimary)
+        selectColorVersion(buttonMy, R.color.colorPrimary)
+        toast("Саня еще не сделал")
+    }
+
+    private fun freeMeasurements() {
+        hideFub()
+        buttonFree.textSize = 16.0F
+        buttonAll.textSize = 14.0F
+        buttonMy.textSize = 14.0F
+        selectColorVersion(buttonFree, R.color.colorPrimaryDark)
+        selectColorVersion(buttonAll, R.color.colorPrimary)
+        selectColorVersion(buttonMy, R.color.colorPrimary)
+        toast("Саня еще не сделал")
+    }
+
     private fun myMeasurements() {
+        hideFub()
         buttonMy.textSize = 16.0F
         buttonFree.textSize = 14.0F
         buttonAll.textSize = 14.0F
         selectColorVersion(buttonMy, R.color.colorPrimaryDark)
         selectColorVersion(buttonAll, R.color.colorPrimary)
         selectColorVersion(buttonFree, R.color.colorPrimary)
-        datePick()
+        toast("Саня еще не сделал")
     }
+
     override fun onItemClick(pos: Int) {
+        hideFub()
         val intent = Intent(context, OneMeasurementActivity::class.java)
         var deal = fragmentListMeasurements[pos].deal
         val json = gson.toJson(fragmentListMeasurements[pos])
@@ -154,6 +218,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     override fun onItemLongClick(pos: Int) {
+        hideFub()
         val ad = android.app.AlertDialog.Builder(context)
         ad.setTitle(R.string.become_response)  // заголовок
         var id = fragmentListMeasurements[pos].id
@@ -167,6 +232,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         ad.setCancelable(true)
         ad.show()
     }
+
 
     private fun datePick() {
         val bundle = this.arguments

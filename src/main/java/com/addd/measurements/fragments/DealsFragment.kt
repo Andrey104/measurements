@@ -169,8 +169,6 @@ class DealsFragment : Fragment(),
         recyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerList.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
-        recyclerList.addItemDecoration(dividerItemDecoration)
         recyclerList.addOnScrollListener(object : PaginationScrollListener(recyclerList.layoutManager as LinearLayoutManager) {
             override fun isLastPage(): Boolean {
                 return isLastPage
