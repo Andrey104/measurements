@@ -32,8 +32,8 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                     supportActionBar?.show()
                     supportActionBar?.title = String.format("Замеры %05d", dealID.toInt())
                     val bundle = Bundle()
-                    if (!json.isEmpty()) {
-                        bundle.putString(DEAL_KEY, json)
+                    if (!dealID.isEmpty()) {
+                        bundle.putString(DEAL_ID, dealID)
                         val fragment = ListMeasurementsFragment()
                         fragment.arguments = bundle
                         val fragmentManager = supportFragmentManager
@@ -47,11 +47,11 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
 
                 R.id.problems -> {
                     supportActionBar?.title = String.format("Проблемы %05d", dealID.toInt())
-                    if (!json.isEmpty()) {
+                    if (!dealID.isEmpty()) {
                         val bundle = Bundle()
                         val fragment = ProblemDealFragment()
                         fragment.arguments = bundle
-                        bundle.putString(DEAL_KEY, json)
+                        bundle.putString(DEAL_ID, dealID)
                         val fragmentManager = supportFragmentManager
                         fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
                     }  else {
@@ -67,11 +67,11 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                     getDeal(false)
                 }
                 R.id.mount -> {
-                    if (intent.hasExtra(DEAL_ID)) {
+                    if (!dealID.isEmpty()) {
                         val bundle = Bundle()
                         val fragment = MountFragment()
                         fragment.arguments = bundle
-                        bundle.putString(DEAL_ID, intent.getStringExtra(DEAL_ID))
+                        bundle.putString(DEAL_ID, dealID)
                         val fragmentManager = supportFragmentManager
                         fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
                     }

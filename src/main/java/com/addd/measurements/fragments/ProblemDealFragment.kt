@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.problems_deal_fragment.view.*
  */
 class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, NetworkControllerProblem.DealProblems {
     private lateinit var bundle: Bundle
-    private lateinit var deal: Deal
+    private lateinit var dealID: String
     private lateinit var adapter: ProblemAdapter
     private lateinit var problems: List<MyProblem>
     var emptyList: ArrayList<MyProblem> = ArrayList(emptyList())
@@ -36,14 +36,18 @@ class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, Ne
         mView = view
         mView.progressBarMain.visibility = View.VISIBLE
         bundle = this.arguments
-        deal = getSavedDeal()
-        (activity as AppCompatActivity).supportActionBar?.title = String.format("Проблемы %05d", deal.id)
+        bundle.let {
+            if (bundle.containsKey(DEAL_ID)) {
+                dealID = bundle.getString(DEAL_ID)
+            }
+        }
+        (activity as AppCompatActivity).supportActionBar?.title = String.format("Проблемы %05d", dealID.toInt())
         mView.fab2.setOnClickListener {
             val intent = Intent(context, ProblemActivity::class.java)
-            intent.putExtra(DEAL_KEY, deal.id.toString())
+            intent.putExtra(DEAL_KEY, dealID)
             startActivityForResult(intent, 30)
         }
-        NetworkControllerProblem.getDealProblem(deal.id.toString())
+        NetworkControllerProblem.getDealProblem(dealID)
         return view
     }
 
@@ -52,21 +56,10 @@ class ProblemDealFragment : Fragment(), ProblemAdapter.CustomAdapterCallback, Ne
             adapter = ProblemAdapter(emptyList, this)
             mView.recyclerList.adapter = adapter
             mView.progressBarMain.visibility = View.VISIBLE
-            NetworkControllerProblem.getDealProblem(deal.id.toString())
+            NetworkControllerProblem.getDealProblem(dealID)
         }
     }
 
-    private fun getSavedDeal(): Deal {
-        val json = bundle.getString(DEAL_KEY)
-        deal = if (json.isNullOrEmpty()) {
-            Deal()
-        } else {
-            val type = object : TypeToken<Deal>() {
-            }.type
-            gson.fromJson(json, type)
-        }
-        return deal
-    }
 
     override fun onItemClick(pos: Int) {
         val intent = Intent(context, OneProblemActivity::class.java)

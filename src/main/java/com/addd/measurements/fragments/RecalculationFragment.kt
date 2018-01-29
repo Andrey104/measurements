@@ -57,6 +57,7 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
     }
 
     private fun displayRecalculations() {
+        if (recalculations.isEmpty()) toast(R.string.no_recalculation_in_deal)
         val adapter = RecalculationAdapter(recalculations)
         mView.recyclerListRecalculation.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

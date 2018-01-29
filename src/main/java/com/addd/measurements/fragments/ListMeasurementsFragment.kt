@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.measurements_list_fragment.view.*
 
 class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, NetworkController.MeasurementsDealCallback {
     private lateinit var bundle: Bundle
-    private lateinit var deal: Deal
+    private lateinit var dealID: String
     private lateinit var adapter: DataAdapter
     var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
     private lateinit var measurements: List<Measurement>
@@ -36,9 +36,13 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
         mView.progressBar4.visibility = View.VISIBLE
         NetworkController.registerMeasurementsDealCallback(this)
         bundle = this.arguments
-        deal = getSavedDeal()
-        (activity as AppCompatActivity).supportActionBar?.title = String.format("Замеры %05d", deal.id)
-        NetworkController.getMeasurementsDeals(deal.id.toString())
+        bundle.let {
+            if (bundle.containsKey(DEAL_ID)) {
+                dealID = bundle.getString(DEAL_ID)
+            }
+        }
+        (activity as AppCompatActivity).supportActionBar?.title = String.format("Замеры %05d", dealID.toInt())
+        NetworkController.getMeasurementsDeals(dealID)
         return view
     }
 
@@ -56,24 +60,14 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
             adapter = DataAdapter(emptyList, this)
             mView.recyclerListMeasurements.adapter = adapter
             mView.progressBar4.visibility = View.VISIBLE
-            NetworkController.getMeasurementsDeals(deal.id.toString())
+            NetworkController.getMeasurementsDeals(dealID)
         }
     }
 
     override fun onItemLongClick(pos: Int) {
     }
 
-    private fun getSavedDeal(): Deal {
-        val json = bundle?.getString(DEAL_KEY)
-        deal = if (json.isNullOrEmpty()) {
-            Deal()
-        } else {
-            val type = object : TypeToken<Deal>() {
-            }.type
-            gson.fromJson(json, type)
-        }
-        return deal
-    }
+
 
     override fun resultMeasurementsDeal(listMeasurements: List<Measurement>, result: Boolean) {
         if (listMeasurements.isEmpty() || !result) {

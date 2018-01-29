@@ -272,4 +272,5 @@
     <string name="enter">Войти</string>
     <string name="free_measurements">Свободные</string>
     <string name="my">Мои</string>
+    <string name="no_recalculation_in_deal">В данной сделке нет перерасчетов</string>
 </resources>
