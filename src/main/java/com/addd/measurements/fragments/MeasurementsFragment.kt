@@ -1,8 +1,11 @@
 package com.addd.measurements.fragments
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -12,13 +15,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import com.addd.measurements.*
 import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
-import kotlinx.android.synthetic.main.activity_search_measurements.*
-import kotlinx.android.synthetic.main.activity_search_measurements.view.*
+import kotlinx.android.synthetic.main.measurements_fragment.*
+import kotlinx.android.synthetic.main.measurements_fragment.view.*
 import java.util.Calendar
 import kotlin.collections.ArrayList
 
@@ -49,12 +54,21 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         NetworkController.registerCallBack(this)
         NetworkController.registerResponsibleCallback(this)
         NetworkController.registerPaginationCallback(this)
-        val view: View = inflater.inflate(R.layout.measurements_fragment, container, false) ?: View(context)
+        val view: View = inflater.inflate(R.layout.measurements_fragment, container, false)
+                ?: View(context)
 
+        selectColorVersion(view.buttonAll, R.color.colorPrimaryDark)
 
-        val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigation)
+        view.buttonAll.setOnClickListener {
+            allMeasurements()
+        }
 
-        onClickMenu(bottomNavigationView)
+        view.buttonFree.setOnClickListener {
+            freeMeasurements()
+        }
+        view.buttonMy.setOnClickListener {
+            myMeasurements()
+        }
 
         bundle = this.arguments
         date = getTodayDate()
@@ -72,45 +86,63 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         return view
     }
 
-    private fun onClickMenu(bottomNavigationView: BottomNavigationView) {
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            val bundle = this.arguments
-            when (item.itemId) {
-                R.id.all -> {
-                    date = getTodayDate()
-                    adapter = DataAdapter(emptyList, this)
-                    recyclerList.adapter = adapter
-                    progressBarMain.visibility = View.VISIBLE
-                    currentPage = 1
-                    isLastPage = false
-                    when (bundle.get(CHECK)) {
-                        STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
-                        STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
-                        STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
-                    }
-                }
-                R.id.free -> {
-                    date = getTomorrowDate()
-                    adapter = DataAdapter(emptyList, this)
-                    recyclerList.adapter = adapter
-                    progressBarMain.visibility = View.VISIBLE
-                    currentPage = 1
-                    isLastPage = false
-                    when (bundle.get(CHECK)) {
-                        STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TOMORROW_CURRENT)
-                        STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TOMORROW_REJECTED)
-                        STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TOMORROW_CLOSED)
-                    }
-                }
-                R.id.my -> {
-                    datePick()
-
-                }
-            }
-            true
+    private fun selectColorVersion(item: Button, color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            item.setBackgroundColor(context.resources.getColor(color, context.theme))
+        } else {
+            item.setBackgroundColor(context.resources.getColor(color))
         }
     }
 
+    private fun allMeasurements() {
+        buttonAll.textSize = 16.0F
+        buttonFree.textSize = 14.0F
+        buttonMy.textSize = 14.0F
+        selectColorVersion(buttonAll,R.color.colorPrimaryDark )
+        selectColorVersion(buttonFree,R.color.colorPrimary )
+        selectColorVersion(buttonMy,R.color.colorPrimary )
+        date = getTodayDate()
+        adapter = DataAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        progressBarMain.visibility = View.VISIBLE
+        currentPage = 1
+        isLastPage = false
+        when (bundle.get(CHECK)) {
+            STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
+            STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
+            STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
+        }
+    }
+
+    private fun freeMeasurements() {
+        buttonFree.textSize = 16.0F
+        buttonAll.textSize = 14.0F
+        buttonMy.textSize = 14.0F
+        selectColorVersion(buttonFree, R.color.colorPrimaryDark)
+        selectColorVersion(buttonAll, R.color.colorPrimary)
+        selectColorVersion(buttonMy, R.color.colorPrimary)
+        date = getTomorrowDate()
+        adapter = DataAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        progressBarMain.visibility = View.VISIBLE
+        currentPage = 1
+        isLastPage = false
+        when (bundle.get(CHECK)) {
+            STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TOMORROW_CURRENT)
+            STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TOMORROW_REJECTED)
+            STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TOMORROW_CLOSED)
+        }
+    }
+
+    private fun myMeasurements() {
+        buttonMy.textSize = 16.0F
+        buttonFree.textSize = 14.0F
+        buttonAll.textSize = 14.0F
+        selectColorVersion(buttonMy, R.color.colorPrimaryDark)
+        selectColorVersion(buttonAll, R.color.colorPrimary)
+        selectColorVersion(buttonFree, R.color.colorPrimary)
+        datePick()
+    }
     override fun onItemClick(pos: Int) {
         val intent = Intent(context, OneMeasurementActivity::class.java)
         var deal = fragmentListMeasurements[pos].deal
@@ -179,6 +211,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
         TOTAL_PAGES = if (count % 20 == 0) {
             count / 20
@@ -189,7 +222,10 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
         val toolbar = (activity as AppCompatActivity).supportActionBar
         if (this.arguments.getInt(CHECK) == STATUS_CURRENT) {
-            toolbar?.title = "${formatDate(date)} В:$allMeasurements Н:$notDistributed M:$myMeasurements"
+            buttonAll.text = "$allMeasurements\nВсе"
+            buttonFree.text = "$notDistributed\nСвободные"
+            buttonMy.text = "$myMeasurements\nМои"
+            toolbar?.title = "${formatDate(date)}"
         }
         if (this.arguments.getInt(CHECK) == STATUS_REJECT) {
             toolbar?.title = getString(R.string.rejected)
@@ -285,10 +321,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
             adapter.addAll(listMeasurements)
 
-            if (currentPage != TOTAL_PAGES)
+            if (currentPage != TOTAL_PAGES) {
                 adapter.addLoadingFooter()
-            else
-                isLastPage = true
+            } else {
+            }
+            isLastPage = true
         }
         isLoading = false
     }
