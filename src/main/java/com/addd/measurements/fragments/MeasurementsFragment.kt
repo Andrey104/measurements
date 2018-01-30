@@ -47,6 +47,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private var yearSave = -1
 
     private lateinit var fabOpen: Animation
+    private lateinit var fabOpen08: Animation
     private lateinit var fabClose: Animation
     private var isFabOpen = false
 
@@ -59,6 +60,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         val view: View = inflater.inflate(R.layout.measurements_fragment, container, false)
                 ?: View(context)
         fabOpen = AnimationUtils.loadAnimation(context, R.anim.fab_open)
+        fabOpen08 = AnimationUtils.loadAnimation(context, R.anim.fab_open_08)
         fabClose = AnimationUtils.loadAnimation(context, R.anim.fab_close)
 
         view.fabMain.setOnClickListener { showFubs() }
@@ -119,9 +121,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         fabMain.isClickable = false
         fabMain.startAnimation(fabClose)
         fabMainClose.startAnimation(fabOpen)
-        fabToday.startAnimation(fabOpen)
-        fabTomorrow.startAnimation(fabOpen)
-        fabDate.startAnimation(fabOpen)
+        fabToday.startAnimation(fabOpen08)
+        fabTomorrow.startAnimation(fabOpen08)
+        fabDate.startAnimation(fabOpen08)
         fabToday.isClickable = true
         fabMainClose.isClickable = true
         fabTomorrow.isClickable = true

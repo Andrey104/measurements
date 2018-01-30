@@ -20,9 +20,6 @@ class Measurement(
         @SerializedName("status")
         @Expose
         val status: Int? = null,
-        @SerializedName("manager_comment")
-        @Expose
-        val managerComment: Any? = null,
         @SerializedName("comment")
         @Expose
         val comment: Any? = null,
@@ -47,9 +44,9 @@ class Measurement(
         @SerializedName("color")
         @Expose
         val color: Int? = null,
-        @SerializedName("deal_comment")
+        @SerializedName("address_comment")
         @Expose
-        val dealComment: Any? = null,
+        val addressComment: String? = null,
         @SerializedName("address")
         @Expose
         val address: String? = null,

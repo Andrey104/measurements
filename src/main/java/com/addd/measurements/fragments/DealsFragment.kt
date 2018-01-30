@@ -1,24 +1,28 @@
 package com.addd.measurements.fragments
 
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import com.addd.measurements.*
 import com.addd.measurements.activity.OneDealActivity
 import com.addd.measurements.adapters.DealAdapter
 import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.network.NetworkControllerDeals
+import kotlinx.android.synthetic.main.my_deals_fragment.*
+import kotlinx.android.synthetic.main.my_deals_fragment.view.*
 import java.util.*
 
 
@@ -44,6 +48,10 @@ class DealsFragment : Fragment(),
     private var daySave = -1
     private var monthSave = -1
     private var yearSave = -1
+    private var isFabOpen = false
+    private lateinit var fabOpen: Animation
+    private lateinit var fabOpen08: Animation
+    private lateinit var fabClose: Animation
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         (activity as AppCompatActivity).supportActionBar?.show()
@@ -53,6 +61,10 @@ class DealsFragment : Fragment(),
         progressBarMainDeal = view.findViewById(R.id.progressBarMainDeal)
         recyclerList = view.findViewById(R.id.recyclerListDeals)
         bundle = this.arguments
+        recyclerList.setOnTouchListener { v, event ->
+            hideFub()
+            false
+        }
         val toolbar = (activity as AppCompatActivity).supportActionBar
         bundle?.let {
             when (bundle.getInt(CHECK)) {
@@ -78,10 +90,67 @@ class DealsFragment : Fragment(),
                 }
             }
         }
+        fabOpen = AnimationUtils.loadAnimation(context, R.anim.fab_open)
+        fabOpen08 = AnimationUtils.loadAnimation(context, R.anim.fab_open_08)
+        fabClose = AnimationUtils.loadAnimation(context, R.anim.fab_close)
 
-        val bottomNavigationView: BottomNavigationView = view.findViewById(R.id.bottomNavigationDeals)
-        onClickMenu(bottomNavigationView)
+        view.fabMain.setOnClickListener {
+            showFubs()
+        }
+
+        view.fabMainClose.setOnClickListener {
+            hideFub()
+        }
+
+        view.fabAll.setOnClickListener {
+            hideFub()
+            adapter = DealAdapter(emptyList, this)
+            recyclerList.adapter = adapter
+            progressBarMainDeal.visibility = View.VISIBLE
+            currentPage = 1
+            isLastPage = false
+            when (bundle.get(CHECK)) {
+                STATUS_CURRENT -> NetworkControllerDeals.getAllCurrentDeals()
+                STATUS_REJECT -> NetworkControllerDeals.getAllRejectedDeals()
+                STATUS_CLOSE -> NetworkControllerDeals.getAllClosedDeals()
+            }
+        }
+
+        view.fabDate.setOnClickListener {
+            hideFub()
+            datePick()
+        }
+
+
         return view
+    }
+
+    private fun hideFub() {
+        if (isFabOpen) {
+            fabAll.startAnimation(fabClose)
+            fabMainClose.startAnimation(fabClose)
+            fabMain.startAnimation(fabOpen)
+            fabDate.startAnimation(fabClose)
+            fabAll.isClickable = false
+            fabMain.isClickable = true
+            fabMainClose.isClickable = false
+            fabDate.isClickable = false
+            isFabOpen = false
+        }
+    }
+
+    private fun showFubs() {
+        fabMain.isClickable = false
+        fabMain.startAnimation(fabClose)
+        fabMainClose.startAnimation(fabOpen)
+        fabAll.startAnimation(fabOpen08)
+        fabDate.startAnimation(fabOpen08)
+        fabAll.isClickable = true
+        fabMainClose.isClickable = true
+        fabDate.isClickable = true
+        fabMain.isClickable = true
+        isFabOpen = true
+
     }
 
     override fun onItemClick(pos: Int) {
