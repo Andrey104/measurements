@@ -68,7 +68,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         view.fabToday.setOnClickListener { todayFab() }
         view.fabTomorrow.setOnClickListener { tomorrowFab() }
         view.fabDate.setOnClickListener { dateFab() }
-        view.recyclerList.setOnTouchListener { v, event ->
+        view.recyclerList.setOnTouchListener { _, _ ->
             hideFub()
             false
         }

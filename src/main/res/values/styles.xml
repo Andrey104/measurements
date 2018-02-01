@@ -8,9 +8,16 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!--<style name="AppSearchViewStyle" parent="Theme.AppCompat.NoActionBar">-->
-    <!--<item name="colorAccent">@color/white</item>-->
-    <!--</style>-->
+    <style name="DialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:bottomBright">@android:color/white</item>
+        <item name="android:bottomDark">@android:color/white</item>
+        <item name="android:centerBright">@android:color/white</item>
+        <item name="android:centerMedium">@android:color/white</item>
+        <item name="android:fullBright">@color/orange</item>
+        <item name="android:fullDark">@color/orange</item>
+        <item name="android:topBright">@color/green</item>
+
+    </style>
 
     <style name="AppSearchViewStyle" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/white</item>

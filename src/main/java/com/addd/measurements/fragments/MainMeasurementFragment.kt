@@ -4,29 +4,47 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
+import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import com.addd.measurements.*
+import com.addd.measurements.activity.CompleteActivity
+import com.addd.measurements.activity.OneDealActivity
+import com.addd.measurements.activity.RejectActivity
+import com.addd.measurements.activity.TransferActivity
+import com.addd.measurements.adapters.ClientAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.main_measurement_fragment.*
+import kotlinx.android.synthetic.main.main_measurement_fragment.view.*
 
 /**
  * Created by addd on 30.01.2018.
  */
 class MainMeasurementFragment : Fragment() {
-    private lateinit var alert: AlertDialog
     private var status: Int = 0
     private lateinit var measurement: Measurement
     private lateinit var bundle: Bundle
+    private lateinit var fabOpen: Animation
+    private lateinit var fabOpen08: Animation
+    private lateinit var fabClose: Animation
+    private lateinit var mView: View
+    private var isFabOpen = false
+    private var ONLY_DEAL = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater?.inflate(R.layout.main_measurement_fragment, container, false)
+        mView = inflater?.inflate(R.layout.main_measurement_fragment, container, false)
                 ?: View(context)
+
+        fabOpen = AnimationUtils.loadAnimation(context, R.anim.fab_open)
+        fabOpen08 = AnimationUtils.loadAnimation(context, R.anim.fab_open_08)
+        fabClose = AnimationUtils.loadAnimation(context, R.anim.fab_close)
+
         bundle = this.arguments
         measurement = if (bundle.containsKey(MEASUREMENT_KEY)) {
             getSavedMeasurement()
@@ -36,38 +54,114 @@ class MainMeasurementFragment : Fragment() {
 
         displayMeasurement(measurement)
 
-        return view
+        mView.fabComplete.setOnClickListener {
+            hideFub()
+            completeMeasurement()
+        }
+
+        mView.fabReject.setOnClickListener {
+            hideFub()
+            rejectMeasurement()
+        }
+
+        mView.fabTransfer.setOnClickListener {
+            hideFub()
+            transferMeasurement()
+        }
+
+        mView.fabGoDeal.setOnClickListener {
+            closeOnlyDealFAB()
+            goDeal()
+        }
+
+        mView.mainConstraintLayout.setOnTouchListener { _, _ ->
+            if (isFabOpen) {
+                if (ONLY_DEAL) {
+                    closeOnlyDealFAB()
+                } else {
+                    hideFub()
+                }
+            }
+            false
+        }
+
+        return mView
+    }
+
+    private fun goDeal() {
+        val intent = Intent(context, OneDealActivity::class.java)
+        intent.putExtra(DEAL_ID, measurement.deal.toString())
+        startActivityForResult(intent, 0)
+    }
+
+    private fun completeMeasurement() {
+        val intent = Intent(context, CompleteActivity::class.java)
+        intent.putExtra(ID_KEY, measurement.id.toString())
+        intent.putExtra(DEAL_KEY, measurement.deal)
+        startActivityForResult(intent, 0)
+        true
+    }
+
+    private fun rejectMeasurement() {
+        val intent = Intent(context, RejectActivity::class.java)
+        intent.putExtra(ID_KEY, measurement.id.toString())
+        startActivityForResult(intent, 0)
+        true
+    }
+
+    private fun transferMeasurement() {
+        val intent = Intent(context, TransferActivity::class.java)
+        intent.putExtra(ID_KEY, measurement.id.toString())
+        startActivityForResult(intent, 0)
+        true
     }
 
     private fun displayMeasurement(measurement: Measurement) {
         if (measurement.color != 2) {
-            fab.hide()
+            mView.fabMain.hide()
+        }
+
+        val mp = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.mp, null)
+        val n = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.n, null)
+        val b = ResourcesCompat.getDrawable(MyApp.instance.resources, R.drawable.b, null)
+
+        when (measurement.company?.id) {
+            1 -> mView.symbol.background = mp
+            2 -> mView.symbol.background = b
+            3 -> mView.symbol.background = n
+        }
+
+        if (measurement.sum == null) {
+            mView.constraintLayoutHide.visibility = View.GONE
+        } else {
+            if (measurement.prepayment == null) {
+                mView.textViewSum.text = "${measurement.sum} р"
+            } else {
+                mView.textViewSum.text = "${measurement.sum} р (Предоплата: ${measurement.prepayment} р)"
+            }
         }
 
         setStatus(measurement)
 
-//        if (measurement.sum != null) {
-//            textViewSum.text = "Сумма " + measurement.sum.toString()
-//            textViewSum.layoutParams = textViewLayoutParams
-//            mainLayout.addView(textViewSum)
-//        }
-//        if (measurement.prepayment != null) {
-//            textViewPrep.text = "Предоплата " + measurement.prepayment.toString()
-//            textViewPrep.layoutParams = textViewLayoutParams
-//            mainLayout.addView(textViewPrep)
-//        }
+        mView.recycleClient.adapter = ClientAdapter(measurement.clients
+                ?: emptyList(), layoutInflater, activity)
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        mView.recycleClient.layoutManager = layoutManager
 
-
-        address.text = measurement.address.toString()
-        time.text = measurement.time.toString()
-        date.text = formatDate(measurement.date ?: "2000-20-20")
+        mView.address.text = measurement.address.toString()
+        mView.time.text = measurement.time.toString()
+        mView.date.text = formatDate(measurement.date ?: "2000-20-20")
         if (measurement.worker == null) {
-            worker_name.text = getString(R.string.not_distributed)
+            mView.worker_name.text = getString(R.string.not_distributed)
         } else {
-            worker_name.text = measurement.worker.firstName + " " + measurement.worker.lastName
+            mView.worker_name.text = measurement.worker.firstName + " " + measurement.worker.lastName
         }
         setColorWorker(measurement)
-        comment.text = measurement.addressComment.toString()
+        if (measurement.addressComment.isNullOrEmpty()) {
+            mView.comment.visibility = View.GONE
+        } else {
+            mView.comment.text = measurement.addressComment.toString()
+        }
     }
 
     private fun selectColorVersion(item: TextView, color: Int) {
@@ -80,26 +174,88 @@ class MainMeasurementFragment : Fragment() {
 
     private fun setColorWorker(measurement: Measurement) {
         when (measurement.color) {
-            1 -> selectColorVersion(worker_name, R.color.red)
-            2 -> selectColorVersion(worker_name, R.color.green)
-            3 -> selectColorVersion(worker_name, R.color.blue)
+            1 -> selectColorVersion(mView.worker_name, R.color.red)
+            2 -> selectColorVersion(mView.worker_name, R.color.green)
+            3 -> selectColorVersion(mView.worker_name, R.color.blue)
         }
     }
 
     private fun setStatus(measurement: Measurement) {
         when (measurement.status) {
-            0, 1 -> textViewStatus.text = getString(R.string.measurement_not_closed)
+            0, 1 -> {
+                ONLY_DEAL = false
+                mView.textViewStatus.text = getString(R.string.measurement_not_closed)
+                mView.fabMain.setOnClickListener { showFubs() }
+                mView.fabMainClose.setOnClickListener { hideFub() }
+            }
             2, 3 -> {
-                textViewStatus.text = getString(R.string.measurement_closed)
-                selectColorVersion(textViewStatus, R.color.red)
-                status = 2
+                ONLY_DEAL = true
+                mView.textViewStatus.text = getString(R.string.measurement_closed)
+                selectColorVersion(mView.textViewStatus, R.color.red)
+                mView.fabMain.setOnClickListener {
+                    isFabOpen = true
+                    mView.fabMainClose.startAnimation(fabOpen)
+                    mView.fabGoDeal.startAnimation(fabOpen08)
+                    mView.fabMainClose.isClickable = true
+                    mView.fabGoDeal.isClickable = true
+                    mView.fabMain.isClickable = false
+                }
+                mView.fabMainClose.setOnClickListener {
+                    closeOnlyDealFAB()
+                }
             }
             4, 5 -> {
-                textViewStatus.text = getString(R.string.measurement_reject)
-                selectColorVersion(textViewStatus, R.color.red)
-                status = 1
+                ONLY_DEAL = false
+                mView.textViewStatus.text = getString(R.string.measurement_reject)
+                selectColorVersion(mView.textViewStatus, R.color.red)
+                mView.fabMain.hide()
+                mView.fabTransfer.hide()
+                mView.fabReject.hide()
+                mView.fabComplete.hide()
             }
         }
+
+    }
+
+    private fun closeOnlyDealFAB() {
+        if (isFabOpen) {
+            mView.fabMainClose.startAnimation(fabClose)
+            mView.fabGoDeal.startAnimation(fabClose)
+            mView.fabMain.startAnimation(fabOpen)
+            mView.fabMainClose.isClickable = false
+            mView.fabGoDeal.isClickable = false
+            mView.fabMain.isClickable = true
+        }
+    }
+
+    private fun hideFub() {
+        if (isFabOpen) {
+            mView.fabComplete.startAnimation(fabClose)
+            mView.fabMainClose.startAnimation(fabClose)
+            mView.fabReject.startAnimation(fabClose)
+            mView.fabTransfer.startAnimation(fabClose)
+            mView.fabMain.startAnimation(fabOpen)
+            mView.fabComplete.isClickable = false
+            mView.fabMainClose.isClickable = false
+            mView.fabReject.isClickable = false
+            mView.fabTransfer.isClickable = false
+            mView.fabMain.isClickable = true
+            isFabOpen = false
+        }
+    }
+
+    private fun showFubs() {
+        mView.fabMain.isClickable = false
+        mView.fabMain.startAnimation(fabClose)
+        mView.fabMainClose.startAnimation(fabOpen)
+        mView.fabTransfer.startAnimation(fabOpen08)
+        mView.fabReject.startAnimation(fabOpen08)
+        mView.fabComplete.startAnimation(fabOpen08)
+        mView.fabReject.isClickable = true
+        mView.fabMainClose.isClickable = true
+        mView.fabComplete.isClickable = true
+        mView.fabTransfer.isClickable = true
+        isFabOpen = true
 
     }
 
@@ -117,18 +273,9 @@ class MainMeasurementFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
-            showDialog()
+            activity.supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, LoadFragment()).commit()
             NetworkController.getOneMeasurement(measurement.id.toString())
-//            setResult(200)
+            activity.setResult(200)
         }
-    }
-
-    private fun showDialog() {
-//        val builder = AlertDialog.Builder(this)
-        layoutInflater.inflate(R.layout.get_one_dialog, null)
-//        builder.setView(viewAlert)
-//                .setCancelable(false)
-//        alert = builder.create()
-//        alert.show()
     }
 }

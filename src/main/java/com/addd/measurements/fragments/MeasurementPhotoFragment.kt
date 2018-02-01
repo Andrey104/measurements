@@ -1,4 +1,4 @@
-package com.addd.measurements.activity
+package com.addd.measurements.fragments
 
 import android.Manifest
 import android.app.Activity
@@ -9,10 +9,15 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.addd.measurements.*
 import com.addd.measurements.adapters.ImageGalleryAdapter
 import com.addd.measurements.modelAPI.Measurement
@@ -20,9 +25,7 @@ import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.addd.measurements.modelAPI.Picture
 import com.addd.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_images.*
-import android.provider.MediaStore
-import android.support.v7.app.AlertDialog
+import kotlinx.android.synthetic.main.measurement_photo_fragment.view.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -30,32 +33,31 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCallback, NetworkControllerPicture.UpdatePicturesCallback {
+/**
+ * Created by addd on 01.02.2018.
+ */
+class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCallback, NetworkControllerPicture.UpdatePicturesCallback {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALERY = 2
     private lateinit var file: File
+    private lateinit var mView: View
 
     var photoFile: File? = null
     var mCurrentPhotoPath = ""
     private lateinit var measurement: Measurement
     private var arrayPhoto = ArrayList<MeasurementPhoto>()
     private lateinit var recyclerPhotoList: RecyclerView
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         NetworkControllerPicture.registerPictureCallback(this)
         NetworkControllerPicture.registerUpdateCallback(this)
-
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_images)
+        mView = inflater?.inflate(R.layout.measurement_photo_fragment, container, false) ?: View(context)
 
         getSavedMeasurement()
 
-        val layoutManager = GridLayoutManager(this, 2)
-        recyclerPhotoList = rv_images
+        val layoutManager = GridLayoutManager(context, 2)
+        recyclerPhotoList = mView.rv_images
         recyclerPhotoList.setHasFixedSize(true)
         recyclerPhotoList.layoutManager = layoutManager
 
@@ -63,8 +65,8 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
 
         displayPictures(recyclerPhotoList)
 
-        fab.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
+        mView.fabMain.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
             builder.setTitle(R.string.what_use)
                     .setCancelable(true)
                     .setPositiveButton(R.string.new_photo)
@@ -75,12 +77,14 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
             val alert = builder.create()
             alert.show()
         }
+
+        return mView
     }
 
     private fun getPhotoFromCamera() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
+        if (takePictureIntent.resolveActivity(activity.packageManager) != null) {
             // Create the File where the photo should go
             try {
                 photoFile = createImageFile()
@@ -103,10 +107,10 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
     }
 
     private fun getPermission() {
-        val permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val permission = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
-                    this,
+                    activity,
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
             )
@@ -139,7 +143,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
             }
         }
 
-        val adapter = ImageGalleryAdapter(this, arrayPhoto)
+        val adapter = ImageGalleryAdapter(context, arrayPhoto)
         recyclerView.adapter = adapter
         recyclerView.adapter.notifyDataSetChanged()
     }
@@ -212,11 +216,11 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         val f = File(mCurrentPhotoPath)
         val contentUri = Uri.fromFile(f)
         mediaScanIntent.data = contentUri
-        this.sendBroadcast(mediaScanIntent)
+        context.sendBroadcast(mediaScanIntent)
     }
 
     private fun getSavedMeasurement() {
-        val json = intent?.getStringExtra(MEASUREMENT_KEY)
+        val json = this.arguments.getString(MEASUREMENT_KEY)
         measurement = if (json.isNullOrEmpty()) {
             Measurement()
         } else {
@@ -231,7 +235,7 @@ class ImagesActivity : AppCompatActivity(), NetworkControllerPicture.PictureCall
         if (result) {
             toast(R.string.photo_added)
             NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
-            setResult(200)
+            activity.setResult(200)
         } else {
             toast(R.string.error_add_photo)
         }

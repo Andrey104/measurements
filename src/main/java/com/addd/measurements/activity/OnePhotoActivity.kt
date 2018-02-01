@@ -9,12 +9,18 @@ import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.addd.measurements.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import kotlinx.android.synthetic.main.activity_one_photo.*
 
 class OnePhotoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_photo)
+        setSupportActionBar(toolbarAst)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
 
         val mImageView = findViewById<View>(R.id.image) as ImageView
         val spacePhoto = intent.getParcelableExtra<MeasurementPhoto>(MEASUREMENT_PHOTO)
