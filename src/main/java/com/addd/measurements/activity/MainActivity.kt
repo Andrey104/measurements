@@ -17,7 +17,6 @@ import android.widget.TextView
 import com.addd.measurements.*
 import com.addd.measurements.fragments.MeasurementsFragment
 import com.addd.measurements.fragments.DealsFragment
-import com.addd.measurements.fragments.ProblemsFragment
 import com.addd.measurements.modelAPI.User
 import com.addd.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.activity_main.*

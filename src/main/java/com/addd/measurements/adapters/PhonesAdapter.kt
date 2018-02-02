@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.addd.measurements.MyApp
 import com.addd.measurements.R
-import com.addd.measurements.formatDate
 import com.addd.measurements.modelAPI.Phone
 
 /**

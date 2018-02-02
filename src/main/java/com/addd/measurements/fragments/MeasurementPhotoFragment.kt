@@ -43,6 +43,7 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
     private val REQUEST_GALERY = 2
     private lateinit var file: File
     private lateinit var mView: View
+    private lateinit var myCallbackMeasurement: MyCallbackMeasurement
 
     var photoFile: File? = null
     var mCurrentPhotoPath = ""
@@ -242,13 +243,26 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
     }
 
     override fun resultUpdate(measurement: Measurement?) {
-        this.measurement = measurement ?: Measurement()
-        displayPictures(recyclerPhotoList)
+        if (measurement == null) {
+            toast(R.string.error_add_photo)
+        } else {
+            this.measurement = measurement
+            displayPictures(recyclerPhotoList)
+        }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        myCallbackMeasurement.getMeasurement(measurement)
         NetworkControllerPicture.registerPictureCallback(null)
         NetworkControllerPicture.registerUpdateCallback(null)
-        super.onDestroy()
+        super.onDestroyView()
+    }
+
+    interface MyCallbackMeasurement {
+        fun getMeasurement(measurement: Measurement)
+    }
+
+    fun registerMyCallback(myCallbackMeasurement: MyCallbackMeasurement) {
+        this.myCallbackMeasurement = myCallbackMeasurement
     }
 }

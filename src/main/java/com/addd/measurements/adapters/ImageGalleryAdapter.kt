@@ -8,10 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.addd.measurements.CHECK
 import com.addd.measurements.MEASUREMENT_PHOTO
-import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.addd.measurements.R
 import com.addd.measurements.activity.OnePhotoActivity
+import com.addd.measurements.modelAPI.MeasurementPhoto
 import com.bumptech.glide.Glide
 
 /**
@@ -60,6 +61,7 @@ class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<Measure
                 val spacePhoto = mMeasurementPhotos?.get(position)
                 val intent = Intent(mContext, OnePhotoActivity::class.java)
                 intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
+                intent.putExtra(CHECK, position + 1)
                 ContextCompat.startActivity(mContext, intent, null)
             }
         }

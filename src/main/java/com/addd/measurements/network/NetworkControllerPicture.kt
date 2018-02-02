@@ -1,10 +1,7 @@
 package com.addd.measurements.network
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.preference.PreferenceManager
-import android.widget.Toast
 import com.addd.measurements.MyApp
 import com.addd.measurements.modelAPI.Measurement
 import com.google.gson.GsonBuilder

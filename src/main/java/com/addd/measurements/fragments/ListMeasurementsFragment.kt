@@ -12,10 +12,8 @@ import android.view.ViewGroup
 import com.addd.measurements.*
 import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.DataAdapter
-import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.measurements_list_fragment.view.*
 
 /**

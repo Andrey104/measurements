@@ -5,7 +5,6 @@ import android.preference.PreferenceManager
 import com.addd.measurements.MyApp
 import com.addd.measurements.modelAPI.Comment
 import com.addd.measurements.modelAPI.CommentRequest
-import com.addd.measurements.modelAPI.User
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

@@ -56,6 +56,9 @@ class Measurement(
         @SerializedName("actions")
         @Expose
         val actions: List<Any>? = null,
+        @SerializedName("comments")
+        @Expose
+        val comments: List<Comment>? = null,
         @SerializedName("company")
         @Expose
         val company: Company? = null,

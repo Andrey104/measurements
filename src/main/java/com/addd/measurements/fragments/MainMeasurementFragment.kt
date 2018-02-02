@@ -27,7 +27,6 @@ import kotlinx.android.synthetic.main.main_measurement_fragment.view.*
  * Created by addd on 30.01.2018.
  */
 class MainMeasurementFragment : Fragment() {
-    private var status: Int = 0
     private lateinit var measurement: Measurement
     private lateinit var bundle: Bundle
     private lateinit var fabOpen: Animation
@@ -75,6 +74,16 @@ class MainMeasurementFragment : Fragment() {
         }
 
         mView.mainConstraintLayout.setOnTouchListener { _, _ ->
+            if (isFabOpen) {
+                if (ONLY_DEAL) {
+                    closeOnlyDealFAB()
+                } else {
+                    hideFub()
+                }
+            }
+            false
+        }
+        mView.recycleClient.setOnTouchListener { _, _ ->
             if (isFabOpen) {
                 if (ONLY_DEAL) {
                     closeOnlyDealFAB()

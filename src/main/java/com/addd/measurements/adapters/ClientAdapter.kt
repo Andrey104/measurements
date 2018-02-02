@@ -2,25 +2,19 @@ package com.addd.measurements.adapters
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.addd.measurements.MyApp
 import com.addd.measurements.R
-import com.addd.measurements.R.id.linearLayout
 import com.addd.measurements.modelAPI.Clients
 import com.addd.measurements.modelAPI.Phone
 

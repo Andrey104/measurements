@@ -1,7 +1,6 @@
 package com.addd.measurements.adapters
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.formatDateTime
 import com.addd.measurements.modelAPI.Comment
@@ -31,19 +29,19 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
             ITEM -> {
                 val viewHolder = holder as ViewHolder
                 viewHolder.name.text = mCommentsList[position].user.firstName + " " + mCommentsList[position].user.lastName
-                if (mCommentsList[position]?.user?.type ?: 1 >= 3) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin, MyApp.instance.theme))
-                    } else {
-                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin))
-                    }
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.white, MyApp.instance.theme))
-                    } else {
-                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.white))
-                    }
-                }
+//                if (mCommentsList[position]?.user?.type ?: 1 >= 3) {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin, MyApp.instance.theme))
+//                    } else {
+//                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.backgroundAdmin))
+//                    }
+//                } else {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.white, MyApp.instance.theme))
+//                    } else {
+//                        viewHolder.constraintLayout.setBackgroundColor(MyApp.instance.resources.getColor(R.color.white))
+//                    }
+//                }
                 viewHolder.date.text = formatDateTime(mCommentsList[position].date)
                 viewHolder.text.text = mCommentsList[position].text
             }
@@ -77,7 +75,7 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
 
     fun addLoadingFooter() {
         isLoadingAdded = true
-        add(Comment(0, User(), "", "", 0))
+        add(Comment(0, User(), "", "", false))
     }
 
     override fun getItemViewType(position: Int): Int {

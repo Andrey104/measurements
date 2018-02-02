@@ -46,17 +46,7 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                 }
 
                 R.id.problems -> {
-                    supportActionBar?.title = String.format("Проблемы %05d", dealID.toInt())
-                    if (!dealID.isEmpty()) {
-                        val bundle = Bundle()
-                        val fragment = ProblemDealFragment()
-                        fragment.arguments = bundle
-                        bundle.putString(DEAL_ID, dealID)
-                        val fragmentManager = supportFragmentManager
-                        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
-                    }  else {
-                        toast(R.string.error)
-                    }
+                   toast("запилю в понедельник или вторник")
                 }
                 R.id.recalculation -> {
                     supportActionBar?.title = String.format("Перерасчеты %05d", dealID.toInt())

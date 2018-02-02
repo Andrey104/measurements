@@ -1,11 +1,9 @@
 package com.addd.measurements.adapters
 
 import android.content.Context
-import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +13,6 @@ import android.widget.TextView
 import com.addd.measurements.MyApp
 import com.addd.measurements.R
 import com.addd.measurements.modelAPI.Measurement
-import kotlin.collections.ArrayList
 
 
 /**

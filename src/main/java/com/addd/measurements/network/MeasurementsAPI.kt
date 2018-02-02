@@ -40,17 +40,13 @@ interface MeasurementsAPI {
     @POST("measurements/{id}/close/")
     fun closeMeasurement(@Body close: Close, @Path("id") id: String): Call<Void>
 
-    @POST("deals/{id}/discussion/")
-    fun addProblem(@Body problem : ProblemRequest, @Path("id") id: String): Call<Void>
 
     @GET("discussions")
     fun getProblems(@Query("page") page: Int): Call<MyResultProblem>
 
-    @POST("discussions/{id}/comment/")
+    @POST("measurements/{id}/comment/")
     fun addComment(@Body text : CommentRequest, @Path("id") id: String): Call<Comment>
 
-    @GET("discussions/{id}")
-    fun getProblems(@Path("id") id: String): Call<MyProblem>
 
     @Multipart
     @POST("measurements/{id}/image_upload/")
@@ -77,8 +73,6 @@ interface MeasurementsAPI {
     @GET("deals/{id}/measurements")
     fun getMeasurementsDeal(@Path("id") id: String): Call<List<Measurement>>
 
-    @GET("deals/{id}/discussions")
-    fun getDiscussionsDeal(@Path("id") id: String): Call<List<MyProblem>>
 
     @GET("deals/{id}/mounts")
     fun getMountsDeal(@Path("id") id: String): Call<List<Mount>>

@@ -1,10 +1,7 @@
 package com.addd.measurements.adapters
 
-import android.content.Context
-import android.os.Build
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

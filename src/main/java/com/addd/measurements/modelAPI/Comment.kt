@@ -13,13 +13,13 @@ class Comment(
         @SerializedName("user")
         @Expose
         val user: User,
-        @SerializedName("date")
+        @SerializedName("auto_date")
         @Expose
         val date: String,
         @SerializedName("text")
         @Expose
         val text: String,
-        @SerializedName("discussion")
+        @SerializedName("read")
         @Expose
-        val discussion: Int
+        val read: Boolean
 )
