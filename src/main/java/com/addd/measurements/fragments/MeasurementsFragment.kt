@@ -20,6 +20,7 @@ import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.DataAdapter
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkController
+import com.addd.measurements.network.NetworkControllerFree
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import kotlinx.android.synthetic.main.measurements_fragment.view.*
 import java.util.Calendar
@@ -32,8 +33,9 @@ import kotlin.collections.ArrayList
 
 class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements,
         DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback,
-        NetworkController.PaginationCallback {
+        NetworkController.PaginationCallback, NetworkControllerFree.CallbackListFree, NetworkControllerFree.CallbackPaginationFree {
     private lateinit var date: String
+    private var owner = ""
     var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
     lateinit var fragmentListMeasurements: List<Measurement>
     private var isLoading = false
@@ -57,6 +59,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         NetworkController.registerCallBack(this)
         NetworkController.registerResponsibleCallback(this)
         NetworkController.registerPaginationCallback(this)
+        NetworkControllerFree.registerCallbackFree(this)
+        NetworkControllerFree.registerPaginationFree(this)
         val view: View = inflater.inflate(R.layout.measurements_fragment, container, false)
                 ?: View(context)
         fabOpen = AnimationUtils.loadAnimation(context, R.anim.fab_open)
@@ -93,8 +97,14 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         bundle?.let {
             when (bundle.getInt(CHECK)) {
                 STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, APP_LIST_TODAY_CURRENT)
-                STATUS_REJECT -> NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
-                STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
+                STATUS_REJECT -> {
+                    view.linearLayoutBottom.visibility = View.GONE
+                    NetworkController.getRejectMeasurements(date, APP_LIST_TODAY_REJECTED)
+                }
+                STATUS_CLOSE -> {
+                    view.linearLayoutBottom.visibility = View.GONE
+                    NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
+                }
             }
         }
 
@@ -133,6 +143,13 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     private fun todayFab() {
+        owner = ""
+        buttonAll.textSize = 16.0F
+        buttonFree.textSize = 14.0F
+        buttonMy.textSize = 14.0F
+        selectColorVersion(buttonAll, R.color.colorPrimaryDark)
+        selectColorVersion(buttonFree, R.color.colorPrimary)
+        selectColorVersion(buttonMy, R.color.colorPrimary)
         hideFub()
         date = getTodayDate()
         adapter = DataAdapter(emptyList, this)
@@ -148,6 +165,13 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     private fun tomorrowFab() {
+        owner = ""
+        buttonAll.textSize = 16.0F
+        buttonFree.textSize = 14.0F
+        buttonMy.textSize = 14.0F
+        selectColorVersion(buttonAll, R.color.colorPrimaryDark)
+        selectColorVersion(buttonFree, R.color.colorPrimary)
+        selectColorVersion(buttonMy, R.color.colorPrimary)
         hideFub()
         date = getTomorrowDate()
         adapter = DataAdapter(emptyList, this)
@@ -176,6 +200,18 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     private fun allMeasurements() {
+        isLoading = false
+        isLastPage = false
+        currentPage = 1
+        owner = ""
+        adapter = DataAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        progressBarMain.visibility = View.VISIBLE
+        when (bundle.get(CHECK)) {
+            STATUS_CURRENT -> NetworkController.getCurrentMeasurements(date, null)
+            STATUS_REJECT -> NetworkController.getRejectMeasurements(date, null)
+            STATUS_CLOSE -> NetworkController.getCloseMeasurements(date, null)
+        }
         hideFub()
         buttonAll.textSize = 16.0F
         buttonFree.textSize = 14.0F
@@ -183,10 +219,15 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         selectColorVersion(buttonAll, R.color.colorPrimaryDark)
         selectColorVersion(buttonFree, R.color.colorPrimary)
         selectColorVersion(buttonMy, R.color.colorPrimary)
-        toast("Саня еще не сделал")
     }
 
     private fun freeMeasurements() {
+        isLoading = false
+        isLastPage = false
+        currentPage = 1
+        adapter = DataAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        progressBarMain.visibility = View.VISIBLE
         hideFub()
         buttonFree.textSize = 16.0F
         buttonAll.textSize = 14.0F
@@ -194,10 +235,17 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         selectColorVersion(buttonFree, R.color.colorPrimaryDark)
         selectColorVersion(buttonAll, R.color.colorPrimary)
         selectColorVersion(buttonMy, R.color.colorPrimary)
-        toast("Саня еще не сделал")
+        owner = "free"
+        NetworkControllerFree.getCurrentMeasurements(date, 1, owner)
     }
 
     private fun myMeasurements() {
+        isLoading = false
+        isLastPage = false
+        currentPage = 1
+        adapter = DataAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        progressBarMain.visibility = View.VISIBLE
         hideFub()
         buttonMy.textSize = 16.0F
         buttonFree.textSize = 14.0F
@@ -205,7 +253,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         selectColorVersion(buttonMy, R.color.colorPrimaryDark)
         selectColorVersion(buttonAll, R.color.colorPrimary)
         selectColorVersion(buttonFree, R.color.colorPrimary)
-        toast("Саня еще не сделал")
+        owner = "my"
+        NetworkControllerFree.getCurrentMeasurements(date, 1, owner)
     }
 
     override fun onItemClick(pos: Int) {
@@ -239,6 +288,13 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private fun datePick() {
         val bundle = this.arguments
         val myCallBack = OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            owner = ""
+            buttonAll.textSize = 16.0F
+            buttonFree.textSize = 14.0F
+            buttonMy.textSize = 14.0F
+            selectColorVersion(buttonAll, R.color.colorPrimaryDark)
+            selectColorVersion(buttonFree, R.color.colorPrimary)
+            selectColorVersion(buttonMy, R.color.colorPrimary)
             daySave = dayOfMonth
             monthSave = monthOfYear
             yearSave = year
@@ -269,7 +325,11 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         adapter = DataAdapter(emptyList, this)
         recyclerList.adapter = adapter
         progressBarMain.visibility = View.VISIBLE
-        NetworkController.updateListInFragment()
+        if (owner.isNullOrEmpty()) {
+            NetworkController.updateListInFragment()
+        } else {
+            NetworkControllerFree.getCurrentMeasurements(date, 1, owner)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -387,15 +447,108 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             adapter.removeLoadingFooter()
             isLoading = false
 
+            if (!listMeasurements.isEmpty()) {
+                adapter.addAll(listMeasurements)
+            } else {
+                currentPage -= 1
+            }
+
+            if (currentPage != TOTAL_PAGES) {
+                adapter.addLoadingFooter()
+            } else {
+                isLastPage = true
+            }
+        }
+        isLoading = false
+    }
+
+    override fun resultListFree(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
+        TOTAL_PAGES = if (count % 20 == 0) {
+            count / 20
+        } else {
+            (count / 20) + 1
+        }
+        fragmentListMeasurements = listMeasurements
+
+        val toolbar = (activity as AppCompatActivity).supportActionBar
+        if (this.arguments.getInt(CHECK) == STATUS_CURRENT) {
+            buttonAll.text = "$allMeasurements\nВсе"
+            buttonFree.text = "$notDistributed\nСвободные"
+            buttonMy.text = "$myMeasurements\nМои"
+            toolbar?.title = "${formatDate(date)}"
+        }
+        if (this.arguments.getInt(CHECK) == STATUS_REJECT) {
+            toolbar?.title = getString(R.string.rejected)
+        }
+        if (this.arguments.getInt(CHECK) == STATUS_CLOSE) {
+            toolbar?.title = getString(R.string.closed)
+        }
+
+        if (listMeasurements.isEmpty()) {
+            if (result == 1) {
+                toast(R.string.no_save_data)
+            } else {
+                toast(R.string.nothing_show)
+            }
+        } else {
+            if (result == 0) {
+//                Toast.makeText(context, "Данные загружены из сети", Toast.LENGTH_SHORT).show()
+            } else {
+                if (this.arguments.getInt(CHECK) == STATUS_CURRENT) toolbar?.title = getString(R.string.without_internet)
+                toast(R.string.no_internet)
+            }
+        }
+        adapter = if (listMeasurements.isEmpty()) {
+            DataAdapter(this.emptyList, this)
+        } else {
+            DataAdapter(listMeasurements as ArrayList, this)
+        }
+        recyclerList.adapter = adapter
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        recyclerList.layoutManager = layoutManager
+        recyclerList.addOnScrollListener(object : PaginationScrollListener(recyclerList.layoutManager as LinearLayoutManager) {
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+
+            override fun loadMoreItems() {
+                isLoading = true
+                currentPage += 1
+
+                loadNextPageFree()
+            }
+
+            override fun getTotalPageCount(): Int {
+                return TOTAL_PAGES
+            }
+
+        })
+        addFooter()
+
+        progressBarMain.visibility = View.GONE
+    }
+
+    private fun loadNextPageFree() {
+        NetworkControllerFree.getCurrentMeasurements(date, currentPage, owner)
+    }
+
+    override fun paginationFree(listMeasurements: List<Measurement>, result: Int) {
+        if (!adapter.isEmpty()) {
+            adapter.removeLoadingFooter()
+            isLoading = false
+
             adapter.addAll(listMeasurements)
 
             if (currentPage != TOTAL_PAGES) {
                 adapter.addLoadingFooter()
             } else {
+                isLastPage = true
             }
-            isLastPage = true
         }
         isLoading = false
     }
-
 }

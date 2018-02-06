@@ -41,8 +41,6 @@ interface MeasurementsAPI {
     fun closeMeasurement(@Body close: Close, @Path("id") id: String): Call<Void>
 
 
-    @GET("discussions")
-    fun getProblems(@Query("page") page: Int): Call<MyResultProblem>
 
     @POST("measurements/{id}/comment/")
     fun addComment(@Body text : CommentRequest, @Path("id") id: String): Call<Comment>
@@ -85,4 +83,8 @@ interface MeasurementsAPI {
 
     @GET("deals/search")
     fun searchDeal(@Query("text") text: String,@Query("page") page: Int): Call<MyResultDeals>
+
+    @GET("measurements/current")
+    fun getCurrentMeasurement(@Query("date") date: String,@Query("page") page: Int, @Query("owner") owner: String): Call<MyResultMeasurements>
+
 }

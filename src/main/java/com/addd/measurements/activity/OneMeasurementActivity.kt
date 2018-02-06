@@ -14,7 +14,9 @@ import kotlinx.android.synthetic.main.activity_one_measurement.*
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
         MeasurementPhotoFragment.MyCallbackMeasurement, CommentsMeasurementFragment.CommentCallback {
     lateinit var measurement: Measurement
-
+    private var isMainPage = false
+    private var isCommentPage = false
+    private var isPicturePage = false
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUpdateOneMeasurementCallback(this)
         super.onCreate(savedInstanceState)
@@ -40,30 +42,37 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     private fun mainPage() {
-        val bundle = Bundle()
-        bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
-        val fragment = MainMeasurementFragment()
-        fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, fragment).commit()
+        if (!isMainPage) {
+            val bundle = Bundle()
+            bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
+            val fragment = MainMeasurementFragment()
+            fragment.arguments = bundle
+            supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, fragment).commit()
+        }
     }
 
     private fun commentPage() {
-        val bundle = Bundle()
-        bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
-        val fragment = CommentsMeasurementFragment()
-        fragment.registerCommentCallback(this)
-        fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, fragment).commit()
+        if (!isCommentPage) {
+            supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, EmptyFragment()).commit()
+            val fragment = CommentsMeasurementFragment()
+            fragment.registerCommentCallback(this)
+            val bundle = Bundle()
+            bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
+            fragment.arguments = bundle
+            supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, fragment).commit()
+        }
     }
 
     private fun picturePage() {
-        val fragment = MeasurementPhotoFragment()
-        fragment.registerMyCallback(this)
-        val json = gson.toJson(measurement) // будет ошибка если сразу нажать, не загрузив замер
-        val bundle = Bundle()
-        bundle.putString(MEASUREMENT_KEY, json)
-        fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, fragment).commit()
+        if (!isPicturePage) {
+            val fragment = MeasurementPhotoFragment()
+            fragment.registerMyCallback(this)
+            val json = gson.toJson(measurement) // будет ошибка если сразу нажать, не загрузив замер
+            val bundle = Bundle()
+            bundle.putString(MEASUREMENT_KEY, json)
+            fragment.arguments = bundle
+            supportFragmentManager.beginTransaction().replace(R.id.measurementContainerLayout, fragment).commit()
+        }
     }
 
     private fun onItemClick() {
@@ -71,12 +80,21 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             when (item.itemId) {
                 R.id.mainMeasurement -> {
                     mainPage()
+                    isMainPage = true
+                    isCommentPage = false
+                    isPicturePage = false
                 }
                 R.id.commentsMeasurement -> {
                     commentPage()
+                    isMainPage = false
+                    isCommentPage = true
+                    isPicturePage = false
                 }
                 R.id.picturesMeasurement -> {
-                   picturePage()
+                    picturePage()
+                    isMainPage = false
+                    isCommentPage = false
+                    isPicturePage = true
                 }
             }
             true

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.addd.measurements.MEASUREMENT_KEY
 import com.addd.measurements.R
+import com.addd.measurements.activity.OneMeasurementActivity
 import com.addd.measurements.adapters.CommentAdapter
 import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Comment
@@ -73,6 +74,9 @@ class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddComm
                     KeyEvent.KEYCODE_DPAD_CENTER,
                     KeyEvent.KEYCODE_ENTER -> {
                         sendComment()
+                    }
+                    KeyEvent.KEYCODE_BACK -> {
+                        mView.editTextCommentProblem.isFocusable = false
                     }
                 }
             }

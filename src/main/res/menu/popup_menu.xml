@@ -16,7 +16,6 @@
             android:title="@string/reject"/>
         <item
             android:id="@+id/problem"
-            android:icon="@drawable/problem"
             android:title="@string/problem"/>
         <item
             android:id="@+id/deal"

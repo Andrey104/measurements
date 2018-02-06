@@ -6,7 +6,6 @@
         android:title="@string/main" />
     <item
         android:id="@+id/measurement"
-        android:icon="@drawable/measurement"
         android:title="@string/measurements" />
     <item
         android:id="@+id/problems"
