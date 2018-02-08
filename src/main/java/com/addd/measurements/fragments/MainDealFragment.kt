@@ -1,14 +1,13 @@
 package com.addd.measurements.fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.addd.measurements.DEAL_KEY
 import com.addd.measurements.R
 import com.addd.measurements.adapters.ActionAdapter
@@ -38,22 +37,37 @@ class MainDealFragment : Fragment() {
     }
 
     private fun displayDeal(view: View) {
-        view.symbol.text = deal.company?.symbol
+        var mp: Drawable
+        var n: Drawable
+        var b: Drawable
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mp = resources.getDrawable(R.drawable.mp, null)
+            n = resources.getDrawable(R.drawable.n, null)
+            b = resources.getDrawable(R.drawable.b, null)
+        } else {
+            mp = resources.getDrawable(R.drawable.mp)
+            n = resources.getDrawable(R.drawable.n)
+            b = resources.getDrawable(R.drawable.b)
+        }
+
+
+        when (deal.company?.id) {
+            1 -> view.imageView13.background = mp
+            2 -> view.imageView13.background = b
+            3 -> view.imageView13.background = n
+        }
         view.address.text = deal.address
 
         if (deal.sum == null) {
-            view.textViewSumR.text = getString(R.string.unpaid)
+            view.textViewSumBefore.text = getString(R.string.unpaid)
         } else {
-            view.textViewSumR.text = "Сумма - " + deal.sum
+            view.textViewSumBefore.text = "Сумма: ${deal.sum}р"
         }
-        setColorCompany(deal.company?.id ?: 1, view)
         actions = deal.actions ?: emptyList
         val adapter = ActionAdapter(actions as ArrayList)
         view.actionRecyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         view.actionRecyclerList.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(view.actionRecyclerList.context, layoutManager.orientation)
-        view.actionRecyclerList.addItemDecoration(dividerItemDecoration)
 
         view.textViewStatusDeal.text = when (deal.status) {
             0 -> getString(R.string.in_treatment)
@@ -65,24 +79,6 @@ class MainDealFragment : Fragment() {
             else -> getString(R.string.status_deal)
         }
         view.progressBar3.visibility = View.GONE
-    }
-
-    private fun setColorCompany(color: Int, view: View) {
-        selectColorVersion(view?.symbol, when (color) {
-            1 -> R.color.green
-            2 -> R.color.orange
-            3 -> R.color.blue
-            else -> R.color.blue
-        })
-
-    }
-
-    private fun selectColorVersion(item: TextView?, color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            item?.setTextColor(context.resources.getColor(color, context.theme))
-        } else {
-            item?.setTextColor(context.resources.getColor(color))
-        }
     }
 
     private fun getSavedDeal(): Deal {

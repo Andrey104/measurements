@@ -1,9 +1,8 @@
 package com.addd.measurements.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.method.ScrollingMovementMethod
 import com.addd.measurements.*
@@ -20,6 +19,10 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_mount)
         setSupportActionBar(toolbarAst)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
         getSaveMount()
         supportActionBar?.title = String.format("Монтаж %05d", mount.deal)
         displayMount()
@@ -52,8 +55,6 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         recyclerViewInstallers.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         recyclerViewInstallers.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(recyclerViewInstallers.context, layoutManager.orientation)
-        recyclerViewInstallers.addItemDecoration(dividerItemDecoration)
     }
 
     override fun onItemClick(pos: Int) {

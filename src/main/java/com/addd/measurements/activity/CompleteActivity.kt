@@ -31,6 +31,10 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
 
         checkBoxOffer.setOnClickListener {
             if (checkBoxOffer.isChecked) {

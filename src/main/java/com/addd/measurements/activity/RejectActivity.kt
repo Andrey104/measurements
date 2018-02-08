@@ -22,6 +22,10 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reject)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
 
         id = intent?.getStringExtra(ID_KEY) ?: "0"
 

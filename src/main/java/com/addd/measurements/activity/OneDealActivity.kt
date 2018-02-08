@@ -21,6 +21,10 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_deal)
         setSupportActionBar(toolbarDeal)
+        toolbarDeal.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarDeal.setNavigationOnClickListener {
+            finish()
+        }
         onClickMenu(bottomNavigation)
         getDeal(true)
     }
@@ -45,9 +49,15 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
 
                 }
 
-                R.id.problems -> {
-                   toast("запилю в понедельник или вторник")
+                R.id.commentsDeal -> {
+                    supportActionBar?.title = String.format("Комментарии %05d", dealID.toInt())
+                    fragmentName = COMMENT_DEAL
+                    val fragment = LoadFragment()
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    getDeal(false)
                 }
+
                 R.id.recalculation -> {
                     supportActionBar?.title = String.format("Перерасчеты %05d", dealID.toInt())
                     fragmentName = RECALCULATION_NAME
@@ -122,6 +132,14 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                     if (bottomNavigation.selectedItemId == R.id.mount) {
                         val fragment = MountFragment()
                         bundle.putString(DEAL_ID, dealID)
+                        fragment.arguments = bundle
+                        val fragmentManager = supportFragmentManager
+                        fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()
+                    }
+                }
+                COMMENT_DEAL -> {
+                    if (bottomNavigation.selectedItemId == R.id.commentsDeal) {
+                        val fragment = CommentsDealFragment()
                         fragment.arguments = bundle
                         val fragmentManager = supportFragmentManager
                         fragmentManager.beginTransaction().replace(R.id.containerDeal, fragment).commit()

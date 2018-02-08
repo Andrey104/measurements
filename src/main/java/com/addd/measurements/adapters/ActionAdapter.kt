@@ -27,9 +27,14 @@ class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<Recycle
         } else {
             viewHolder.textViewFio.text = action.user?.firstName + " " + action.user?.lastName
         }
-        viewHolder.textViewCommentAction.text = action.comment
-
-        viewHolder.timeAction.text = formatDateTime(action.autoDate ?: "")
+        if (action.comment.isNullOrEmpty()) {
+            viewHolder.textViewCommentAction.visibility = View.GONE
+        } else {
+            viewHolder.textViewCommentAction.text = action.comment
+        }
+        var fullDate = formatDateTime(action.autoDate ?: "")
+        viewHolder.timeAction.text = fullDate.substring(0, 5)
+        viewHolder.dateAction.text = fullDate.substring(6, fullDate.length - 1)
     }
 
 
@@ -47,12 +52,14 @@ class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<Recycle
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var status: TextView
         var timeAction: TextView
+        var dateAction: TextView
         var textViewFio: TextView
         var textViewCommentAction: TextView
 
         init {
             status = itemView.findViewById(R.id.status_deal)
             timeAction = itemView.findViewById(R.id.timeAction)
+            dateAction = itemView.findViewById(R.id.dateAction)
             textViewFio = itemView.findViewById(R.id.textViewFioAction)
             textViewCommentAction = itemView.findViewById(R.id.textViewCommentAction)
         }

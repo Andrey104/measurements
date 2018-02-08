@@ -2,7 +2,6 @@ package com.addd.measurements.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.text.method.ScrollingMovementMethod
 import com.addd.measurements.*
@@ -22,6 +21,10 @@ class OneStageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_stage)
         setSupportActionBar(toolbarAst)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
         textViewCommentStage.movementMethod = ScrollingMovementMethod()
         countStage = intent.getStringExtra(STAGE_COUNT)
         getSaveStage()
@@ -55,8 +58,6 @@ class OneStageActivity : AppCompatActivity() {
         recyclerViewInstallers.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         recyclerViewInstallers.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(recyclerViewInstallers.context, layoutManager.orientation)
-        recyclerViewInstallers.addItemDecoration(dividerItemDecoration)
 
     }
 }

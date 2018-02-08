@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -62,8 +61,6 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
         mView.recyclerListRecalculation.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mView.recyclerListRecalculation.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(mView.recyclerListRecalculation.context, layoutManager.orientation)
-        mView.recyclerListRecalculation.addItemDecoration(dividerItemDecoration)
     }
 
     private fun addRecalculation() {

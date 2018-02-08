@@ -17,6 +17,10 @@ class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.Dis
         NetworkControllerDeals.registerDiscountCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_recalculation)
+        toolbar2.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbar2.setNavigationOnClickListener {
+            finish()
+        }
         dealId = intent.getStringExtra(DEAL_ID)
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doAddRecalculation() }

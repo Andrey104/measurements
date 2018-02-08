@@ -67,5 +67,5 @@ class Deal {
     val mounts: List<Any>? = null
     @SerializedName("comments")
     @Expose
-    val comments: List<Any>? = null
+    val comments: List<Comment>? = null
 }

@@ -8,46 +8,45 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.addd.measurements.MEASUREMENT_KEY
+import com.addd.measurements.DEAL_KEY
 import com.addd.measurements.R
 import com.addd.measurements.adapters.CommentAdapter
 import com.addd.measurements.gson
 import com.addd.measurements.modelAPI.Comment
 import com.addd.measurements.modelAPI.CommentRequest
+import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.modelAPI.Measurement
 import com.addd.measurements.network.NetworkControllerComment
 import com.addd.measurements.toast
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.comments_measurement_fragment.view.*
 
-
 /**
- * Created by addd on 02.02.2018.
+ * Created by addd on 08.02.2018.
  */
-class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddCommentCallback {
+class CommentsDealFragment : Fragment(), NetworkControllerComment.AddCommentCallback {
     private lateinit var mView: View
-    private lateinit var measurement: Measurement
+    private lateinit var deal: Deal
     private lateinit var bundle: Bundle
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: CommentAdapter
     private lateinit var commentRequest: CommentRequest
-    private lateinit var commentCallback: CommentCallback
     private var isSending = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         NetworkControllerComment.registerProblemPagination(this)
         mView = inflater?.inflate(R.layout.comments_measurement_fragment, container, false) ?: View(context)
         bundle = this.arguments
-        getSavedMeasurement()
+        getSavedDeal()
         displayComments()
-        if (measurement.comments?.isNotEmpty() == true) {
+        if (deal.comments?.isNotEmpty() == true) {
             recycler.smoothScrollToPosition(
                     recycler.adapter.itemCount - 1)
         }
         recycler.addOnLayoutChangeListener({ _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) {
                 recycler.postDelayed({
-                    if (measurement.comments?.isNotEmpty() == true) {
+                    if (deal.comments?.isNotEmpty() == true) {
                         recycler.smoothScrollToPosition(
                                 recycler.adapter.itemCount - 1)
 
@@ -60,7 +59,7 @@ class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddComm
     }
 
     private fun displayComments() {
-        adapter = CommentAdapter(measurement.comments as ArrayList<Comment>)
+        adapter = CommentAdapter(deal.comments as ArrayList<Comment>)
         recycler = mView.recyclerViewComments
         mView.recyclerViewComments.adapter = adapter
 
@@ -90,23 +89,23 @@ class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddComm
             if (!isSending) {
                 isSending = true
                 commentRequest = CommentRequest(mView.editTextCommentProblem.text.toString())
-                NetworkControllerComment.addComment(commentRequest, measurement.id.toString()) // изменить
+                NetworkControllerComment.addCommentDeal(commentRequest, deal.id.toString())
                 adapter.addLoadingFooter()
                 mView.editTextCommentProblem.setText(R.string.empty)
             }
         }
     }
 
-    private fun getSavedMeasurement(): Measurement {
-        val json = bundle.getString(MEASUREMENT_KEY)
-        measurement = if (json.isNullOrEmpty()) {
-            Measurement()
+    private fun getSavedDeal(): Deal {
+        val json = bundle.getString(DEAL_KEY)
+        deal = if (json.isNullOrEmpty()) {
+            Deal()
         } else {
-            val type = object : TypeToken<Measurement>() {
+            val type = object : TypeToken<Deal>() {
             }.type
             gson.fromJson(json, type)
         }
-        return measurement
+        return deal
     }
 
     override fun addCommentResult(result: Boolean, comment: Comment?) {
@@ -131,16 +130,8 @@ class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddComm
     }
 
     override fun onDestroyView() {
-        commentCallback.getMeasurementComment(measurement)
         NetworkControllerComment.registerProblemPagination(null)
         super.onDestroyView()
     }
 
-    interface CommentCallback {
-        fun getMeasurementComment(measurement: Measurement)
-    }
-
-    fun registerCommentCallback(commentCallback1: CommentCallback) {
-        this.commentCallback = commentCallback1
-    }
 }

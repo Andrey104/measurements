@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -50,8 +49,6 @@ class MountFragment : Fragment(), NetworkControllerDeals.MountsDealCallback, Mou
         mView.recyclerListMounts.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mView.recyclerListMounts.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(mView.recyclerListMounts.context, layoutManager.orientation)
-        mView.recyclerListMounts.addItemDecoration(dividerItemDecoration)
         mView.progressBarMount.visibility = View.GONE
     }
 

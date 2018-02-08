@@ -35,7 +35,9 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
                     2 -> viewHolder.imageView.setImageResource(R.drawable.manager)
                     1 -> viewHolder.imageView.setImageResource(R.drawable.worker_comment)
                 }
-                viewHolder.date.text = formatDateTime(mCommentsList[position].date)
+                var fullDate = formatDateTime(mCommentsList[position].date)
+                viewHolder.time.text = fullDate.substring(0, 5)
+                viewHolder.date.text = fullDate.substring(6, fullDate.length - 1)
                 viewHolder.text.text = mCommentsList[position].text
             }
             LOADING -> {
@@ -103,12 +105,14 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
 
         var name: TextView
         var date: TextView
+        var time: TextView
         var text: TextView
         var imageView: ImageView
         var constraintLayout: ConstraintLayout
 
         init {
             date = itemView.findViewById(R.id.dateComment)
+            time = itemView.findViewById(R.id.timeComment)
             name = itemView.findViewById(R.id.nameComment)
             text = itemView.findViewById(R.id.textComment)
             imageView = itemView.findViewById(R.id.imageView12)

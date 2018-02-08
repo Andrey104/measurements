@@ -50,6 +50,23 @@ object NetworkControllerComment {
         })
     }
 
+    fun addCommentDeal(text: CommentRequest, id: String) {
+        val call = api.addCommentDeal(text, id)
+        call.enqueue(object : retrofit2.Callback<Comment> {
+            override fun onResponse(call: Call<Comment>?, response: Response<Comment>?) {
+                if (response?.code() == 200) {
+                    addCommentCallback?.addCommentResult(true, response.body())
+                } else {
+                    addCommentCallback?.addCommentResult(false, null)
+                }
+            }
+
+            override fun onFailure(call: Call<Comment>?, t: Throwable?) {
+                addCommentCallback?.addCommentResult(false, null)
+            }
+        })
+    }
+
     interface AddCommentCallback {
         fun addCommentResult(result: Boolean, comment: Comment?)
     }

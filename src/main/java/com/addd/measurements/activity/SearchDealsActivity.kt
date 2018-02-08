@@ -1,9 +1,8 @@
 package com.addd.measurements.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -12,7 +11,7 @@ import com.addd.measurements.adapters.DealAdapter
 import com.addd.measurements.modelAPI.Deal
 import com.addd.measurements.network.NetworkControllerSearchDeals
 import kotlinx.android.synthetic.main.activity_search_deals.*
-import java.util.ArrayList
+import java.util.*
 
 class SearchDealsActivity : AppCompatActivity(),NetworkControllerSearchDeals.PaginationCallback, NetworkControllerSearchDeals.CallbackListDeals, DealAdapter.CustomAdapterCallback {
     private lateinit var adapter: DealAdapter
@@ -28,6 +27,10 @@ class SearchDealsActivity : AppCompatActivity(),NetworkControllerSearchDeals.Pag
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_deals)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
         NetworkControllerSearchDeals.registerCallBack(this)
         NetworkControllerSearchDeals.registerPaginationCallback(this)
         recyclerList = recyclerListDeals
@@ -76,8 +79,6 @@ class SearchDealsActivity : AppCompatActivity(),NetworkControllerSearchDeals.Pag
         recyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         recyclerList.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
-        recyclerList.addItemDecoration(dividerItemDecoration)
         recyclerList.addOnScrollListener(object : PaginationScrollListener(recyclerList.layoutManager as LinearLayoutManager) {
             override fun isLastPage(): Boolean {
                 return isLastPage

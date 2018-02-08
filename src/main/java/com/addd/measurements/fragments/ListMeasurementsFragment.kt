@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -76,8 +75,6 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
             mView.recyclerListMeasurements.adapter = adapter
             val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             mView.recyclerListMeasurements.layoutManager = layoutManager
-            val dividerItemDecoration = DividerItemDecoration(mView.recyclerListMeasurements.context, layoutManager.orientation)
-            mView.recyclerListMeasurements.addItemDecoration(dividerItemDecoration)
         }
             mView.progressBar4.visibility = View.GONE
     }

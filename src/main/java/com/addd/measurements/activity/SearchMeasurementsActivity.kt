@@ -1,9 +1,8 @@
 package com.addd.measurements.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.addd.measurements.*
@@ -29,6 +28,10 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkControllerSearchM
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_measurements)
         setSupportActionBar(toolbarAst)
+        toolbarAst.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
 
         search = if (intent.hasExtra(IS_IT_SEARCH)) {
             intent.getStringExtra(IS_IT_SEARCH)
@@ -70,8 +73,6 @@ class SearchMeasurementsActivity : AppCompatActivity(), NetworkControllerSearchM
         recyclerList.adapter = adapter
         val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         recyclerList.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(recyclerList.context, layoutManager.orientation)
-        recyclerList.addItemDecoration(dividerItemDecoration)
         recyclerList.addOnScrollListener(object : PaginationScrollListener(recyclerList.layoutManager as LinearLayoutManager) {
             override fun isLastPage(): Boolean {
                 return isLastPage

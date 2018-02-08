@@ -22,10 +22,13 @@ class RecalculationAdapter(notesList: List<Recalculation>) : RecyclerView.Adapte
         val viewHolder = holder as ViewHolder
 
         viewHolder.textViewFio.text = recalculation.user?.firstName + " " + recalculation.user?.lastName
-        viewHolder.textViewSum.text = "${recalculation.before} -> ${recalculation.after}"
+        viewHolder.textViewSumBefore.text = "${recalculation.before}"
+        viewHolder.textViewSumAfter.text = "${recalculation.after}"
         viewHolder.textViewComment.text = recalculation.comment
 
-        viewHolder.textViewDate.text = formatDateTime(recalculation.autoDate ?: "")
+        var fullDate = formatDateTime(recalculation.autoDate ?: "")
+        viewHolder.textViewTime.text = fullDate.substring(0, 5)
+        viewHolder.textViewDate.text = fullDate.substring(6, fullDate.length - 1)
     }
 
 
@@ -43,13 +46,17 @@ class RecalculationAdapter(notesList: List<Recalculation>) : RecyclerView.Adapte
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textViewFio: TextView
         var textViewDate: TextView
-        var textViewSum: TextView
+        var textViewTime: TextView
+        var textViewSumBefore: TextView
+        var textViewSumAfter: TextView
         var textViewComment: TextView
 
         init {
             textViewFio = itemView.findViewById(R.id.textViewFio)
             textViewDate = itemView.findViewById(R.id.textViewDateR)
-            textViewSum = itemView.findViewById(R.id.textViewSumR)
+            textViewTime = itemView.findViewById(R.id.textViewTimeR)
+            textViewSumBefore = itemView.findViewById(R.id.textViewSumBefore)
+            textViewSumAfter = itemView.findViewById(R.id.textViewSumAfter)
             textViewComment = itemView.findViewById(R.id.textViewCommentR)
         }
     }
