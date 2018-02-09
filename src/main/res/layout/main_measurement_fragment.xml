@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.addd.measurements.activity.OneMeasurementActivity">
+    tools:context="ru.nextf.measurements.activity.OneMeasurementActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -164,7 +164,8 @@
         android:layout_marginEnd="36dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/check_mark" />
+        app:srcCompat="@drawable/check_mark"
+        android:layout_marginRight="36dp" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout5"
@@ -257,7 +258,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_query_builder_gray_24dp"
-            tools:ignore="VectorDrawableCompat" />
+            tools:ignore="VectorDrawableCompat"
+            android:layout_marginLeft="8dp" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -312,7 +314,8 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fabMain"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/check_mark" />
+        app:srcCompat="@drawable/check_mark"
+        android:layout_marginRight="16dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabTransfer"
@@ -324,7 +327,8 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fabComplete"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/calendar_white" />
+        app:srcCompat="@drawable/calendar_white"
+        android:layout_marginRight="16dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabReject"
@@ -336,7 +340,9 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fabTransfer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_close_white_24dp" />
+        app:srcCompat="@drawable/ic_close_white_24dp"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginRight="16dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabGoDeal"
@@ -348,7 +354,9 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fabMain"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_settings_applications_white_24dp" />
+        app:srcCompat="@drawable/ic_settings_applications_white_24dp"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginRight="16dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabMainClose"
@@ -360,7 +368,9 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_close_white_24dp" />
+        app:srcCompat="@drawable/ic_close_white_24dp"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginRight="16dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleClient"
@@ -379,7 +389,8 @@
         android:layout_marginTop="8dp"
         android:background="@color/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHide" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHide"
+        android:layout_marginLeft="0dp" />
 
     <View
         android:id="@+id/line2"

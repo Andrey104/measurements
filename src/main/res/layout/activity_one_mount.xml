@@ -39,7 +39,8 @@
         android:text="TextView"
         android:textColor="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
+        android:layout_marginRight="8dp" />
 
     <TextView
         android:id="@+id/textViewStatusMount"
@@ -51,7 +52,8 @@
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/imageView23"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
+        android:layout_marginLeft="8dp" />
 
     <TextView
         android:id="@+id/textViewCommentStage"
@@ -106,7 +108,9 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
-        app:srcCompat="@drawable/ic_info_outline_gray_24dp" />
+        app:srcCompat="@drawable/ic_info_outline_gray_24dp"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginLeft="8dp" />
 
     <ImageView
         android:id="@+id/imageView24"
@@ -116,7 +120,9 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toStartOf="@+id/textViewDateStage"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
-        app:srcCompat="@drawable/ic_event_gray_24dp" />
+        app:srcCompat="@drawable/ic_event_gray_24dp"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginRight="8dp" />
 
     <ImageView
         android:id="@+id/imageView25"
@@ -126,5 +132,7 @@
         android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView23"
-        app:srcCompat="@drawable/ic_chat_bubble_gray_24dp" />
+        app:srcCompat="@drawable/ic_chat_bubble_gray_24dp"
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginLeft="8dp" />
 </android.support.constraint.ConstraintLayout>

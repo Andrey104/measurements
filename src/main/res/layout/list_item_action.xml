@@ -80,7 +80,9 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toStartOf="@+id/dateAction"
             app:layout_constraintTop_toTopOf="parent"
-            card_view:srcCompat="@drawable/ic_event_gray_24dp" />
+            card_view:srcCompat="@drawable/ic_event_gray_24dp"
+            tools:ignore="VectorDrawableCompat"
+            android:layout_marginRight="8dp" />
 
         <TextView
             android:id="@+id/timeAction"
@@ -91,6 +93,7 @@
             android:layout_marginEnd="8dp"
             android:text="TextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateAction" />
+            app:layout_constraintTop_toBottomOf="@+id/dateAction"
+            android:layout_marginRight="8dp" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

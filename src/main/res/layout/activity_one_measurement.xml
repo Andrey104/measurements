@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.addd.measurements.activity.OneMeasurementActivity">
+    tools:context="ru.nextf.measurements.activity.OneMeasurementActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"

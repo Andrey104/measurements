@@ -30,7 +30,7 @@
     <string name="client">Клиент</string>
     <string name="gauger">Замерщик</string>
     <string name="comment">Комментарий:</string>
-    <string name="date_transfer">Дата переноса</string>
+    <string name="date_transfer">Дата переноса:</string>
     <string name="cancel">Отмена</string>
     <string name="another_company">Выбрали другую компанию</string>
     <string name="wrong_gauger">Ошибка замерищика</string>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.addd.measurements.activity.CompleteActivity">
+    tools:context="ru.nextf.measurements.activity.CompleteActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbarAst"
@@ -18,147 +19,162 @@
 
     <TextView
         android:id="@+id/textViewDeal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="8dp"
         android:text="@string/textview"
         android:textSize="18sp"
-        android:layout_marginStart="5dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarAst"
+        android:layout_marginLeft="8dp" />
 
     <CheckBox
         android:id="@+id/checkBoxOffer"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/offer_concluded"
-        android:layout_marginStart="5dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDeal"
+        android:layout_marginLeft="8dp" />
 
     <CheckBox
         android:id="@+id/checkBoxCash"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="8dp"
         android:text="@string/non_cash"
-        android:layout_marginStart="5dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxOffer"
+        android:layout_marginLeft="8dp" />
 
     <EditText
         android:id="@+id/editTextSum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/sum"
-        android:inputType="numberDecimal" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:textSize="16sp"
-        android:layout_marginTop="5dp"
-        android:text="@string/comment"
-        android:layout_marginStart="5dp" />
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxCash" />
 
     <EditText
         android:id="@+id/editTextComment"
-        android:layout_width="match_parent"
-        android:layout_height="127dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="@string/enter_comment"
-        android:inputType="textMultiLine" />
+        android:maxLines="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPrepayment" />
 
     <EditText
         android:id="@+id/editTextPrepayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/prepayment"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSum" />
 
     <TextView
         android:id="@+id/textViewDateInstallation"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:textColor="@color/black"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
         android:text="@string/date_mount"
-        android:layout_marginStart="5dp" />
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextComment"
+        android:layout_marginLeft="8dp" />
+
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:layout_marginStart="8dp"
+        android:text="@string/select_date"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dateButton"
+        app:layout_constraintStart_toEndOf="@+id/dateButton"
+        app:layout_constraintTop_toTopOf="@+id/dateButton"
+        android:layout_marginLeft="8dp" />
+
+    <ImageButton
+        android:id="@+id/dateButton"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/blue_calendar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDateInstallation"
+        android:layout_marginLeft="16dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/close_circle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDate"
+        app:layout_constraintStart_toEndOf="@+id/textViewDate"/>
 
     <LinearLayout
-        android:id="@+id/linearLayoutDateMount"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <ImageButton
-            android:id="@+id/dateButton"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="64dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            app:srcCompat="@drawable/calendar" />
-
-        <TextView
-            android:id="@+id/textViewDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:text="@string/select_date"
-            android:textSize="16sp" />
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageButton
-                android:id="@+id/imageButton"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="43dp"
-                android:layout_height="41dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/reject" />
-        </android.support.constraint.ConstraintLayout>
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:gravity="bottom"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/buttonCancel"
+            style="@style/MyButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/buttonOk"
+            style="@style/MyButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:text="@string/ok" />
     </LinearLayout>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

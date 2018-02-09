@@ -1,90 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.addd.measurements.activity.RejectActivity">
+    tools:context="ru.nextf.measurements.activity.RejectActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbarAst"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
         android:layout_width="match_parent"
-        app:title="@string/reject_measurement"
-        app:titleTextColor="@color/white"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary" />
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="@string/reject_measurement"
+        app:titleTextColor="@color/white" />
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:textSize="18sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/cause"
-        android:layout_marginStart="10dp" />
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarAst"
+        android:layout_marginLeft="8dp" />
 
     <RadioGroup
-        android:layout_width="match_parent"
         android:id="@+id/radioGroupReject"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="10dp">
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        android:layout_marginLeft="8dp">
 
         <RadioButton
-            android:id="@+id/radioButtonAnother"
-            android:onClick="onRadioButtonClick"
+            android:id="@+id/radioButtonWrongManager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="onRadioButtonClick"
+            android:text="@string/wrong_manager" />
+
+        <RadioButton
+            android:id="@+id/radioButtonAnother"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onRadioButtonClick"
             android:text="@string/another_company" />
 
         <RadioButton
             android:id="@+id/radioButtonWrongGauger"
             android:layout_width="wrap_content"
-            android:onClick="onRadioButtonClick"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="onRadioButtonClick"
             android:text="@string/wrong_gauger" />
 
-        <RadioButton
-            android:id="@+id/radioButtonWrongManager"
-            android:layout_width="wrap_content"
-            android:onClick="onRadioButtonClick"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/wrong_manager" />
     </RadioGroup>
 
     <EditText
         android:id="@+id/editComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="@string/enter_comment"
-        android:inputType="textMultiLine" />
+        android:maxLines="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupReject" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:gravity="bottom"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/buttonCancel"
+            style="@style/MyButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:text="@string/cancel" />
 
         <Button
             android:id="@+id/buttonOk"
+            style="@style/MyButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:text="@string/ok" />
     </LinearLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
