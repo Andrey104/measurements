@@ -60,11 +60,11 @@
             android:layout_margin="@dimen/fab_margin"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             app:layout_constraintBottom_toTopOf="@+id/linearLayoutBottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_event_white_24dp"
-            tools:ignore="VectorDrawableCompat"
-            android:layout_marginRight="16dp" />
+            tools:ignore="VectorDrawableCompat" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabMainClose"
@@ -74,12 +74,70 @@
             android:layout_margin="@dimen/fab_margin"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/linearLayoutBottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_close_white_24dp"
-            tools:ignore="VectorDrawableCompat"
-            android:layout_marginRight="16dp" />
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/textViewTomorrow"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/gradient_text"
+            android:text="@string/tomorrow"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fabTomorrow"
+            app:layout_constraintEnd_toStartOf="@+id/fabTomorrow"
+            app:layout_constraintTop_toTopOf="@+id/fabTomorrow"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/textViewDate"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/gradient_text"
+            android:text="@string/date"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fabDate"
+            app:layout_constraintEnd_toStartOf="@+id/fabDate"
+            app:layout_constraintTop_toTopOf="@+id/fabDate"
+            android:layout_marginRight="8dp" />
+
+
+        <TextView
+            android:id="@+id/textViewToday"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/gradient_text"
+            android:text="@string/today"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fabToday"
+            app:layout_constraintEnd_toStartOf="@+id/fabToday"
+            app:layout_constraintTop_toTopOf="@+id/fabToday"
+            android:layout_marginRight="8dp" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linearLayoutBottom"
@@ -131,10 +189,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/fabMain"
             app:layout_constraintEnd_toEndOf="parent"
@@ -146,10 +202,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/fabToday"
             app:layout_constraintEnd_toEndOf="parent"
@@ -163,12 +217,12 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/fabTomorrow"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/calendar_white"
-            tools:ignore="VectorDrawableCompat" />
+            tools:ignore="VectorDrawableCompat"
+            android:layout_marginRight="16dp" />
 
 
     </android.support.constraint.ConstraintLayout>

@@ -32,7 +32,7 @@ class ActionAdapter(notesList: ArrayList<Action>) : RecyclerView.Adapter<Recycle
         }
         var fullDate = formatDateTime(action.autoDate ?: "")
         viewHolder.timeAction.text = fullDate.substring(0, 5)
-        viewHolder.dateAction.text = fullDate.substring(6, fullDate.length - 1)
+        viewHolder.dateAction.text = fullDate.substring(6, fullDate.length)
     }
 
 

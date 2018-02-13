@@ -56,7 +56,8 @@ class DealsFragment : Fragment(),
         (activity as AppCompatActivity).supportActionBar?.show()
         NetworkControllerDeals.registerCallBack(this)
         NetworkControllerDeals.registerPaginationCallback(this)
-        val view = inflater?.inflate(ru.nextf.measurements.R.layout.my_deals_fragment, container, false) ?: View(context)
+        val view = inflater?.inflate(ru.nextf.measurements.R.layout.my_deals_fragment, container, false)
+                ?: View(context)
         progressBarMainDeal = view.findViewById(ru.nextf.measurements.R.id.progressBarMainDeal)
         recyclerList = view.findViewById(ru.nextf.measurements.R.id.recyclerListDeals)
         bundle = this.arguments
@@ -287,12 +288,17 @@ class DealsFragment : Fragment(),
             adapter.removeLoadingFooter()
             isLoading = false
 
-            adapter.addAll(listDeals)
+            if (!listDeals.isEmpty()) {
+                adapter.addAll(listDeals)
+            } else {
+                currentPage -= 1
+            }
 
-            if (currentPage != TOTAL_PAGES)
+            if (currentPage != TOTAL_PAGES) {
                 adapter.addLoadingFooter()
-            else
+            } else {
                 isLastPage = true
+            }
         }
         isLoading = false
     }

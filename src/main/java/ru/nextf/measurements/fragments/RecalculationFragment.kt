@@ -34,7 +34,8 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
         NetworkControllerDeals.registerOneDealRecalcCallback(this)
         bundle = this.arguments
         mFragmentManager = (activity as AppCompatActivity).supportFragmentManager
-        val view = inflater?.inflate(ru.nextf.measurements.R.layout.recalculation_fragment, container, false) ?: View(context)
+        val view = inflater?.inflate(ru.nextf.measurements.R.layout.recalculation_fragment, container, false)
+                ?: View(context)
         mView = view
         deal = getSavedDeal()
         (activity as AppCompatActivity).supportActionBar?.title = String.format("Перерасчеты %05d", deal.id)

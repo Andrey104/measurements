@@ -36,7 +36,7 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
                 }
                 var fullDate = formatDateTime(mCommentsList[position].date)
                 viewHolder.time.text = fullDate.substring(0, 5)
-                viewHolder.date.text = fullDate.substring(6, fullDate.length - 1)
+                viewHolder.date.text = fullDate.substring(6, fullDate.length)
                 viewHolder.text.text = mCommentsList[position].text
             }
             LOADING -> {

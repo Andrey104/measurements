@@ -27,7 +27,7 @@ class RecalculationAdapter(notesList: List<Recalculation>) : RecyclerView.Adapte
 
         var fullDate = formatDateTime(recalculation.autoDate ?: "")
         viewHolder.textViewTime.text = fullDate.substring(0, 5)
-        viewHolder.textViewDate.text = fullDate.substring(6, fullDate.length - 1)
+        viewHolder.textViewDate.text = fullDate.substring(6, fullDate.length)
     }
 
 

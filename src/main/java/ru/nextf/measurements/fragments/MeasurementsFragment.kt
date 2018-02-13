@@ -51,6 +51,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private lateinit var fabOpen: Animation
     private lateinit var fabOpen08: Animation
     private lateinit var fabClose: Animation
+    private lateinit var textOpen: Animation
+    private lateinit var textClose: Animation
     private var isFabOpen = false
 
     @SuppressLint("ClickableViewAccessibility")
@@ -66,6 +68,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         fabOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open)
         fabOpen08 = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open_08)
         fabClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_close)
+        textOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.text_open)
+        textClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.text_close)
 
         view.fabMain.setOnClickListener { showFubs() }
         view.fabMainClose.setOnClickListener { hideFub() }
@@ -124,6 +128,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             fabDate.isClickable = false
             fabMain.isClickable = true
             isFabOpen = false
+            textViewToday.startAnimation(textClose)
+            textViewDate.startAnimation(textClose)
+            textViewTomorrow.startAnimation(textClose)
         }
     }
 
@@ -139,7 +146,9 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         fabTomorrow.isClickable = true
         fabDate.isClickable = true
         isFabOpen = true
-
+        textViewToday.startAnimation(textOpen)
+        textViewDate.startAnimation(textOpen)
+        textViewTomorrow.startAnimation(textOpen)
     }
 
     private fun todayFab() {
