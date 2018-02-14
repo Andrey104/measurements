@@ -32,6 +32,8 @@ class MainMeasurementFragment : Fragment() {
     private lateinit var fabOpen: Animation
     private lateinit var fabOpen08: Animation
     private lateinit var fabClose: Animation
+    private lateinit var textClose: Animation
+    private lateinit var textOpen: Animation
     private lateinit var mView: View
     private var isFabOpen = false
     private var ONLY_DEAL = false
@@ -43,6 +45,8 @@ class MainMeasurementFragment : Fragment() {
         fabOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open)
         fabOpen08 = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open_08)
         fabClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_close)
+        textOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.text_open)
+        textClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.text_close)
 
         bundle = this.arguments
         measurement = if (bundle.containsKey(MEASUREMENT_KEY)) {
@@ -205,6 +209,7 @@ class MainMeasurementFragment : Fragment() {
                     isFabOpen = true
                     mView.fabMainClose.startAnimation(fabOpen)
                     mView.fabGoDeal.startAnimation(fabOpen08)
+                    mView.textViewGoDeal.startAnimation(textOpen)
                     mView.fabMainClose.isClickable = true
                     mView.fabGoDeal.isClickable = true
                     mView.fabMain.isClickable = false
@@ -230,6 +235,7 @@ class MainMeasurementFragment : Fragment() {
         if (isFabOpen) {
             mView.fabMainClose.startAnimation(fabClose)
             mView.fabGoDeal.startAnimation(fabClose)
+            mView.textViewGoDeal.startAnimation(textClose)
             mView.fabMain.startAnimation(fabOpen)
             mView.fabMainClose.isClickable = false
             mView.fabGoDeal.isClickable = false
@@ -244,6 +250,9 @@ class MainMeasurementFragment : Fragment() {
             mView.fabReject.startAnimation(fabClose)
             mView.fabTransfer.startAnimation(fabClose)
             mView.fabMain.startAnimation(fabOpen)
+            mView.textViewComplete.startAnimation(textClose)
+            mView.textViewReject.startAnimation(textClose)
+            mView.textViewTransfer.startAnimation(textClose)
             mView.fabComplete.isClickable = false
             mView.fabMainClose.isClickable = false
             mView.fabReject.isClickable = false
@@ -260,6 +269,9 @@ class MainMeasurementFragment : Fragment() {
         mView.fabTransfer.startAnimation(fabOpen08)
         mView.fabReject.startAnimation(fabOpen08)
         mView.fabComplete.startAnimation(fabOpen08)
+        mView.textViewComplete.startAnimation(textOpen)
+        mView.textViewReject.startAnimation(textOpen)
+        mView.textViewTransfer.startAnimation(textOpen)
         mView.fabReject.isClickable = true
         mView.fabMainClose.isClickable = true
         mView.fabComplete.isClickable = true

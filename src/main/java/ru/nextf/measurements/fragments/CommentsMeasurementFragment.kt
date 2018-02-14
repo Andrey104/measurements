@@ -1,5 +1,6 @@
 package ru.nextf.measurements.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -18,12 +19,15 @@ import ru.nextf.measurements.network.NetworkControllerComment
 import ru.nextf.measurements.toast
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.comments_measurement_fragment.view.*
+import ru.nextf.measurements.R
+import ru.nextf.measurements.network.NetworkController
 
 
 /**
  * Created by addd on 02.02.2018.
  */
-class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddCommentCallback {
+class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddCommentCallback,
+        NetworkController.CallbackUpdateOneMeasurementFragment {
     private lateinit var mView: View
     private lateinit var measurement: Measurement
     private lateinit var bundle: Bundle
@@ -35,6 +39,7 @@ class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddComm
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         NetworkControllerComment.registerProblemPagination(this)
+        NetworkController.registerOneMeasurementCallbackFragment(this)
         mView = inflater?.inflate(ru.nextf.measurements.R.layout.comments_measurement_fragment, container, false) ?: View(context)
         bundle = this.arguments
         getSavedMeasurement()
@@ -55,7 +60,30 @@ class CommentsMeasurementFragment : Fragment(), NetworkControllerComment.AddComm
             }
         })
         mView.imageButtonSend.setOnClickListener { sendComment() }
+        mView.refresh.setOnRefreshListener {
+            mView.refresh.isRefreshing = true
+            adapter = CommentAdapter(emptyList())
+            mView.recyclerViewComments.adapter = adapter
+            NetworkController.getOneMeasurementFragment(measurement.id.toString())
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mView.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent, context.theme),
+                    resources.getColor(R.color.colorPrimary, context.theme),
+                    resources.getColor(R.color.colorPrimaryDark, context.theme))
+        } else {
+            mView.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent),
+                    resources.getColor(R.color.colorPrimary),
+                    resources.getColor(R.color.colorPrimaryDark))
+        }
         return mView
+    }
+
+    override fun resultUpdate(measurement: Measurement?) {
+        mView.refresh.isRefreshing = false
+        if (measurement != null) {
+            this.measurement = measurement
+            displayComments()
+        }
     }
 
     private fun displayComments() {

@@ -30,6 +30,7 @@ object NetworkController {
     var responsible: ResponsibleCallback? = null
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
+    var fragmentOneCallback: CallbackUpdateOneMeasurementFragment? = null
     var callbackMeasurementsDealCallback: MeasurementsDealCallback? = null
     var callbackPaginationListMeasurements: PaginationCallback? = null
     private lateinit var listMeasurements: List<Measurement>
@@ -86,7 +87,8 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count
+                            ?: 0)
                 }
             }
 
@@ -113,7 +115,8 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count
+                            ?: 0)
 
                 }
             }
@@ -140,7 +143,8 @@ object NetworkController {
                     if (nameSave != null) {
                         saveMeasurementsList(listMeasurements, nameSave)
                     }
-                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count ?: 0)
+                    callbackListMeasurements?.resultList(listMeasurements, 0, date, it.count, it.myMeasurements, it.notDistributed, it.count
+                            ?: 0)
 
                 }
             }
@@ -165,8 +169,10 @@ object NetworkController {
                 response?.body().let {
                     if (response?.code() == 200) {
                         measurement = response.body()
+                        updateOneMeasurement?.resultUpdate(measurement)
+                    } else {
+                        updateOneMeasurement?.resultUpdate(null)
                     }
-                    updateOneMeasurement?.resultUpdate(measurement)
                 }
             }
 
@@ -192,6 +198,28 @@ object NetworkController {
             override fun onFailure(call: Call<Void>?, t: Throwable?) {
                 transferMeasurement?.resultTransfer(false)
             }
+        })
+    }
+
+    fun getOneMeasurementFragment(id: String) {
+        val call = api.getOneMeasurement(id)
+        call.enqueue(object : retrofit2.Callback<Measurement> {
+            override fun onResponse(call: Call<Measurement>?, response: Response<Measurement>?) {
+                var measurement: Measurement? = null
+                response?.body().let {
+                    if (response?.code() == 200) {
+                        measurement = response.body()
+                        fragmentOneCallback?.resultUpdate(measurement)
+                    } else {
+                        fragmentOneCallback?.resultUpdate(null)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
+                fragmentOneCallback?.resultUpdate(null)
+            }
+
         })
     }
 
@@ -479,6 +507,14 @@ object NetworkController {
 
     fun registerUpdateOneMeasurementCallback(callback: CallbackUpdateOneMeasurement?) {
         NetworkController.updateOneMeasurement = callback
+    }
+
+    interface CallbackUpdateOneMeasurementFragment {
+        fun resultUpdate(measurement: Measurement?)
+    }
+
+    fun registerOneMeasurementCallbackFragment(callback: CallbackUpdateOneMeasurementFragment?) {
+        NetworkController.fragmentOneCallback = callback
     }
 
     interface TransferMeasurementCallback {

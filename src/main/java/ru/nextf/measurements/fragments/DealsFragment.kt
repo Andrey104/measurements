@@ -3,9 +3,10 @@ package ru.nextf.measurements.fragments
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -34,6 +35,7 @@ class DealsFragment : Fragment(),
 
     private lateinit var adapter: DealAdapter
     private lateinit var recyclerList: RecyclerView
+    private lateinit var refresher: SwipeRefreshLayout
     private lateinit var progressBarMainDeal: ProgressBar
     private lateinit var date: String
     private lateinit var bundle: Bundle
@@ -51,6 +53,8 @@ class DealsFragment : Fragment(),
     private lateinit var fabOpen: Animation
     private lateinit var fabOpen08: Animation
     private lateinit var fabClose: Animation
+    private lateinit var textOpen: Animation
+    private lateinit var textClose: Animation
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         (activity as AppCompatActivity).supportActionBar?.show()
@@ -93,6 +97,8 @@ class DealsFragment : Fragment(),
         fabOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open)
         fabOpen08 = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open_08)
         fabClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_close)
+        textOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.text_open)
+        textClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.text_close)
 
         view.fabMain.setOnClickListener {
             showFubs()
@@ -121,9 +127,37 @@ class DealsFragment : Fragment(),
             datePick()
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            view.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent, context.theme),
+                    resources.getColor(R.color.colorPrimary, context.theme))
+        } else {
+            view.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent),
+                    resources.getColor(R.color.colorPrimary))
+        }
+
+        view.refresh.setOnRefreshListener {
+            view.refresh.isRefreshing = true
+            updateList()
+        }
+        refresher = view.refresh
 
         return view
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == 200) {
+            updateList()
+        }
+    }
+
+    private fun updateList() {
+        currentPage = 1
+        isLastPage = false
+        adapter = DealAdapter(emptyList, this)
+        recyclerList.adapter = adapter
+        NetworkControllerDeals.updateListInFragment()
+    }
+
 
     private fun hideFub() {
         if (isFabOpen) {
@@ -131,6 +165,8 @@ class DealsFragment : Fragment(),
             fabMainClose.startAnimation(fabClose)
             fabMain.startAnimation(fabOpen)
             fabDate.startAnimation(fabClose)
+            textViewAll.startAnimation(textClose)
+            textViewDate.startAnimation(textClose)
             fabAll.isClickable = false
             fabMain.isClickable = true
             fabMainClose.isClickable = false
@@ -145,6 +181,8 @@ class DealsFragment : Fragment(),
         fabMainClose.startAnimation(fabOpen)
         fabAll.startAnimation(fabOpen08)
         fabDate.startAnimation(fabOpen08)
+        textViewAll.startAnimation(textOpen)
+        textViewDate.startAnimation(textOpen)
         fabAll.isClickable = true
         fabMainClose.isClickable = true
         fabDate.isClickable = true
@@ -159,29 +197,6 @@ class DealsFragment : Fragment(),
         startActivityForResult(intent, 0)
     }
 
-
-    private fun onClickMenu(bottomNavigationView: BottomNavigationView) {
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                ru.nextf.measurements.R.id.allDeals -> {
-                    adapter = DealAdapter(emptyList, this)
-                    recyclerList.adapter = adapter
-                    progressBarMainDeal.visibility = View.VISIBLE
-                    currentPage = 1
-                    isLastPage = false
-                    when (bundle.get(CHECK)) {
-                        STATUS_CURRENT -> NetworkControllerDeals.getAllCurrentDeals()
-                        STATUS_REJECT -> NetworkControllerDeals.getAllRejectedDeals()
-                        STATUS_CLOSE -> NetworkControllerDeals.getAllClosedDeals()
-                    }
-                }
-                ru.nextf.measurements.R.id.calendarDeals -> {
-                    datePick()
-                }
-            }
-            true
-        }
-    }
 
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
@@ -210,6 +225,7 @@ class DealsFragment : Fragment(),
     }
 
     override fun resultList(listDeals: List<Deal>, result: Int, date: String, count: Int) {
+        refresher.isRefreshing = false
         TOTAL_PAGES = if (count % 20 == 0) {
             count / 20
         } else {

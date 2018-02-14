@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.recalculation_fragment.view.*
 /**
  * Created by addd on 10.01.2018.
  */
-class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallbackRecalc {
+class RecalculationFragment : Fragment() {
     private lateinit var mView: View
     private lateinit var bundle: Bundle
     private lateinit var deal: Deal
@@ -31,7 +31,6 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        NetworkControllerDeals.registerOneDealRecalcCallback(this)
         bundle = this.arguments
         mFragmentManager = (activity as AppCompatActivity).supportFragmentManager
         val view = inflater?.inflate(ru.nextf.measurements.R.layout.recalculation_fragment, container, false)
@@ -74,25 +73,7 @@ class RecalculationFragment : Fragment(), NetworkControllerDeals.OneDealCallback
         if (resultCode == 200) {
             val fragment = LoadFragment()
             mFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.containerDeal, fragment).commit()
-            NetworkControllerDeals.getOneDeal(deal.id.toString())
+            NetworkControllerDeals.getOneDeal(deal.id.toString()) //коллбекнет в активити и заново перересует этот фрагмент
         }
-    }
-
-    override fun resultOneDealRecalc(deal: Deal?, boolean: Boolean) {
-        if (deal != null && boolean) {
-            val fragment = RecalculationFragment()
-            val json = gson.toJson(deal)
-            val bundle = Bundle()
-            bundle.putString(DEAL_KEY, json)
-            fragment.arguments = bundle
-            mFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.containerDeal, fragment).commit()
-        } else {
-            toast(ru.nextf.measurements.R.string.error)
-        }
-    }
-
-    override fun onDestroy() {
-        NetworkControllerDeals.registerOneDealRecalcCallback(null)
-        super.onDestroy()
     }
 }

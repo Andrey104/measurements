@@ -277,4 +277,5 @@
     <string name="images">Изображения</string>
     <string name="contacts">Контакты</string>
     <string name="history">История</string>
+    <string name="to_deal">К сделке</string>
 </resources>

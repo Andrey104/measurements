@@ -24,7 +24,6 @@ object NetworkControllerDeals {
     var callbackPaginationListDeals: PaginationCallback? = null
     var callbackOneDeal: OneDealCallback? = null
     var addDiscountCallback: DiscountCallback? = null
-    var callbackOneDealRecalc: OneDealCallbackRecalc? = null
     var callbackMountsDeal: MountsDealCallback? = null
 
 
@@ -184,7 +183,6 @@ object NetworkControllerDeals {
                 } else {
                     getClosedDeals(date)
                 }
-
         }
     }
 
@@ -356,14 +354,6 @@ object NetworkControllerDeals {
 
     fun registerDiscountCallback(callback: DiscountCallback?) {
         addDiscountCallback = callback
-    }
-
-    interface OneDealCallbackRecalc {
-        fun resultOneDealRecalc(deal: Deal?, boolean: Boolean)
-    }
-
-    fun registerOneDealRecalcCallback(callback: OneDealCallbackRecalc?) {
-        callbackOneDealRecalc = callback
     }
 
     interface MountsDealCallback {

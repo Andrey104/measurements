@@ -23,7 +23,8 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import ru.nextf.measurements.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
+class MainActivity : AppCompatActivity(),
+        NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback{
     private val bundle = Bundle()
     private lateinit var item: MenuItem
 

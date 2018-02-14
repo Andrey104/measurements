@@ -33,7 +33,8 @@ import kotlin.collections.ArrayList
 
 class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements,
         DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback,
-        NetworkController.PaginationCallback, NetworkControllerFree.CallbackListFree, NetworkControllerFree.CallbackPaginationFree {
+        NetworkController.PaginationCallback, NetworkControllerFree.CallbackListFree,
+        NetworkControllerFree.CallbackPaginationFree{
     private lateinit var date: String
     private var owner = ""
     var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
@@ -110,6 +111,28 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                     NetworkController.getCloseMeasurements(date, APP_LIST_TODAY_CLOSED)
                 }
             }
+        }
+        view.refresh.setOnRefreshListener {
+            view.refresh.isRefreshing = true
+            currentPage = 1
+            isLastPage = false
+            adapter = DataAdapter(emptyList, this)
+            recyclerList.adapter = adapter
+            if (owner.isNullOrEmpty()) {
+                NetworkController.updateListInFragment()
+            } else {
+                NetworkControllerFree.getCurrentMeasurements(date, 1, owner)
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            view.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent, context.theme),
+                    resources.getColor(R.color.colorPrimary, context.theme),
+                    resources.getColor(R.color.colorPrimaryDark, context.theme))
+        } else {
+            view.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent),
+                    resources.getColor(R.color.colorPrimary),
+                    resources.getColor(R.color.colorPrimaryDark))
         }
 
         return view
@@ -350,6 +373,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
 
     @SuppressLint("SetTextI18n")
     override fun resultList(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
+        refresh.isRefreshing = false
         TOTAL_PAGES = if (count % 20 == 0) {
             count / 20
         } else {
@@ -472,6 +496,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     }
 
     override fun resultListFree(listMeasurements: List<Measurement>, result: Int, date: String, allMeasurements: Int?, myMeasurements: Int?, notDistributed: Int?, count: Int) {
+        refresh.isRefreshing = false
         TOTAL_PAGES = if (count % 20 == 0) {
             count / 20
         } else {

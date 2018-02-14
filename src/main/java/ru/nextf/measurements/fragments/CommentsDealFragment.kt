@@ -1,5 +1,6 @@
 package ru.nextf.measurements.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -19,6 +20,9 @@ import ru.nextf.measurements.network.NetworkControllerComment
 import ru.nextf.measurements.toast
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.comments_measurement_fragment.view.*
+import ru.nextf.measurements.R
+import ru.nextf.measurements.network.NetworkController
+import ru.nextf.measurements.network.NetworkControllerDeals
 
 /**
  * Created by addd on 08.02.2018.
@@ -54,6 +58,21 @@ class CommentsDealFragment : Fragment(), NetworkControllerComment.AddCommentCall
             }
         })
         mView.imageButtonSend.setOnClickListener { sendComment() }
+        mView.refresh.setOnRefreshListener {
+            mView.refresh.isRefreshing = true
+            adapter = CommentAdapter(emptyList())
+            mView.recyclerViewComments.adapter = adapter
+            NetworkControllerDeals.getOneDeal(deal.id.toString())
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mView.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent, context.theme),
+                    resources.getColor(R.color.colorPrimary, context.theme),
+                    resources.getColor(R.color.colorPrimaryDark, context.theme))
+        } else {
+            mView.refresh.setColorSchemeColors(resources.getColor(R.color.colorAccent),
+                    resources.getColor(R.color.colorPrimary),
+                    resources.getColor(R.color.colorPrimaryDark))
+        }
         return mView
     }
 

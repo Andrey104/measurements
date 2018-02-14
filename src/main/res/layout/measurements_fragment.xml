@@ -36,21 +36,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerList"
+        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/refresh"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@+id/linearLayoutBottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbarAst"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintVertical_bias="1.0"
+            tools:context="ru.nextf.measurements.fragments.MeasurementsFragment">
 
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerList"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayoutBottom"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbarAst"
+                app:layout_constraintVertical_bias="1.0">
+
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabMain"
@@ -83,10 +97,11 @@
 
         <TextView
             android:id="@+id/textViewTomorrow"
-            android:layout_width="70dp"
+            android:layout_width="80dp"
             android:layout_height="20dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/gradient_text"
             android:text="@string/tomorrow"
@@ -97,15 +112,15 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/fabTomorrow"
             app:layout_constraintEnd_toStartOf="@+id/fabTomorrow"
-            app:layout_constraintTop_toTopOf="@+id/fabTomorrow"
-            android:layout_marginRight="8dp" />
+            app:layout_constraintTop_toTopOf="@+id/fabTomorrow" />
 
         <TextView
             android:id="@+id/textViewDate"
-            android:layout_width="70dp"
-            android:layout_height="20dp"
+            android:layout_width="80dp"
+            android:layout_height="22dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/gradient_text"
             android:text="@string/date"
@@ -116,13 +131,12 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/fabDate"
             app:layout_constraintEnd_toStartOf="@+id/fabDate"
-            app:layout_constraintTop_toTopOf="@+id/fabDate"
-            android:layout_marginRight="8dp" />
+            app:layout_constraintTop_toTopOf="@+id/fabDate" />
 
 
         <TextView
             android:id="@+id/textViewToday"
-            android:layout_width="70dp"
+            android:layout_width="80dp"
             android:layout_height="20dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
@@ -136,8 +150,7 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/fabToday"
             app:layout_constraintEnd_toStartOf="@+id/fabToday"
-            app:layout_constraintTop_toTopOf="@+id/fabToday"
-            android:layout_marginRight="8dp" />
+            app:layout_constraintTop_toTopOf="@+id/fabToday" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linearLayoutBottom"
@@ -191,6 +204,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/fabMain"
             app:layout_constraintEnd_toEndOf="parent"
@@ -204,6 +218,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/fabToday"
             app:layout_constraintEnd_toEndOf="parent"
@@ -217,12 +232,12 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/fabTomorrow"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/calendar_white"
-            tools:ignore="VectorDrawableCompat"
-            android:layout_marginRight="16dp" />
+            tools:ignore="VectorDrawableCompat" />
 
 
     </android.support.constraint.ConstraintLayout>
