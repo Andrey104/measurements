@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.nextf.measurements">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="ru.nextf.measurements.MyApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OneMeasurementActivity"
+            android:label="@string/title_activity_one_measurement"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TransferActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.RejectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CompleteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OnePhotoActivity"
+            android:theme="@style/PhotoTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OneDealActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddRecalculationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OneMountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OneStageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SearchMeasurementsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SearchDealsActivity"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>
