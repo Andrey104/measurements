@@ -24,13 +24,16 @@ import ru.nextf.measurements.*
 
 
 class MainActivity : AppCompatActivity(),
-        NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback{
+        NavigationView.OnNavigationItemSelectedListener, NetworkController.UserInfoCallback {
     private val bundle = Bundle()
     private lateinit var item: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUserInfoCallBack(this)
         title = getString(ru.nextf.measurements.R.string.measurements)
+        myWebSocket = MyWebSocket()
+//        myWebSocket.registerSocketCallback(this)
+        myWebSocket.run()
 
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.activity_main)
@@ -207,6 +210,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         NetworkController.registerUserInfoCallBack(null)
+        myWebSocket.close()
         super.onDestroy()
     }
 }

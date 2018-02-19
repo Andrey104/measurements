@@ -6,6 +6,8 @@ import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -15,14 +17,15 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import com.google.gson.reflect.TypeToken
 import ru.nextf.measurements.*
 import ru.nextf.measurements.activity.OneMeasurementActivity
 import ru.nextf.measurements.adapters.DataAdapter
-import ru.nextf.measurements.modelAPI.Measurement
 import ru.nextf.measurements.network.NetworkController
 import ru.nextf.measurements.network.NetworkControllerFree
 import kotlinx.android.synthetic.main.measurements_fragment.*
 import kotlinx.android.synthetic.main.measurements_fragment.view.*
+import ru.nextf.measurements.modelAPI.*
 import java.util.Calendar
 import kotlin.collections.ArrayList
 
@@ -34,7 +37,7 @@ import kotlin.collections.ArrayList
 class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasurements,
         DataAdapter.CustomAdapterCallback, NetworkController.ResponsibleCallback,
         NetworkController.PaginationCallback, NetworkControllerFree.CallbackListFree,
-        NetworkControllerFree.CallbackPaginationFree{
+        NetworkControllerFree.CallbackPaginationFree, MyWebSocket.SocketCallback {
     private lateinit var date: String
     private var owner = ""
     var emptyList: ArrayList<Measurement> = ArrayList(emptyList())
@@ -48,6 +51,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private var daySave = -1
     private var monthSave = -1
     private var yearSave = -1
+    private var handler = Handler()
 
     private lateinit var fabOpen: Animation
     private lateinit var fabOpen08: Animation
@@ -134,7 +138,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                     resources.getColor(R.color.colorPrimary),
                     resources.getColor(R.color.colorPrimaryDark))
         }
-
+        myWebSocket.registerSocketCallback(this)
         return view
     }
 
@@ -457,7 +461,13 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        myWebSocket.registerSocketCallback(this)
+    }
+
     override fun onResume() {
+        myWebSocket.registerSocketCallback(this)
         NetworkController.registerCallBack(this)
         NetworkController.registerResponsibleCallback(this)
         NetworkController.registerPaginationCallback(this)
@@ -584,5 +594,90 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
             }
         }
         isLoading = false
+    }
+
+    override fun message(text: String) {
+        val type = object : TypeToken<Event>() {}.type
+        val event = gson.fromJson<Event>(text, type)
+        when (event.event) {
+            "on_create_measurement",
+            "on_complete_measurement", "on_reject_measurement", "on_take" -> {
+                val type = object : TypeToken<EventUpdateList>() {}.type
+                val transfer = gson.fromJson<EventUpdateList>(gson.toJson(event.data), type)
+                handler.post {
+                    if (transfer.date == date) {
+                        if (bundle.getInt(CHECK) == STATUS_CURRENT) {
+                            updateList()
+                        }
+                    }
+                }
+            }
+            "on_transfer_measurement" -> {
+                val type = object : TypeToken<EventTransfer>() {}.type
+                val transfer = gson.fromJson<EventTransfer>(gson.toJson(event.data), type)
+                handler.post {
+                    if (transfer.oldDate == date || transfer.newDate == date) {
+                        updateList()
+                    }
+                }
+            }
+            "on_comment_measurement" -> {
+                val type = object : TypeToken<NewCommentMeasurement>() {}.type
+                val newComment = gson.fromJson<NewCommentMeasurement>(gson.toJson(event.data), type)
+                for (meas in fragmentListMeasurements) {
+                    if (meas.id == newComment.id) {
+                        handler.post {
+                            (meas.comments as ArrayList).add(newComment.comment)
+                            val mPrefs = PreferenceManager.getDefaultSharedPreferences(ru.nextf.measurements.MyApp.instance)
+                            val prefsEditor = mPrefs.edit()
+                            when (bundle.getInt(CHECK)) {
+                                STATUS_CURRENT -> {
+                                    when (date) {
+                                        getTodayDate() -> {
+                                            val json = gson.toJson(fragmentListMeasurements)
+                                            prefsEditor.putString(APP_LIST_TODAY_CURRENT, json)
+                                            prefsEditor.apply()
+                                        }
+                                        getTomorrowDate() -> {
+                                            val json = gson.toJson(fragmentListMeasurements)
+                                            prefsEditor.putString(APP_LIST_TOMORROW_CURRENT, json)
+                                            prefsEditor.apply()
+                                        }
+                                    }
+                                }
+                                STATUS_REJECT -> {
+                                    when (date) {
+                                        getTodayDate() -> {
+                                            val json = gson.toJson(fragmentListMeasurements)
+                                            prefsEditor.putString(APP_LIST_TODAY_REJECTED, json)
+                                            prefsEditor.apply()
+                                        }
+                                        getTomorrowDate() -> {
+                                            val json = gson.toJson(fragmentListMeasurements)
+                                            prefsEditor.putString(APP_LIST_TOMORROW_REJECTED, json)
+                                            prefsEditor.apply()
+                                        }
+                                    }
+                                }
+                                STATUS_CLOSE -> {
+                                    when (date) {
+                                        getTodayDate() -> {
+                                            val json = gson.toJson(fragmentListMeasurements)
+                                            prefsEditor.putString(APP_LIST_TODAY_CLOSED, json)
+                                            prefsEditor.apply()
+                                        }
+                                        getTomorrowDate() -> {
+                                            val json = gson.toJson(fragmentListMeasurements)
+                                            prefsEditor.putString(APP_LIST_TOMORROW_CLOSED, json)
+                                            prefsEditor.apply()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

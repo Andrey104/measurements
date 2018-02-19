@@ -34,7 +34,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             bottomNavigation.visibility = View.INVISIBLE
             val fragment = LoadFragment()
             supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
-            title = String.format("Замер %05d", intent.getIntExtra(ID_KEY, 0))
+            title = String.format("Замер %05d", intent.getIntExtra(DEAL_ID, 0))
             NetworkController.getOneMeasurement(intent.getIntExtra(ID_KEY, 0).toString())
         }
         onItemClick()

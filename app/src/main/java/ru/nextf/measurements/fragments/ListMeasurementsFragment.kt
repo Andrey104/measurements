@@ -47,6 +47,7 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
         val intent = Intent(context, OneMeasurementActivity::class.java)
         var id = measurements[pos].id
         intent.putExtra(ID_KEY, id)
+        intent.putExtra(DEAL_ID, measurements[pos].deal)
         intent.putExtra(FROM_DEAL, true)
         intent.putExtra(MEASUREMENT_EXPANDED, true)
         startActivityForResult(intent, 10)

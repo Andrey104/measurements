@@ -155,6 +155,7 @@ class DealsFragment : Fragment(),
         isLastPage = false
         adapter = DealAdapter(emptyList, this)
         recyclerList.adapter = adapter
+        progressBarMainDeal.visibility = View.VISIBLE
         NetworkControllerDeals.updateListInFragment()
     }
 

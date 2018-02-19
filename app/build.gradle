@@ -9,7 +9,7 @@ android {
         config {
             keyAlias 'natcomKey'
             keyPassword '77181258'
-            storeFile file('C:/Users/addd/Desktop/natcom_key_store/natcom_key.jks')
+            storeFile file('/home/left0ver/AndroidStudioProjects/keys')
             storePassword '77181258'
         }
     }
