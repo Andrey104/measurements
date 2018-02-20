@@ -50,7 +50,6 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
                 })
             }
         })
-        myWebSocket.registerSocketCallback(this)
         mView.imageButtonSend.setOnClickListener { sendComment() }
         mView.refresh.setOnRefreshListener {
             mView.refresh.isRefreshing = true
@@ -68,6 +67,11 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
                     resources.getColor(R.color.colorPrimaryDark))
         }
         return mView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        myWebSocket.registerSocketCallback(this)
     }
 
     override fun message(text: String) {

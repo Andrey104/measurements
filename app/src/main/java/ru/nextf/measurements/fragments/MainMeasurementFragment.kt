@@ -1,6 +1,5 @@
 package ru.nextf.measurements.fragments
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,14 +11,9 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import ru.nextf.measurements.activity.CompleteActivity
-import ru.nextf.measurements.activity.OneDealActivity
-import ru.nextf.measurements.activity.RejectActivity
 import ru.nextf.measurements.*
-import ru.nextf.measurements.activity.TransferActivity
 import ru.nextf.measurements.adapters.ClientAdapter
 import ru.nextf.measurements.modelAPI.Measurement
-import ru.nextf.measurements.network.NetworkController
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.main_measurement_fragment.view.*
 
@@ -37,11 +31,11 @@ class MainMeasurementFragment : Fragment() {
     private lateinit var mView: View
     private var isFabOpen = false
     private var ONLY_DEAL = false
+    private var mainMF: MainMF? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         mView = inflater?.inflate(ru.nextf.measurements.R.layout.main_measurement_fragment, container, false)
                 ?: View(context)
-
         fabOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open)
         fabOpen08 = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open_08)
         fabClose = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_close)
@@ -59,22 +53,22 @@ class MainMeasurementFragment : Fragment() {
 
         mView.fabComplete.setOnClickListener {
             hideFub()
-            completeMeasurement()
+            mainMF?.complete()
         }
 
         mView.fabReject.setOnClickListener {
             hideFub()
-            rejectMeasurement()
+            mainMF?.reject()
         }
 
         mView.fabTransfer.setOnClickListener {
             hideFub()
-            transferMeasurement()
+            mainMF?.transfer()
         }
 
         mView.fabGoDeal.setOnClickListener {
             closeOnlyDealFAB()
-            goDeal()
+            mainMF?.goDeal()
         }
 
         mView.mainConstraintLayout.setOnTouchListener { _, _ ->
@@ -87,6 +81,7 @@ class MainMeasurementFragment : Fragment() {
             }
             false
         }
+
         mView.recycleClient.setOnTouchListener { _, _ ->
             if (isFabOpen) {
                 if (ONLY_DEAL) {
@@ -101,33 +96,6 @@ class MainMeasurementFragment : Fragment() {
         return mView
     }
 
-    private fun goDeal() {
-        val intent = Intent(context, OneDealActivity::class.java)
-        intent.putExtra(DEAL_ID, measurement.deal.toString())
-        startActivityForResult(intent, 0)
-    }
-
-    private fun completeMeasurement() {
-        val intent = Intent(context, CompleteActivity::class.java)
-        intent.putExtra(ID_KEY, measurement.id.toString())
-        intent.putExtra(DEAL_KEY, measurement.deal)
-        startActivityForResult(intent, 0)
-        true
-    }
-
-    private fun rejectMeasurement() {
-        val intent = Intent(context, RejectActivity::class.java)
-        intent.putExtra(ID_KEY, measurement.id.toString())
-        startActivityForResult(intent, 0)
-        true
-    }
-
-    private fun transferMeasurement() {
-        val intent = Intent(context, TransferActivity::class.java)
-        intent.putExtra(ID_KEY, measurement.id.toString())
-        startActivityForResult(intent, 0)
-        true
-    }
 
     private fun displayMeasurement(measurement: Measurement) {
         if (measurement.color != 2) {
@@ -228,7 +196,6 @@ class MainMeasurementFragment : Fragment() {
                 mView.fabComplete.hide()
             }
         }
-
     }
 
     private fun closeOnlyDealFAB() {
@@ -292,11 +259,19 @@ class MainMeasurementFragment : Fragment() {
         return measurement
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == 200) {
-            activity.supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, LoadFragment()).commit()
-            NetworkController.getOneMeasurement(measurement.id.toString())
-            activity.setResult(200)
-        }
+    interface MainMF {
+        fun complete()
+        fun reject()
+        fun transfer()
+        fun goDeal()
+    }
+
+    fun registerMainMF(mainMF: MainMF) {
+        this.mainMF = mainMF
+    }
+
+    override fun onDestroy() {
+        mainMF = null
+        super.onDestroy()
     }
 }

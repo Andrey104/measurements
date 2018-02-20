@@ -23,14 +23,13 @@ import ru.nextf.measurements.network.NetworkController
  * Created by addd on 02.02.2018.
  */
 class CommentsMeasurementFragment : Fragment(),
-        NetworkController.CallbackUpdateOneMeasurementFragment, MyWebSocket.SocketCallback {
+        NetworkController.CallbackUpdateOneMeasurementFragment {
     private lateinit var mView: View
     private lateinit var measurement: Measurement
     private lateinit var bundle: Bundle
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: CommentAdapter
     private lateinit var commentRequest: CommentRequest
-    private lateinit var commentCallback: CommentCallback
     private var isSending = false
     private val handler = Handler()
 
@@ -40,7 +39,6 @@ class CommentsMeasurementFragment : Fragment(),
         bundle = this.arguments
         getSavedMeasurement()
         displayComments()
-        myWebSocket.registerSocketCallback(this)
         if (measurement.comments?.isNotEmpty() == true) {
             recycler.scrollToPosition(recycler.adapter.itemCount - 1)
         }
@@ -112,35 +110,22 @@ class CommentsMeasurementFragment : Fragment(),
         return measurement
     }
 
+    fun refreshComments(measurement: Measurement) {
+        handler.post {
+            adapter = CommentAdapter(measurement.comments as ArrayList<Comment>)
+            recycler = mView.recyclerViewComments
+            mView.recyclerViewComments.adapter = adapter
+            adapter.notifyDataSetChanged()
+
+            val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            mView.recyclerViewComments.layoutManager = layoutManager
+            recycler.scrollToPosition(adapter.itemCount - 1)
+        }
+    }
 
     override fun onDestroyView() {
-        commentCallback.getMeasurementComment(measurement)
         NetworkControllerComment.registerProblemPagination(null)
         super.onDestroyView()
     }
 
-    override fun message(text: String) {
-        val type = object : TypeToken<Event>() {}.type
-        val event = gson.fromJson<Event>(text, type)
-        if (event.event == "on_comment_measurement") {
-            val type = object : TypeToken<NewCommentMeasurement>() {}.type
-            val newComment = gson.fromJson<NewCommentMeasurement>(gson.toJson(event.data), type)
-            if (measurement.id == newComment.id) {
-
-                handler.post {
-                    adapter.add(newComment.comment)
-                    recycler.smoothScrollToPosition(adapter.itemCount - 1)
-                    activity.setResult(200)
-                }
-            }
-        }
-    }
-
-    interface CommentCallback {
-        fun getMeasurementComment(measurement: Measurement)
-    }
-
-    fun registerCommentCallback(commentCallback1: CommentCallback) {
-        this.commentCallback = commentCallback1
-    }
 }

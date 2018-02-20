@@ -1,20 +1,24 @@
 package ru.nextf.measurements.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import ru.nextf.measurements.fragments.*
-import ru.nextf.measurements.modelAPI.Measurement
 import ru.nextf.measurements.network.NetworkController
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_measurement.*
 import ru.nextf.measurements.*
+import ru.nextf.measurements.modelAPI.*
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
-        MeasurementPhotoFragment.MyCallbackMeasurement, CommentsMeasurementFragment.CommentCallback {
+        MainMeasurementFragment.MainMF, MyWebSocket.SocketCallback {
     lateinit var measurement: Measurement
+    lateinit var fragmentComment: CommentsMeasurementFragment
+    lateinit var fragmentPicture: MeasurementPhotoFragment
     private var isMainPage = false
+    private var isResume = false
     private var isCommentPage = false
     private var isPicturePage = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +31,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             finish()
         }
         if (!intent.hasExtra(MEASUREMENT_EXPANDED)) {
-            measurement = getSavedMeasurement()
+            getSavedMeasurement()
             title = String.format("Замер %05d", measurement.deal)
             mainPage()
         } else {
@@ -38,7 +42,6 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             NetworkController.getOneMeasurement(intent.getIntExtra(ID_KEY, 0).toString())
         }
         onItemClick()
-
     }
 
     private fun mainPage() {
@@ -46,6 +49,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             val bundle = Bundle()
             bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
             val fragment = MainMeasurementFragment()
+            fragment.registerMainMF(this)
             fragment.arguments = bundle
             supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
         }
@@ -54,24 +58,22 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     private fun commentPage() {
         if (!isCommentPage) {
             supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, EmptyFragment()).commit()
-            val fragment = CommentsMeasurementFragment()
-            fragment.registerCommentCallback(this)
+            fragmentComment = CommentsMeasurementFragment()
             val bundle = Bundle()
             bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
-            fragment.arguments = bundle
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
+            fragmentComment.arguments = bundle
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragmentComment).commit()
         }
     }
 
     private fun picturePage() {
         if (!isPicturePage) {
-            val fragment = MeasurementPhotoFragment()
-            fragment.registerMyCallback(this)
-            val json = gson.toJson(measurement) // будет ошибка если сразу нажать, не загрузив замер
+            fragmentPicture = MeasurementPhotoFragment()
+            val json = gson.toJson(measurement)
             val bundle = Bundle()
             bundle.putString(MEASUREMENT_KEY, json)
-            fragment.arguments = bundle
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
+            fragmentPicture.arguments = bundle
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragmentPicture).commit()
         }
     }
 
@@ -101,23 +103,24 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        myWebSocket.registerSocketCallback(this)
+    }
 
     override fun resultUpdate(measurement: Measurement?) {
         if (measurement != null) {
             bottomNavigation.visibility = View.VISIBLE
             this.measurement = measurement
-            val bundle = Bundle()
-            bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
-            val fragment = MainMeasurementFragment()
-            fragment.arguments = bundle
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
+            mainPage()
         } else {
             supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, EmptyFragment()).commit()
             toast(ru.nextf.measurements.R.string.error_add_photo)
         }
     }
 
-    private fun getSavedMeasurement(): Measurement {
+
+    private fun getSavedMeasurement() {
         val json = intent.getStringExtra(MEASUREMENT_KEY)
         measurement = if (json.isNullOrEmpty()) {
             Measurement()
@@ -126,19 +129,73 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             }.type
             gson.fromJson(json, type)
         }
-        return measurement
     }
 
-    override fun getMeasurement(measurement: Measurement) {
-        this.measurement = measurement
-    }
-
-    override fun getMeasurementComment(measurement: Measurement) {
-        this.measurement = measurement
-    }
 
     override fun onDestroy() {
         NetworkController.registerUpdateOneMeasurementCallback(null)
         super.onDestroy()
+    }
+
+    override fun complete() {
+        val intent = Intent(applicationContext, CompleteActivity::class.java)
+        intent.putExtra(ID_KEY, measurement.id.toString())
+        intent.putExtra(DEAL_KEY, measurement.deal)
+        startActivityForResult(intent, 0)
+    }
+
+    override fun reject() {
+        val intent = Intent(applicationContext, RejectActivity::class.java)
+        intent.putExtra(ID_KEY, measurement.id.toString())
+        startActivityForResult(intent, 0)
+    }
+
+    override fun transfer() {
+        val intent = Intent(applicationContext, TransferActivity::class.java)
+        intent.putExtra(ID_KEY, measurement.id.toString())
+        startActivityForResult(intent, 0)
+    }
+
+    override fun goDeal() {
+        val intent = Intent(applicationContext, OneDealActivity::class.java)
+        intent.putExtra(DEAL_ID, measurement.deal.toString())
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode == 200) {
+            val fragment = LoadFragment()
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
+            NetworkController.getOneMeasurement(measurement.id.toString())
+            setResult(200)
+        }
+    }
+
+    override fun message(text: String) {
+        val type = object : TypeToken<Event>() {}.type
+        val event = gson.fromJson<Event>(text, type)
+        when (event.event) {
+            "on_create_measurement",
+            "on_complete_measurement", "on_reject_measurement", "on_take",
+            "on_transfer_measurement" -> {
+                val type = object : TypeToken<EventUpdateList>() {}.type
+                val event = gson.fromJson<EventUpdateList>(gson.toJson(event.data), type)
+                NetworkController.getOneMeasurement(measurement.id.toString())
+                setResult(200)
+            }
+
+            "on_comment_measurement" -> {
+                setResult(200)
+                val type = object : TypeToken<NewCommentMeasurement>() {}.type
+                val newComment = gson.fromJson<NewCommentMeasurement>(gson.toJson(event.data), type)
+                if (measurement.id == newComment.id) {
+                    (measurement.comments as ArrayList).add(newComment.comment)
+                    if (bottomNavigation.selectedItemId == R.id.commentsMeasurement) {
+                        fragmentComment.refreshComments(measurement)
+                    }
+                }
+            }
+        }
     }
 }

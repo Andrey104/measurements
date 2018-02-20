@@ -14,6 +14,7 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import com.google.firebase.messaging.FirebaseMessaging
 import ru.nextf.measurements.fragments.MeasurementsFragment
 import ru.nextf.measurements.fragments.DealsFragment
 import ru.nextf.measurements.modelAPI.User
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(),
     private lateinit var item: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        FirebaseMessaging.getInstance().subscribeToTopic("today_measurements")
         NetworkController.registerUserInfoCallBack(this)
         title = getString(ru.nextf.measurements.R.string.measurements)
         myWebSocket = MyWebSocket()
@@ -210,7 +212,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         NetworkController.registerUserInfoCallBack(null)
-        myWebSocket.close()
         super.onDestroy()
     }
 }
