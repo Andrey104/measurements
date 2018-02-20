@@ -55,6 +55,11 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         buttonOk.setOnClickListener { doTransferRequest() }
     }
 
+    override fun onResume() {
+        super.onResume()
+        NetworkController.registerTransferMeasurementCallback(this)
+    }
+
     private fun doTransferRequest(): Boolean {
         val check = radioGroup.checkedRadioButtonId
         if (check == -1 && date == null) {
@@ -70,7 +75,6 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
         buttonOk.isEnabled = false
         val comment = editComment.text.toString()
         val transfer = Transfer(date, cause, if (comment.isEmpty()) null else comment)
-        showDialog()
 
         NetworkController.doTransferMeasurement(transfer, id)
 
@@ -108,23 +112,13 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
     }
 
 
-    private fun showDialog() {
-        val builder = AlertDialog.Builder(this)
-        val viewAlert = layoutInflater.inflate(ru.nextf.measurements.R.layout.update_dialog, null)
-        builder.setView(viewAlert)
-                .setCancelable(false)
-        alert = builder.create()
-        alert.show()
-    }
 
     override fun resultTransfer(result: Boolean) {
         if (result) {
-            alert.dismiss()
             setResult(200)
             toast("Замер перенесен на $userDate")
             finish()
         } else {
-            alert.dismiss()
             toast(ru.nextf.measurements.R.string.transfer_error)
             buttonOk.isEnabled = true
         }

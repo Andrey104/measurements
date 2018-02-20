@@ -2,6 +2,8 @@ package ru.nextf.measurements.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import ru.nextf.measurements.fragments.*
@@ -10,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_measurement.*
 import ru.nextf.measurements.*
 import ru.nextf.measurements.modelAPI.*
+import android.os.SystemClock
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
@@ -21,6 +24,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     private var isResume = false
     private var isCommentPage = false
     private var isPicturePage = false
+    private var handler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUpdateOneMeasurementCallback(this)
         super.onCreate(savedInstanceState)
@@ -37,7 +41,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         } else {
             bottomNavigation.visibility = View.INVISIBLE
             val fragment = LoadFragment()
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commitAllowingStateLoss()
             title = String.format("Замер %05d", intent.getIntExtra(DEAL_ID, 0))
             NetworkController.getOneMeasurement(intent.getIntExtra(ID_KEY, 0).toString())
         }
@@ -45,24 +49,22 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     private fun mainPage() {
-        if (!isMainPage) {
-            val bundle = Bundle()
-            bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
-            val fragment = MainMeasurementFragment()
-            fragment.registerMainMF(this)
-            fragment.arguments = bundle
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
-        }
+        val bundle = Bundle()
+        bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
+        val fragment = MainMeasurementFragment()
+        fragment.registerMainMF(this)
+        fragment.arguments = bundle
+        supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
     }
 
     private fun commentPage() {
         if (!isCommentPage) {
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, EmptyFragment()).commit()
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, EmptyFragment()).commitAllowingStateLoss()
             fragmentComment = CommentsMeasurementFragment()
             val bundle = Bundle()
             bundle.putString(MEASUREMENT_KEY, gson.toJson(measurement))
             fragmentComment.arguments = bundle
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragmentComment).commit()
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragmentComment).commitAllowingStateLoss()
         }
     }
 
@@ -73,7 +75,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             val bundle = Bundle()
             bundle.putString(MEASUREMENT_KEY, json)
             fragmentPicture.arguments = bundle
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragmentPicture).commit()
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragmentPicture).commitAllowingStateLoss()
         }
     }
 
@@ -110,11 +112,12 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     override fun resultUpdate(measurement: Measurement?) {
         if (measurement != null) {
+            onPostResume()
             bottomNavigation.visibility = View.VISIBLE
             this.measurement = measurement
             mainPage()
         } else {
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, EmptyFragment()).commit()
+            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, EmptyFragment()).commitAllowingStateLoss()
             toast(ru.nextf.measurements.R.string.error_add_photo)
         }
     }
@@ -165,9 +168,6 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == 200) {
-            val fragment = LoadFragment()
-            supportFragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.measurementContainerLayout, fragment).commit()
-            NetworkController.getOneMeasurement(measurement.id.toString())
             setResult(200)
         }
     }
@@ -179,14 +179,11 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             "on_create_measurement",
             "on_complete_measurement", "on_reject_measurement", "on_take",
             "on_transfer_measurement" -> {
-                val type = object : TypeToken<EventUpdateList>() {}.type
-                val event = gson.fromJson<EventUpdateList>(gson.toJson(event.data), type)
                 NetworkController.getOneMeasurement(measurement.id.toString())
                 setResult(200)
             }
 
             "on_comment_measurement" -> {
-                setResult(200)
                 val type = object : TypeToken<NewCommentMeasurement>() {}.type
                 val newComment = gson.fromJson<NewCommentMeasurement>(gson.toJson(event.data), type)
                 if (measurement.id == newComment.id) {
@@ -195,6 +192,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                         fragmentComment.refreshComments(measurement)
                     }
                 }
+                setResult(200)
             }
         }
     }
