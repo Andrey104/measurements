@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_add_recalculation.*
 import ru.nextf.measurements.DEAL_ID
 import ru.nextf.measurements.modelAPI.RecalculationRequest
+import ru.nextf.measurements.myWebSocket
 import ru.nextf.measurements.network.NetworkControllerDeals
 import ru.nextf.measurements.toast
 

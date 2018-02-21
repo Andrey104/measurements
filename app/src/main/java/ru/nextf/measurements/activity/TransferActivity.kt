@@ -73,6 +73,7 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
             return false
         }
         buttonOk.isEnabled = false
+        progressBar6.visibility = View.VISIBLE
         val comment = editComment.text.toString()
         val transfer = Transfer(date, cause, if (comment.isEmpty()) null else comment)
 
@@ -114,6 +115,7 @@ class TransferActivity : AppCompatActivity(), NetworkController.TransferMeasurem
 
 
     override fun resultTransfer(result: Boolean) {
+        progressBar6.visibility = View.GONE
         if (result) {
             setResult(200)
             toast("Замер перенесен на $userDate")

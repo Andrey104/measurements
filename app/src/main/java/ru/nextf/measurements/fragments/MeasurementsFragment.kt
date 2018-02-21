@@ -3,12 +3,14 @@ package ru.nextf.measurements.fragments
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.app.Notification
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
+import android.support.v4.app.NotificationCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -28,6 +30,10 @@ import kotlinx.android.synthetic.main.measurements_fragment.view.*
 import ru.nextf.measurements.modelAPI.*
 import java.util.Calendar
 import kotlin.collections.ArrayList
+import ru.nextf.measurements.R.mipmap.ic_launcher
+import android.app.PendingIntent
+import android.support.v4.app.NotificationManagerCompat
+import ru.nextf.measurements.activity.MainActivity
 
 
 /**
@@ -600,7 +606,6 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         val type = object : TypeToken<Event>() {}.type
         val event = gson.fromJson<Event>(text, type)
         when (event.event) {
-            "on_create_measurement",
             "on_complete_measurement", "on_reject_measurement", "on_take" -> {
                 val type = object : TypeToken<EventUpdateList>() {}.type
                 val transfer = gson.fromJson<EventUpdateList>(gson.toJson(event.data), type)
@@ -612,12 +617,49 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
                     }
                 }
             }
+            "on_create_measurement" -> {
+                val type = object : TypeToken<EventCreate>() {}.type
+                val create = gson.fromJson<EventCreate>(gson.toJson(event.data), type)
+                if (create.date == date) {
+                    handler.post {
+                        updateList()
+                    }
+                }
+                if (create.date == getTodayDate()) {
+                    val notificationIntent = Intent(context, MainActivity::class.java)
+                    val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                    val builder = NotificationCompat.Builder(context, "wtf")
+                            .setContentTitle("Новый замер")
+                            .setContentText("На сегодня новый замер")
+                            .setWhen(System.currentTimeMillis())
+                            .setContentIntent(pendingIntent)
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.mipmap.icon)
+                    val notificationManager = NotificationManagerCompat.from(context)
+                    notificationManager.notify(1001, builder.build())
+                }
+            }
             "on_transfer_measurement" -> {
                 val type = object : TypeToken<EventTransfer>() {}.type
                 val transfer = gson.fromJson<EventTransfer>(gson.toJson(event.data), type)
                 handler.post {
                     if (transfer.oldDate == date || transfer.newDate == date) {
                         updateList()
+                    }
+                    if (transfer.newDate == getTodayDate()) {
+                        val notificationIntent = Intent(context, MainActivity::class.java)
+                        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                        val builder = NotificationCompat.Builder(context, "wtf")
+                                .setContentTitle("Новый замер")
+                                .setContentText("На сегодня новый замер")
+                                .setWhen(System.currentTimeMillis())
+                                .setContentIntent(pendingIntent)
+                                .setDefaults(Notification.DEFAULT_SOUND)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.mipmap.icon)
+                        val notificationManager = NotificationManagerCompat.from(context)
+                        notificationManager.notify(1001, builder.build())
                     }
                 }
             }

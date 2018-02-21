@@ -53,6 +53,10 @@ class ClientAdapter(notesList: List<Clients>, inflater: LayoutInflater, activity
             ru.nextf.measurements.MyApp.instance.startActivity(intent)
         }
 
+        if (arrayList.size == 1) {
+            holder.image2.visibility = View.GONE
+        }
+
         holder.itemView.setOnClickListener({ v ->
             val builder = AlertDialog.Builder(ru.nextf.measurements.MyApp.instance)
 
@@ -93,11 +97,13 @@ class ClientAdapter(notesList: List<Clients>, inflater: LayoutInflater, activity
         var name: TextView
         var number: TextView
         var image: ImageView
+        var image2: ImageView
 
         init {
             name = itemView.findViewById(ru.nextf.measurements.R.id.name)
             number = itemView.findViewById(ru.nextf.measurements.R.id.number)
             image = itemView.findViewById(ru.nextf.measurements.R.id.imageViewClient)
+            image2 = itemView.findViewById(ru.nextf.measurements.R.id.imageView30)
         }
 
 

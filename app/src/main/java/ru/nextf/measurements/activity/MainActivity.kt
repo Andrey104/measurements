@@ -169,6 +169,7 @@ class MainActivity : AppCompatActivity(),
                     editor.clear()
                     editor.apply()
                     startActivity(Intent(applicationContext, LoginActivity::class.java))
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic("today_measurements")
                     finish()
                 }
                 .setNegativeButton(ru.nextf.measurements.R.string.no) { dialog, _ -> dialog.cancel() }

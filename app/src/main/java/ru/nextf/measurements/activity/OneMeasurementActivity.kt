@@ -1,5 +1,7 @@
 package ru.nextf.measurements.activity
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +15,8 @@ import kotlinx.android.synthetic.main.activity_one_measurement.*
 import ru.nextf.measurements.*
 import ru.nextf.measurements.modelAPI.*
 import android.os.SystemClock
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
@@ -176,13 +180,60 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         val type = object : TypeToken<Event>() {}.type
         val event = gson.fromJson<Event>(text, type)
         when (event.event) {
-            "on_create_measurement",
-            "on_complete_measurement", "on_reject_measurement", "on_take",
             "on_transfer_measurement" -> {
-                NetworkController.getOneMeasurement(measurement.id.toString())
+                val type = object : TypeToken<EventTransfer>() {}.type
+                val transfer = gson.fromJson<EventTransfer>(gson.toJson(event.data), type)
+                if (transfer.newDate == getTodayDate()) {
+                    val notificationIntent = Intent(applicationContext, MainActivity::class.java)
+                    val pendingIntent = PendingIntent.getActivity(applicationContext, 0,
+                            notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                    val builder = NotificationCompat.Builder(applicationContext, "wtf")
+                            .setContentTitle("Новый замер")
+                            .setContentText("На сегодня новый замер")
+                            .setWhen(System.currentTimeMillis())
+                            .setContentIntent(pendingIntent)
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.mipmap.icon)
+                    val notificationManager = NotificationManagerCompat.from(applicationContext)
+                    notificationManager.notify(1001, builder.build())
+                }
+                if (measurement.id == transfer.id) {
+                    NetworkController.getOneMeasurement(measurement.id.toString())
+                }
+                if (transfer.oldDate == measurement.date || transfer.newDate == measurement.date) {
+                    setResult(200)
+                }
+            }
+            "on_create_measurement" -> {
+                val type = object : TypeToken<EventCreate>() {}.type
+                val create = gson.fromJson<EventCreate>(gson.toJson(event.data), type)
+                if (create.date == measurement.date) {
+                    setResult(200)
+                }
+                if (create.date == getTodayDate()) {
+                    val notificationIntent = Intent(applicationContext, MainActivity::class.java)
+                    val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                    val builder = NotificationCompat.Builder(applicationContext, "wtf")
+                            .setContentTitle("Новый замер")
+                            .setContentText("На сегодня новый замер")
+                            .setWhen(System.currentTimeMillis())
+                            .setContentIntent(pendingIntent)
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.mipmap.icon)
+                    val notificationManager = NotificationManagerCompat.from(applicationContext)
+                    notificationManager.notify(1001, builder.build())
+                }
+            }
+            "on_complete_measurement", "on_reject_measurement", "on_take" -> {
+                val type = object : TypeToken<EventUpdateList>() {}.type
+                val transfer = gson.fromJson<EventUpdateList>(gson.toJson(event.data), type)
+                if (measurement.id == transfer.id) {
+                    NetworkController.getOneMeasurement(measurement.id.toString())
+                }
                 setResult(200)
             }
-
             "on_comment_measurement" -> {
                 val type = object : TypeToken<NewCommentMeasurement>() {}.type
                 val newComment = gson.fromJson<NewCommentMeasurement>(gson.toJson(event.data), type)

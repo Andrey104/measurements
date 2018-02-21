@@ -37,7 +37,7 @@ import java.util.*
  * Created by addd on 01.02.2018.
  */
 class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCallback,
-        NetworkControllerPicture.UpdatePicturesCallback, MyWebSocket.SocketCallback {
+        NetworkControllerPicture.UpdatePicturesCallback {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
@@ -242,22 +242,6 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
         }
     }
 
-    override fun message(text: String) {
-        val type = object : TypeToken<Event>() {}.type
-        val event = gson.fromJson<Event>(text, type)
-        when (event.event) {
-            "on_create_measurement",
-            "on_complete_measurement", "on_reject_measurement", "on_take",
-            "on_transfer_measurement", "on_comment_measurement" -> {
-                val type = object : TypeToken<EventUpdateList>() {}.type
-                val event = gson.fromJson<EventUpdateList>(gson.toJson(event.data), type)
-                if (measurement.id == event.id) {
-                    NetworkController.getOneMeasurement(measurement.id.toString())
-                    activity.setResult(200)
-                }
-            }
-        }
-    }
 
     override fun resultUpdate(measurement: Measurement?) {
         if (measurement == null) {
