@@ -69,7 +69,6 @@ fun AppCompatActivity.toast(@StringRes r: Int) {
 }
 
 val backendDateFormat = SimpleDateFormat("yyyy-MM-dd")
-private val normalDateFormat = SimpleDateFormat("dd.MM.yyyy")
 fun formatDate(date: String): String {
     return try {
         normalDateFormat.format(backendDateFormat.parse(date))
@@ -79,13 +78,47 @@ fun formatDate(date: String): String {
     }
 }
 
-val backendDateFormatTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ")
-private val normalDateFormatTime = SimpleDateFormat("HH:mm dd.MM.yyyy")
-fun formatDateTime(date: String): String {
+
+val ONE_MINUTE_IN_MILLIS = 60000
+val backendDateFormatTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.US)
+val abackendDateFormatTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+private val normalFormatTime = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.US)
+fun formatTime(date: String): String {
     return try {
-        normalDateFormatTime.format(backendDateFormatTime.parse(date))
+        val hoursZ = localTime.substring(0, 3).toInt()
+        val minutesZ = (localTime.substring(0, 1) + localTime.substring(3, localTime.length)).toInt() + hoursZ * 60
+        val date1 = backendDateFormatTime.parse(date)
+        val t = date1.time
+        val afterAdding = Date(t + (minutesZ * ONE_MINUTE_IN_MILLIS))
+        normalFormatTime.format(afterAdding)
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        try {
+            val hoursZ = localTime.substring(0, 3).toInt()
+            val minutesZ = (localTime.substring(0, 1) + localTime.substring(3, localTime.length)).toInt() + hoursZ * 60
+            val date1 = abackendDateFormatTime.parse(date)
+            val t = date1.time
+            val afterAdding = Date(t + (minutesZ * ONE_MINUTE_IN_MILLIS))
+            normalFormatTime.format(afterAdding)
+        } catch (e: ParseException) {
+            "8888.88.88"
+        }
+    }
+}
+
+val normalDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.US)
+fun formatDateTime(date: String): String {
+    val date = try {
+        formatTime(date)
     } catch (e: ParseException) {
         e.printStackTrace()
         "8888.88.88"
     }
+    println(date + "-------date")
+    return date
 }
+
+val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault())
+val currentLocalTime = calendar.time
+val dateZ = SimpleDateFormat("Z")
+val localTime = dateZ.format(currentLocalTime)

@@ -105,11 +105,13 @@ class MainMeasurementFragment : Fragment() {
         val mp = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.mp, null)
         val n = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.n, null)
         val b = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.b, null)
+        val unknown = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.unknown, null)
 
-        when (measurement.company?.id) {
-            1 -> mView.symbol.background = mp
-            2 -> mView.symbol.background = b
-            3 -> mView.symbol.background = n
+        when (measurement.company?.symbol) {
+            "МП", "MP" -> mView.symbol.background = mp
+            "Б", "B" -> mView.symbol.background = b
+            "Н", "H" -> mView.symbol.background = n
+            else -> mView.symbol.background = unknown
         }
 
         if (measurement.sum == null) {

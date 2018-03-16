@@ -190,6 +190,8 @@ object NetworkController {
                 response?.let {
                     if (response.code() == 200) {
                         transferMeasurement?.resultTransfer(true)
+                    } else {
+                        transferMeasurement?.resultTransfer(false)
                     }
                 }
 

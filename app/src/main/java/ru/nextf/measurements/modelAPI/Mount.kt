@@ -35,4 +35,7 @@ class Mount {
     @SerializedName("deal")
     @Expose
     val deal: Int? = null
+    @SerializedName("user")
+    @Expose
+    val user: User? = null
 }

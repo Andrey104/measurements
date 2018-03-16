@@ -39,21 +39,25 @@ class MainDealFragment : Fragment() {
         var mp: Drawable
         var n: Drawable
         var b: Drawable
+        var unknown: Drawable
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mp = resources.getDrawable(ru.nextf.measurements.R.drawable.mp, null)
             n = resources.getDrawable(ru.nextf.measurements.R.drawable.n, null)
             b = resources.getDrawable(ru.nextf.measurements.R.drawable.b, null)
+            unknown = resources.getDrawable(ru.nextf.measurements.R.drawable.unknown, null)
         } else {
             mp = resources.getDrawable(ru.nextf.measurements.R.drawable.mp)
             n = resources.getDrawable(ru.nextf.measurements.R.drawable.n)
             b = resources.getDrawable(ru.nextf.measurements.R.drawable.b)
+            unknown = resources.getDrawable(ru.nextf.measurements.R.drawable.unknown)
         }
 
 
-        when (deal.company?.id) {
-            1 -> view.imageView13.background = mp
-            2 -> view.imageView13.background = b
-            3 -> view.imageView13.background = n
+        when (deal.company?.symbol) {
+            "МП", "MP" -> view.imageView13.background = mp
+            "Б", "B" -> view.imageView13.background = b
+            "Н", "H" -> view.imageView13.background = n
+            else -> view.imageView13.background = unknown
         }
         view.address.text = deal.address
 

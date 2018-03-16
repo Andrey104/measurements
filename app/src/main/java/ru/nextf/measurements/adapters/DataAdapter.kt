@@ -45,11 +45,13 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
                 val mp = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.mp, null)
                 val n = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.n, null)
                 val b = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.b, null)
+                val unknown = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.unknown, null)
 
-                when (measurement.company?.id) {
-                    1 -> viewHolder.symbol.background = mp
-                    2 -> viewHolder.symbol.background = b
-                    3 -> viewHolder.symbol.background = n
+                when (measurement.company?.symbol) {
+                    "МП", "MP" -> viewHolder.symbol.background = mp
+                    "Б", "B" -> viewHolder.symbol.background = b
+                    "Н", "H" -> viewHolder.symbol.background = n
+                    else -> viewHolder.symbol.background = unknown
                 }
             }
             LOADING -> {
