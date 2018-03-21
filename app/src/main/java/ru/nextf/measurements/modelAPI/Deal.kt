@@ -32,6 +32,9 @@ class Deal {
     @SerializedName("task_date")
     @Expose
     val taskDate: String? = null
+    @SerializedName("description")
+    @Expose
+    val description: String? = null
     @SerializedName("order")
     @Expose
     val order: Int? = null

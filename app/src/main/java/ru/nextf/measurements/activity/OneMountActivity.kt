@@ -46,8 +46,8 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
             else -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.not_processed)
         }
         textViewCommentStage.movementMethod = ScrollingMovementMethod()
-        if (!mount.comment.isNullOrEmpty()) {
-            textViewCommentStage.text = mount.comment
+        if (!mount.description.isNullOrEmpty()) {
+            textViewCommentStage.text = mount.description
         } else {
             textViewCommentStage.text = getString(ru.nextf.measurements.R.string.comment_empty)
         }

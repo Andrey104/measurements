@@ -17,6 +17,9 @@ class Measurement(
         @SerializedName("date")
         @Expose
         val date: String? = null,
+        @SerializedName("description")
+        @Expose
+        val description: String? = null,
         @SerializedName("status")
         @Expose
         val status: Int? = null,

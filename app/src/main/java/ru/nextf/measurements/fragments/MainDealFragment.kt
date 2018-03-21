@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import ru.nextf.measurements.gson
 import ru.nextf.measurements.modelAPI.Action
 import ru.nextf.measurements.modelAPI.Deal
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.main_deal_fragment.*
 import kotlinx.android.synthetic.main.main_deal_fragment.view.*
 
 /**
@@ -27,7 +29,8 @@ class MainDealFragment : Fragment() {
     private lateinit var actions: List<Action>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater?.inflate(ru.nextf.measurements.R.layout.main_deal_fragment, container, false) ?: View(context)
+        val view = inflater?.inflate(ru.nextf.measurements.R.layout.main_deal_fragment, container, false)
+                ?: View(context)
         bundle = this.arguments
         getSavedDeal()
         displayDeal(view)
@@ -36,6 +39,12 @@ class MainDealFragment : Fragment() {
     }
 
     private fun displayDeal(view: View) {
+        if (deal.description == null || deal.description == "") {
+            view.description.visibility = View.GONE
+        } else {
+            view.description_text.text = deal.description
+            view.description_text.movementMethod = ScrollingMovementMethod()
+        }
         var mp: Drawable
         var n: Drawable
         var b: Drawable

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,6 +101,13 @@ class MainMeasurementFragment : Fragment() {
     private fun displayMeasurement(measurement: Measurement) {
         if (measurement.color != 2) {
             mView.fabMain.hide()
+        }
+
+        if (measurement.description == null || measurement.description == "") {
+            mView.description.visibility = View.GONE
+        } else {
+            mView.description_text.text = measurement.description
+            mView.description_text.movementMethod = ScrollingMovementMethod()
         }
 
         val mp = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.mp, null)

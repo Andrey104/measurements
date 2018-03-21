@@ -33,9 +33,9 @@ class Stage {
     @SerializedName("status")
     @Expose
     val status: Int? = null
-    @SerializedName("comment")
+    @SerializedName("description")
     @Expose
-    val comment: String? = null
+    val description: String? = null
     @SerializedName("mount")
     @Expose
     val mount: Int? = null

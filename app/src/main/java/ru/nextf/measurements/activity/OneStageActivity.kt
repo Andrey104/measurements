@@ -51,8 +51,8 @@ class OneStageActivity : AppCompatActivity() {
     private fun displayStage() {
         textViewDateStage.text = formatDate(stage.date ?: "2000-20-20")
 
-        if (!stage.comment.isNullOrEmpty()) {
-            textViewCommentStage.text = stage.comment
+        if (!stage.description.isNullOrEmpty()) {
+            textViewCommentStage.text = stage.description
         } else {
             textViewCommentStage.text = getString(ru.nextf.measurements.R.string.comment_empty)
         }
