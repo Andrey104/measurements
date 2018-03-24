@@ -1,5 +1,6 @@
 package ru.nextf.measurements.activity
 
+import android.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -9,6 +10,7 @@ import ru.nextf.measurements.modelAPI.Installers
 import ru.nextf.measurements.modelAPI.Stage
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_stage.*
+import kotlinx.android.synthetic.main.dialog_description.view.*
 import ru.nextf.measurements.STAGE_COUNT
 import ru.nextf.measurements.STAGE_KEY
 import ru.nextf.measurements.formatDate
@@ -28,7 +30,6 @@ class OneStageActivity : AppCompatActivity() {
         toolbarAst.setNavigationOnClickListener {
             finish()
         }
-        textViewCommentStage.movementMethod = ScrollingMovementMethod()
         countStage = intent.getStringExtra(STAGE_COUNT)
         getSaveStage()
         supportActionBar?.title = "Этап $countStage"
@@ -53,6 +54,19 @@ class OneStageActivity : AppCompatActivity() {
 
         if (!stage.description.isNullOrEmpty()) {
             textViewCommentStage.text = stage.description
+            textViewCommentStage.setOnClickListener {
+                val builder = AlertDialog.Builder(this)
+                val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_description, null)
+                view.textViewDescription.text = stage.description
+                builder.setView(view)
+                        .setCancelable(true)
+                        .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                        { dialog, _ ->
+                            dialog.cancel()
+                        }
+                val alert = builder.create()
+                alert.show()
+            }
         } else {
             textViewCommentStage.text = getString(ru.nextf.measurements.R.string.comment_empty)
         }

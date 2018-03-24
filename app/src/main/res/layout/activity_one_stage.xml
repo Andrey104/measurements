@@ -60,9 +60,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
-        android:maxLines="4"
+        android:layout_marginTop="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
         android:scrollbars="vertical"
+        android:singleLine="true"
         android:text="TextView"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
@@ -111,7 +114,7 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@color/colorPrimary"
         app:layout_constraintTop_toBottomOf="@+id/textViewCommentStage" />
 
@@ -127,10 +130,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView27"
         app:srcCompat="@drawable/ic_chat_bubble_gray_24dp"
-        tools:ignore="VectorDrawableCompat"
-        android:layout_marginLeft="8dp" />
+        tools:ignore="VectorDrawableCompat" />
 </android.support.constraint.ConstraintLayout>

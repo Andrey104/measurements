@@ -1,5 +1,6 @@
 package ru.nextf.measurements.fragments
 
+import android.app.AlertDialog
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +16,8 @@ import ru.nextf.measurements.gson
 import ru.nextf.measurements.modelAPI.Action
 import ru.nextf.measurements.modelAPI.Deal
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.main_deal_fragment.*
+import kotlinx.android.synthetic.main.dialog_address_comment.view.*
+import kotlinx.android.synthetic.main.dialog_description.view.*
 import kotlinx.android.synthetic.main.main_deal_fragment.view.*
 
 /**
@@ -34,16 +36,52 @@ class MainDealFragment : Fragment() {
         bundle = this.arguments
         getSavedDeal()
         displayDeal(view)
+        setDialogs(view)
 
         return view
     }
 
+    private fun setDialogs(view: View) {
+        view.constraint1.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_address_comment, null)
+            view.textViewAddress.text = deal.address
+            if (deal.addressComment == null || deal.addressComment == "") {
+                view.textView10.text = "Комментарий отсутствует"
+            } else {
+                view.textViewAddressComment.text = deal.addressComment
+            }
+            builder.setView(view)
+                    .setCancelable(true)
+                    .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                    { dialog, _ ->
+                        dialog.cancel()
+                    }
+            val alert = builder.create()
+            alert.show()
+        }
+
+        view.constraint_description.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_description, null)
+            view.textViewDescription.text = deal.description
+            builder.setView(view)
+                    .setCancelable(true)
+                    .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                    { dialog, _ ->
+                        dialog.cancel()
+                    }
+            val alert = builder.create()
+            alert.show()
+        }
+
+    }
+
     private fun displayDeal(view: View) {
         if (deal.description == null || deal.description == "") {
-            view.description.visibility = View.GONE
+            view.constraint_description.visibility = View.GONE
         } else {
             view.description_text.text = deal.description
-            view.description_text.movementMethod = ScrollingMovementMethod()
         }
         var mp: Drawable
         var n: Drawable

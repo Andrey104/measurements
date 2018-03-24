@@ -1,11 +1,11 @@
 package ru.nextf.measurements.fragments
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +16,9 @@ import ru.nextf.measurements.*
 import ru.nextf.measurements.adapters.ClientAdapter
 import ru.nextf.measurements.modelAPI.Measurement
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.dialog_address_comment.view.*
+import kotlinx.android.synthetic.main.dialog_description.view.*
+import kotlinx.android.synthetic.main.dialog_time.view.*
 import kotlinx.android.synthetic.main.main_measurement_fragment.view.*
 
 /**
@@ -94,7 +97,56 @@ class MainMeasurementFragment : Fragment() {
             false
         }
 
+        setDialogs()
+
         return mView
+    }
+
+    private fun setDialogs() {
+        mView.constraint_description.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_description, null)
+            view.textViewDescription.text = measurement.description
+            builder.setView(view)
+                    .setCancelable(true)
+                    .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                    { dialog, _ ->
+                        dialog.cancel()
+                    }
+            val alert = builder.create()
+            alert.show()
+        }
+        mView.constraint_time.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_time, null)
+            view.textViewTime.text = measurement.time
+            builder.setView(view)
+                    .setCancelable(true)
+                    .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                    { dialog, _ ->
+                        dialog.cancel()
+                    }
+            val alert = builder.create()
+            alert.show()
+        }
+        mView.constraint_address.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_address_comment, null)
+            view.textViewAddress.text = measurement.address
+            if (measurement.addressComment == null || measurement.addressComment == "") {
+                view.textView10.text = "Комментарий отсутствует"
+            } else {
+                view.textViewAddressComment.text = measurement.addressComment
+            }
+            builder.setView(view)
+                    .setCancelable(true)
+                    .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                    { dialog, _ ->
+                        dialog.cancel()
+                    }
+            val alert = builder.create()
+            alert.show()
+        }
     }
 
 
@@ -104,10 +156,9 @@ class MainMeasurementFragment : Fragment() {
         }
 
         if (measurement.description == null || measurement.description == "") {
-            mView.description.visibility = View.GONE
+            mView.constraint_description.visibility = View.GONE
         } else {
             mView.description_text.text = measurement.description
-            mView.description_text.movementMethod = ScrollingMovementMethod()
         }
 
         val mp = ResourcesCompat.getDrawable(ru.nextf.measurements.MyApp.instance.resources, ru.nextf.measurements.R.drawable.mp, null)

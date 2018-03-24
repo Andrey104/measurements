@@ -1,5 +1,6 @@
 package ru.nextf.measurements.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import ru.nextf.measurements.adapters.StageAdapter
 import ru.nextf.measurements.modelAPI.Mount
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_mount.*
+import kotlinx.android.synthetic.main.dialog_description.view.*
 import ru.nextf.measurements.*
 
 class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback {
@@ -45,9 +47,21 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
             3 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.closed_not_successful)
             else -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.not_processed)
         }
-        textViewCommentStage.movementMethod = ScrollingMovementMethod()
         if (!mount.description.isNullOrEmpty()) {
             textViewCommentStage.text = mount.description
+            textViewCommentStage.setOnClickListener {
+                val builder = AlertDialog.Builder(this)
+                val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_description, null)
+                view.textViewDescription.text = mount.description
+                builder.setView(view)
+                        .setCancelable(true)
+                        .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                        { dialog, _ ->
+                            dialog.cancel()
+                        }
+                val alert = builder.create()
+                alert.show()
+            }
         } else {
             textViewCommentStage.text = getString(ru.nextf.measurements.R.string.comment_empty)
         }
