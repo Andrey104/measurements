@@ -111,7 +111,7 @@ class MainDealFragment : Fragment() {
         if (deal.sum == null) {
             view.textViewSumBefore.text = getString(ru.nextf.measurements.R.string.unpaid)
         } else {
-            view.textViewSumBefore.text = "Сумма: ${deal.sum}р"
+            view.textViewSumBefore.text = "Сумма: ${String.format("%,.2f", deal.sum)}р"
         }
         actions = deal.actions ?: emptyList
         val adapter = ActionAdapter(actions as ArrayList)

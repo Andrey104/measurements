@@ -177,9 +177,9 @@ class MainMeasurementFragment : Fragment() {
             mView.constraintLayoutHide.visibility = View.GONE
         } else {
             if (measurement.prepayment == null) {
-                mView.textViewSum.text = "${measurement.sum} р"
+                mView.textViewSum.text = "${String.format("%,.2f", measurement.sum)}р"
             } else {
-                mView.textViewSum.text = "${measurement.sum} р (Предоплата: ${measurement.prepayment} р)"
+                mView.textViewSum.text = "${String.format("%,.2f", measurement.sum)}р (Предоплата: ${String.format("%,.2f", measurement.prepayment)}р)"
             }
         }
 
