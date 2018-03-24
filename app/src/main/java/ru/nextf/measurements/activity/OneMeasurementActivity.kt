@@ -1,11 +1,13 @@
 package ru.nextf.measurements.activity
 
+import android.app.Activity
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.PersistableBundle
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.*
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import ru.nextf.measurements.fragments.*
@@ -14,23 +16,30 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_measurement.*
 import ru.nextf.measurements.*
 import ru.nextf.measurements.modelAPI.*
-import android.os.SystemClock
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import ru.nextf.measurements.network.NetworkControllerPicture
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
-        MainMeasurementFragment.MainMF, MyWebSocket.SocketCallback {
+        MainMeasurementFragment.MainMF, MyWebSocket.SocketCallback, NetworkControllerPicture.PictureCallback,
+        NetworkControllerPicture.UpdatePicturesCallback {
+    private val REQUEST_CAMERA = 1
+    private val REQUEST_GALERY = 2
     lateinit var measurement: Measurement
     lateinit var fragmentComment: CommentsMeasurementFragment
     lateinit var fragmentPicture: MeasurementPhotoFragment
     private var isMainPage = false
-    private var isResume = false
+    private lateinit var file: File
     private var isCommentPage = false
     private var isPicturePage = false
-    private var handler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUpdateOneMeasurementCallback(this)
+        NetworkControllerPicture.registerUpdateCallback(this)
+        NetworkControllerPicture.registerPictureCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.activity_one_measurement)
         setSupportActionBar(toolbarAst)
@@ -145,7 +154,9 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun complete() {
+        var json = gson.toJson(measurement)
         val intent = Intent(applicationContext, CompleteActivity::class.java)
+        intent.putExtra(MEASUREMENT_KEY, json)
         intent.putExtra(ID_KEY, measurement.id.toString())
         intent.putExtra(DEAL_KEY, measurement.deal)
         startActivityForResult(intent, 0)
@@ -170,11 +181,60 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
+        if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
+            val uri = data?.data
+            println("результат - ${data} + file ${file}")
+            postPictureUri(file, uri)
+        }
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            fragmentPicture.galleryAddPic()
+            fragmentPicture.postPictureFile(file)
+        }
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == 200) {
             setResult(200)
         }
     }
+
+    //берем картинку из глаерии/еще  откуда-либо. И отправляем из активити, так как в фрагменте приходит пустой uri, а это тупо((
+    private fun postPictureUri(file: File, uri: Uri?) {
+        try {
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                val inputStream = ru.nextf.measurements.MyApp.instance.contentResolver.openInputStream(uri)
+                val selectedImage = BitmapFactory.decodeStream(inputStream)
+                selectedImage.compress(Bitmap.CompressFormat.JPEG, 20, fos)
+            } finally {
+                if (fos != null) fos.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
+    }
+
+    override fun resultPictureAdd(result: Boolean) {
+        file.delete()
+        if (result) {
+            toast(ru.nextf.measurements.R.string.photo_added)
+            NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
+            setResult(200)
+        } else {
+            toast(ru.nextf.measurements.R.string.error_add_photo)
+        }
+    }
+
+    override fun resultUpdatePicAdd(measurement: Measurement?) {
+        if (measurement == null) {
+            toast(ru.nextf.measurements.R.string.error_add_photo)
+        } else {
+            this.measurement = measurement
+            fragmentPicture.displayPictures(measurement)
+        }
+    }
+    //конец работы с картинкой
 
     override fun message(text: String) {
         val type = object : TypeToken<Event>() {}.type

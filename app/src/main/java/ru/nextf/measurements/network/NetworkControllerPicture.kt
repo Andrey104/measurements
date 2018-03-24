@@ -68,12 +68,12 @@ object NetworkControllerPicture {
                     if (response?.code() == 200) {
                         measurement = response.body()
                     }
-                    updatePicturesOneMeasurement?.resultUpdate(measurement)
+                    updatePicturesOneMeasurement?.resultUpdatePicAdd(measurement)
                 }
             }
 
             override fun onFailure(call: Call<Measurement>?, t: Throwable?) {
-                updatePicturesOneMeasurement?.resultUpdate(null)
+                updatePicturesOneMeasurement?.resultUpdatePicAdd(null)
             }
 
         })
@@ -88,7 +88,7 @@ object NetworkControllerPicture {
     }
 
     interface UpdatePicturesCallback {
-        fun resultUpdate(measurement: Measurement?)
+        fun resultUpdatePicAdd(measurement: Measurement?)
     }
 
     fun registerUpdateCallback(picturesCallback: UpdatePicturesCallback?) {

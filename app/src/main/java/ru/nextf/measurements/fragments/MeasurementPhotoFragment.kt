@@ -36,8 +36,7 @@ import java.util.*
 /**
  * Created by addd on 01.02.2018.
  */
-class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCallback,
-        NetworkControllerPicture.UpdatePicturesCallback {
+class MeasurementPhotoFragment : Fragment() {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
@@ -51,8 +50,6 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
     private var arrayPhoto = ArrayList<MeasurementPhoto>()
     private lateinit var recyclerPhotoList: RecyclerView
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        NetworkControllerPicture.registerPictureCallback(this)
-        NetworkControllerPicture.registerUpdateCallback(this)
         mView = inflater?.inflate(ru.nextf.measurements.R.layout.measurement_photo_fragment, container, false) ?: View(context)
 
         getSavedMeasurement()
@@ -64,7 +61,7 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
 
         getPermission()
 
-        displayPictures(recyclerPhotoList)
+        displayPictures(measurement)
 
         mView.fabMain.setOnClickListener {
             val builder = AlertDialog.Builder(context)
@@ -96,7 +93,7 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile))
-                startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+                activity.startActivityForResult(takePictureIntent, REQUEST_CAMERA)
             }
         }
     }
@@ -104,7 +101,7 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
     private fun getPhotoFromGallery() {
         val openGalleryIntent = Intent(Intent.ACTION_PICK)
         openGalleryIntent.type = "image/*"
-        startActivityForResult(openGalleryIntent, REQUEST_GALERY)
+        activity.startActivityForResult(openGalleryIntent, REQUEST_GALERY)
     }
 
     private fun getPermission() {
@@ -118,7 +115,7 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
         }
     }
 
-    private fun displayPictures(recyclerView: RecyclerView) {
+    fun displayPictures(measurement: Measurement) {
         measurement.pictures.let {
             arrayPhoto = ArrayList()
             var strBuilder = StringBuilder()
@@ -145,23 +142,12 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
         }
 
         val adapter = ImageGalleryAdapter(context, arrayPhoto)
-        recyclerView.adapter = adapter
-        recyclerView.adapter.notifyDataSetChanged()
+        recyclerPhotoList.adapter = adapter
+        recyclerPhotoList.adapter.notifyDataSetChanged()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
-        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
-            galleryAddPic()
-            postPictureFile(file)
-        }
-        if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
-            val uri = data?.data
-            postPictureUri(file, uri)
-        }
-    }
 
-    private fun postPictureFile(file: File) {
+    fun postPictureFile(file: File) {
         try {
             var fos: FileOutputStream? = null
             try {
@@ -178,22 +164,6 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
         NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
     }
 
-    private fun postPictureUri(file: File, uri: Uri?) {
-        try {
-            var fos: FileOutputStream? = null
-            try {
-                fos = FileOutputStream(file)
-                val inputStream = ru.nextf.measurements.MyApp.instance.contentResolver.openInputStream(uri)
-                val selectedImage = BitmapFactory.decodeStream(inputStream)
-                selectedImage.compress(Bitmap.CompressFormat.JPEG, 20, fos)
-            } finally {
-                if (fos != null) fos.close()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
-    }
 
     private fun createImageFile(): File {
         // Create an image file name
@@ -212,7 +182,7 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
         return image
     }
 
-    private fun galleryAddPic() {
+    fun galleryAddPic() {
         val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
         val f = File(mCurrentPhotoPath)
         val contentUri = Uri.fromFile(f)
@@ -230,33 +200,5 @@ class MeasurementPhotoFragment : Fragment(), NetworkControllerPicture.PictureCal
             gson.fromJson(json, type)
         }
     }
-
-    override fun resultPictureAdd(result: Boolean) {
-        file.delete()
-        if (result) {
-            toast(ru.nextf.measurements.R.string.photo_added)
-            NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
-            activity.setResult(200)
-        } else {
-            toast(ru.nextf.measurements.R.string.error_add_photo)
-        }
-    }
-
-
-    override fun resultUpdate(measurement: Measurement?) {
-        if (measurement == null) {
-            toast(ru.nextf.measurements.R.string.error_add_photo)
-        } else {
-            this.measurement = measurement
-            displayPictures(recyclerPhotoList)
-        }
-    }
-
-    override fun onDestroyView() {
-        NetworkControllerPicture.registerPictureCallback(null)
-        NetworkControllerPicture.registerUpdateCallback(null)
-        super.onDestroyView()
-    }
-
 
 }

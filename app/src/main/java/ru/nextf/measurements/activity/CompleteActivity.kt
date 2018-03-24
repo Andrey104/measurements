@@ -7,26 +7,27 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import ru.nextf.measurements.DEAL_KEY
-import ru.nextf.measurements.ID_KEY
+import com.google.gson.reflect.TypeToken
 import ru.nextf.measurements.modelAPI.Close
 import ru.nextf.measurements.network.NetworkController
-import ru.nextf.measurements.toast
 import kotlinx.android.synthetic.main.activity_complete.*
+import kotlinx.android.synthetic.main.dialog_address_comment.view.*
+import ru.nextf.measurements.*
 import java.util.*
-import ru.nextf.measurements.OwnWatcher
-
+import ru.nextf.measurements.modelAPI.Measurement
 
 
 class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     private var id: String = ""
     private var deal: Int = 0
     private lateinit var alert: AlertDialog
+    private lateinit var measurement: Measurement
     private var serverDate: String? = null
     private var months = emptyArray<String>()
     private var daySave = -1
     private var monthSave = -1
     private var yearSave = -1
+    private var canRequest = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +63,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             }
         }
 
+        getSavedMeasurement()
         id = intent?.getStringExtra(ID_KEY) ?: "0"
         deal = intent?.getIntExtra(DEAL_KEY, 0) ?: throw IllegalStateException()
         textViewDeal.text = String.format("Договор %05d", deal)
@@ -72,6 +74,18 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         imageButton.setOnClickListener {
             deleteDateMount()
             imageButton.visibility = View.GONE
+        }
+        canRequest = measurement.pictures?.size != 0
+    }
+
+    private fun getSavedMeasurement() {
+        val json = intent?.getStringExtra(MEASUREMENT_KEY)
+        measurement = if (json.isNullOrEmpty()) {
+            Measurement()
+        } else {
+            val type = object : TypeToken<Measurement>() {
+            }.type
+            gson.fromJson(json, type)
         }
     }
 
@@ -108,6 +122,30 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             toast(ru.nextf.measurements.R.string.enter_sum)
             return false
         }
+        if (!canRequest) {
+            val builder = android.app.AlertDialog.Builder(this)
+            builder.setCancelable(true)
+                    .setTitle("Предупреждение")
+                    .setMessage("Вы действительно хотите завершить замер без фотографий?")
+                    .setPositiveButton(ru.nextf.measurements.R.string.yes)
+                    { dialog, _ ->
+                        complete()
+                        dialog.cancel()
+                    }
+                    .setNegativeButton(ru.nextf.measurements.R.string.no)
+                    { dialog, _ ->
+                        dialog.cancel()
+                    }
+            val alert = builder.create()
+            alert.show()
+        }
+        if (canRequest) {
+            complete()
+        }
+        return true
+    }
+
+    private fun complete() {
         buttonOk.isEnabled = false
         val sum: Float = editTextSum.text.toString().toFloat()
 
@@ -116,7 +154,6 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
                 sum, checkBoxOffer.isChecked, serverDate, checkBoxCash.isChecked)
         showDialog()
         NetworkController.closeMeasurement(close, id)
-        return true
     }
 
     override fun onDestroy() {

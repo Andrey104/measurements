@@ -30,7 +30,6 @@ class CommentsMeasurementFragment : Fragment(),
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: CommentAdapter
     private lateinit var commentRequest: CommentRequest
-    private var isSending = false
     private val handler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
