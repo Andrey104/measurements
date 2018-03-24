@@ -14,6 +14,9 @@ import ru.nextf.measurements.network.NetworkController
 import ru.nextf.measurements.toast
 import kotlinx.android.synthetic.main.activity_complete.*
 import java.util.*
+import ru.nextf.measurements.OwnWatcher
+
+
 
 class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     private var id: String = ""
@@ -44,6 +47,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             finish()
         }
 
+//        editTextSum.addTextChangedListener(OwnWatcher())
         checkBoxOffer.setOnClickListener {
             if (checkBoxOffer.isChecked) {
                 textViewDateInstallation.visibility = View.VISIBLE
@@ -79,6 +83,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         daySave = 1
     }
 
+
     private fun datePick() {
         val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             serverDate = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
@@ -99,20 +104,14 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     }
 
     private fun doCompleteRequest(): Boolean {
-        if (editTextSum.text.isEmpty() && editTextComment.text.isEmpty()) {
-            toast(ru.nextf.measurements.R.string.enter_sum_comment)
-            return false
-        } else if (editTextSum.text.isEmpty()) {
+        if (editTextSum.text.isEmpty()) {
             toast(ru.nextf.measurements.R.string.enter_sum)
-            return false
-        } else if (editTextComment.text.isEmpty()) {
-            toast(ru.nextf.measurements.R.string.enter_comment)
             return false
         }
         buttonOk.isEnabled = false
         val sum: Float = editTextSum.text.toString().toFloat()
 
-        val close = Close(editTextComment.text.toString(),
+        val close = Close(if (editTextComment.text.isEmpty()) null else editTextComment.text.toString(),
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
                 sum, checkBoxOffer.isChecked, serverDate, checkBoxCash.isChecked)
         showDialog()
