@@ -23,7 +23,7 @@ class OnePhotoActivity : AppCompatActivity() {
         }
         title = "Фото ${intent.getIntExtra(CHECK, 1)}"
 
-        val mImageView = findViewById<View>(ru.nextf.measurements.R.id.image) as ImageView
+        val mImageView = findViewById<View>(ru.nextf.measurements.R.id.image) as com.github.chrisbanes.photoview.PhotoView
         val spacePhoto = intent.getParcelableExtra<MeasurementPhoto>(MEASUREMENT_PHOTO)
 
         Glide.with(this)
