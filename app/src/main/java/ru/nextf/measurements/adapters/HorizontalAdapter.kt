@@ -34,7 +34,7 @@ class HorizontalAdapter(context: Context, measurementPhotos: LinkedList<Measurem
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val imageView = holder.mPhotoImageView
         if (position == 0) {
-            imageView.setImageResource(R.drawable.ic_add_circle_outline_black_24dp)
+            imageView.setImageResource(R.drawable.add_photo)
             imageView.maxWidth = 50
             imageView.maxHeight = 50
         } else {
