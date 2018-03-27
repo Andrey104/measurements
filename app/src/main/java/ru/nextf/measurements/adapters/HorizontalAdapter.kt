@@ -14,56 +14,70 @@ import ru.nextf.measurements.CHECK
 import ru.nextf.measurements.MEASUREMENT_PHOTO
 import ru.nextf.measurements.activity.OnePhotoActivity
 import ru.nextf.measurements.modelAPI.MeasurementPhoto
+import java.util.*
 
 
 /**
  * Created by left0ver on 27.03.18.
  */
-class HorizontalAdapter(context: Context, measurementPhotos: ArrayList<MeasurementPhoto>) : RecyclerView.Adapter<HorizontalAdapter.MyViewHolder>() {
-    private var mMeasurementPhotos: ArrayList<MeasurementPhoto>? = measurementPhotos
+class HorizontalAdapter(context: Context, measurementPhotos: LinkedList<MeasurementPhoto>, private val listener: CustomAdapterCallback) : RecyclerView.Adapter<HorizontalAdapter.MyViewHolder>() {
+    private var mMeasurementPhotos: LinkedList<MeasurementPhoto>? = measurementPhotos
     private var mContext: Context? = context
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): MyViewHolder {
         val context = viewGroup.context
         val inflater = LayoutInflater.from(context)
         val photoView = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_horizontal, viewGroup, false)
-        return MyViewHolder(photoView)
+        return MyViewHolder(photoView, listener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val spacePhoto = mMeasurementPhotos?.get(position)
-        val photo = mMeasurementPhotos?.get(position)
         val imageView = holder.mPhotoImageView
+        if (position == 0) {
+            imageView.setImageResource(R.drawable.ic_add_circle_outline_black_24dp)
+            imageView.maxWidth = 50
+            imageView.maxHeight = 50
+        } else {
+            val spacePhoto = mMeasurementPhotos?.get(position)
 
-        Glide.with(mContext)
-                .load(spacePhoto?.getUrl())
-                .placeholder(ru.nextf.measurements.R.drawable.ic_crop_original_black_24dp)
-                .into(imageView)
+            Glide.with(mContext)
+                    .load(spacePhoto?.getUrl())
+                    .placeholder(ru.nextf.measurements.R.drawable.ic_crop_original_black_24dp)
+                    .into(imageView)
+        }
     }
 
     override fun getItemCount(): Int {
         return mMeasurementPhotos?.size ?: 0
     }
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class MyViewHolder(itemView: View, listener: CustomAdapterCallback) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         var mPhotoImageView: ImageView
+        private val listener: CustomAdapterCallback
 
         init {
+            this.listener = listener
             mPhotoImageView = itemView.findViewById(ru.nextf.measurements.R.id.image_horizontal) as ImageView
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(view: View) {
-
-            val position = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
+                        val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION && position > 0) {
                 val spacePhoto = mMeasurementPhotos?.get(position)
                 val intent = Intent(mContext, OnePhotoActivity::class.java)
                 intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
                 intent.putExtra(CHECK, position + 1)
                 ContextCompat.startActivity(mContext, intent, null)
             }
+            if (position != RecyclerView.NO_POSITION && position == 0) {
+                listener.onFirstItemClick(adapterPosition)
+            }
         }
+    }
+
+    interface CustomAdapterCallback {
+        fun onFirstItemClick(pos: Int)
     }
 }

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_add_recalculation.*
 import ru.nextf.measurements.DEAL_ID
+import ru.nextf.measurements.NumberTextWatcherForThousand
 import ru.nextf.measurements.modelAPI.RecalculationRequest
 import ru.nextf.measurements.myWebSocket
 import ru.nextf.measurements.network.NetworkControllerDeals
@@ -30,6 +31,7 @@ class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.Dis
         dealId = intent.getStringExtra(DEAL_ID)
         buttonCancel.setOnClickListener { finish() }
         buttonOk.setOnClickListener { doAddRecalculation() }
+        editTextHeader.addTextChangedListener(NumberTextWatcherForThousand(editTextHeader))
     }
 
     private fun doAddRecalculation(): Boolean {
@@ -43,8 +45,13 @@ class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.Dis
             toast(ru.nextf.measurements.R.string.enter_comment)
             return false
         }
+        var after = NumberTextWatcherForThousand.trimCommaOfString(editTextHeader.text.toString())
+        if (after[after.length - 1] == '.') {
+            after = after.substring(0, after.length - 1)
+        }
+        val close: Float = after.toFloat()
         buttonOk.isEnabled = false
-        val discount = RecalculationRequest(editTextHeader.text.toString().toFloat(), editTextDescription.text.toString())
+        val discount = RecalculationRequest(close, editTextDescription.text.toString())
         NetworkControllerDeals.addDiscount(discount, dealId)
         return true
     }

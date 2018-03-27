@@ -127,6 +127,8 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
 
     override fun onResume() {
         super.onResume()
+        NetworkControllerPicture.registerUpdateCallback(this)
+        NetworkControllerPicture.registerPictureCallback(this)
         myWebSocket.registerSocketCallback(this)
     }
 
@@ -166,7 +168,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         intent.putExtra(MEASUREMENT_KEY, json)
         intent.putExtra(ID_KEY, measurement.id.toString())
         intent.putExtra(DEAL_KEY, measurement.deal)
-        startActivityForResult(intent, 0)
+        startActivityForResult(intent, 33)
     }
 
     override fun reject() {
@@ -208,6 +210,9 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         if (resultCode == 200) {
             setResult(200)
         }
+        if (requestCode == 33) {
+            NetworkController.getOneMeasurement(measurement.id.toString())
+        }
     }
 
     //берем картинку из глаерии/еще  откуда-либо. И отправляем из активити, так как в фрагменте приходит пустой uri, а это тупо((
@@ -230,7 +235,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun resultPictureAdd(result: Boolean) {
-//        file.delete()
+        file.delete()
         if (result) {
             toast(ru.nextf.measurements.R.string.photo_added)
             NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
@@ -255,12 +260,16 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         val orientationColumn = arrayOf(MediaStore.Images.Media.ORIENTATION)
         val cur = contentResolver.query(imageUri, orientationColumn, null, null, null)
         var orientation = -1
-        if (cur != null && cur!!.moveToFirst()) {
-            orientation = cur!!.getInt(cur!!.getColumnIndex(orientationColumn[0]))
+        if (cur != null && cur.moveToFirst()) {
+            try {
+                orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]))
+            } catch (e: Exception) {
+                return orientation
+            }
         } else {
             Log.d("orientation", "Wrong picture orientation: " + orientation)
         }
-        if (cur != null) cur!!.close()
+        if (cur != null) cur.close()
 
         return orientation
     }

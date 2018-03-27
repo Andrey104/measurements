@@ -1,11 +1,20 @@
 package ru.nextf.measurements.activity
 
 import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
@@ -18,15 +27,28 @@ import ru.nextf.measurements.*
 import java.util.*
 import ru.nextf.measurements.modelAPI.Measurement
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import ru.nextf.measurements.adapters.HorizontalAdapter
 import ru.nextf.measurements.modelAPI.MeasurementPhoto
 import ru.nextf.measurements.modelAPI.Picture
 import android.widget.Spinner
+import ru.nextf.measurements.network.NetworkControllerPicture
+import java.io.*
+import java.text.SimpleDateFormat
 
 
-class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
+class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, HorizontalAdapter.CustomAdapterCallback,
+        NetworkControllerPicture.PictureCallback,
+        NetworkControllerPicture.UpdatePicturesCallback {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
+    private val REQUEST_CAMERA = 1
+    private val REQUEST_GALERY = 2
+    private var uriPhotoFile: Uri? = null
+    var photoFile: File? = null
+    private lateinit var file: File
+    private val matrix = Matrix()
+    var mCurrentPhotoPath = ""
     private var id: String = ""
     private var deal: Int = 0
     private lateinit var alert: AlertDialog
@@ -37,12 +59,14 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     private var monthSave = -1
     private var yearSave = -1
     private var canRequest = false
-    private var arrayPhoto = ArrayList<MeasurementPhoto>()
+    private var arrayPhoto = LinkedList<MeasurementPhoto>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerCloseCallback(this)
         months = resources.getStringArray(ru.nextf.measurements.R.array.months)
+        NetworkControllerPicture.registerUpdateCallback(this)
+        NetworkControllerPicture.registerPictureCallback(this)
 
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.activity_complete)
@@ -86,15 +110,203 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             imageButton.visibility = View.GONE
         }
         editTextSum.addTextChangedListener(NumberTextWatcherForThousand(editTextSum))
+        editTextPrepayment.addTextChangedListener(NumberTextWatcherForThousand(editTextPrepayment))
         canRequest = measurement.pictures?.size != 0
 
         getPermission()
         displayPictures(measurement)
     }
 
+    // начало рабоыт с картинками
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
+        if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
+            val uri = data?.data
+            try {
+                matrix.postRotate(getImageOrientation(data ?: Intent()).toFloat())
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            postPictureUri(file, uri)
+        }
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            galleryAddPic()
+            postPictureFile(file)
+        }
+        super.onActivityResult(requestCode, resultCode, intent)
+
+    }
+
+    private fun postPictureUri(file: File, uri: Uri?) {
+        try {
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                val inputStream = ru.nextf.measurements.MyApp.instance.contentResolver.openInputStream(uri)
+                val selectedImage = BitmapFactory.decodeStream(inputStream)
+                val rotatedBitmap = Bitmap.createBitmap(selectedImage, 0, 0, selectedImage.width, selectedImage.height, matrix, true)
+                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 20, fos)
+            } finally {
+                if (fos != null) fos.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
+    }
+
+    override fun resultPictureAdd(result: Boolean) {
+        file.delete()
+        if (result) {
+            toast(ru.nextf.measurements.R.string.photo_added)
+            NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
+            setResult(200)
+        } else {
+            toast(ru.nextf.measurements.R.string.error_add_photo)
+        }
+    }
+
+    override fun resultUpdatePicAdd(measurement: Measurement?) {
+        if (measurement == null) {
+            toast(ru.nextf.measurements.R.string.error_add_photo)
+        } else {
+            this.measurement = measurement
+            displayPictures(measurement)
+        }
+    }
+
+    override fun onFirstItemClick(pos: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(ru.nextf.measurements.R.string.what_use)
+                .setCancelable(true)
+                .setPositiveButton(ru.nextf.measurements.R.string.new_photo)
+                { _, _ ->
+                    getPhotoFromCamera()
+                }
+                .setNegativeButton(ru.nextf.measurements.R.string.from_gallery) { _, _ -> getPhotoFromGallery() }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun getPhotoFromCamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            // Create the File where the photo should go
+            try {
+                photoFile = createImageFile()
+            } catch (ex: IOException) {
+                toast(ru.nextf.measurements.R.string.itis_error)
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                uriPhotoFile = Uri.fromFile(photoFile)
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile))
+                startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+            }
+        }
+    }
+
+    private fun getPhotoFromGallery() {
+        val openGalleryIntent = Intent(Intent.ACTION_PICK)
+        openGalleryIntent.type = "image/*"
+        startActivityForResult(openGalleryIntent, REQUEST_GALERY)
+    }
+
+    fun postPictureFile(file: File) {
+        try {
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                val inputStream = FileInputStream(photoFile)
+                val selectedImage = BitmapFactory.decodeStream(inputStream)
+                rotateOrientation(selectedImage).compress(Bitmap.CompressFormat.JPEG, 20, fos)
+            } finally {
+                if (fos != null) fos.close()
+            }
+        } catch (e: Exception) {
+            toast(ru.nextf.measurements.R.string.error)
+        }
+        NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
+    }
+
+
+    private fun rotateOrientation(srcBitmap: Bitmap): Bitmap {
+        var exif: ExifInterface? = null
+        try {
+            exif = ExifInterface(uriPhotoFile?.path)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val orientation = exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
+        exif?.setAttribute(ExifInterface.TAG_ORIENTATION, 0.toString())
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> {
+                matrix.postRotate(90f)
+            }
+            ExifInterface.ORIENTATION_ROTATE_180 -> {
+                matrix.postRotate(180f)
+            }
+            ExifInterface.ORIENTATION_ROTATE_270 -> {
+                matrix.postRotate(270f)
+            }
+        }
+        return Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.width,
+                srcBitmap.height, matrix, true)
+    }
+
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES)
+        val image = File.createTempFile(
+                imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir      /* directory */
+        )
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.absolutePath
+        return image
+    }
+
+    fun galleryAddPic() {
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val f = File(mCurrentPhotoPath)
+        val contentUri = Uri.fromFile(f)
+        mediaScanIntent.data = contentUri
+        applicationContext.sendBroadcast(mediaScanIntent)
+    }
+
+    private fun getImageOrientation(data: Intent): Int {
+        println(data)
+        val imageUri = data.data
+        val orientationColumn = arrayOf(MediaStore.Images.Media.ORIENTATION)
+        val cur = contentResolver.query(imageUri, orientationColumn, null, null, null)
+        var orientation = -1
+        if (cur != null && cur.moveToFirst()) {
+            try {
+                orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]))
+            } catch (e: Exception) {
+                return orientation
+            }
+        } else {
+            Log.d("orientation", "Wrong picture orientation: " + orientation)
+        }
+        if (cur != null) cur.close()
+
+        return orientation
+    }
+
     private fun displayPictures(measurement: Measurement) {
         measurement.pictures.let {
-            arrayPhoto = ArrayList()
+            arrayPhoto = LinkedList()
             var strBuilder = StringBuilder()
             var count = 0
             var index = 0
@@ -117,8 +329,8 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
                 strBuilder.delete(0, strBuilder.length)
             }
         }
-
-        val adapter = HorizontalAdapter(this, arrayPhoto)
+        arrayPhoto.addFirst(MeasurementPhoto(BASE_URL, "id"))
+        val adapter = HorizontalAdapter(this, arrayPhoto, this)
         val thirdManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         images.layoutManager = thirdManager
         images.adapter = adapter
@@ -136,6 +348,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         }
     }
 
+    //конец работы с картинками
     private fun getSavedMeasurement() {
         val json = intent?.getStringExtra(MEASUREMENT_KEY)
         measurement = if (json.isNullOrEmpty()) {
@@ -220,10 +433,16 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         }
         val sum: Float = q.toFloat()
 
-        var payment = spinner.selectedItemPosition
+        var prepayment = NumberTextWatcherForThousand.trimCommaOfString(editTextPrepayment.text.toString())
+        if (prepayment[prepayment.length - 1] == '.') {
+            prepayment = prepayment.substring(0, prepayment.length - 1)
+        }
+        val prepaymentClose: Float = prepayment.toFloat()
+
+        var paymentMethod = spinner.selectedItemPosition
         val close = Close(if (editTextComment.text.isEmpty()) null else editTextComment.text.toString(),
-                if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
-                sum, checkBoxOffer.isChecked, serverDate, payment)
+                if (editTextPrepayment.text.isEmpty()) null else prepaymentClose,
+                sum, checkBoxOffer.isChecked, serverDate, paymentMethod)
         showDialog()
         NetworkController.closeMeasurement(close, id)
     }
