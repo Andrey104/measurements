@@ -75,6 +75,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
             deleteDateMount()
             imageButton.visibility = View.GONE
         }
+        editTextSum.addTextChangedListener(NumberTextWatcherForThousand(editTextSum))
         canRequest = measurement.pictures?.size != 0
     }
 
@@ -99,7 +100,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
 
     private fun datePick() {
-        val myCallBack = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        val myCallBack = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             serverDate = String.format("$year-%02d-%02d", monthOfYear + 1, dayOfMonth)
             imageButton.visibility = View.VISIBLE
             textViewDate.text = "$dayOfMonth ${months[monthOfYear]} $year года"
@@ -147,7 +148,11 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
 
     private fun complete() {
         buttonOk.isEnabled = false
-        val sum: Float = editTextSum.text.toString().toFloat()
+        var q = NumberTextWatcherForThousand.trimCommaOfString(editTextSum.text.toString())
+        if (q[q.length - 1] == '.') {
+            q = q.substring(0, q.length - 1)
+        }
+        val sum: Float = q.toFloat()
 
         val close = Close(if (editTextComment.text.isEmpty()) null else editTextComment.text.toString(),
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
