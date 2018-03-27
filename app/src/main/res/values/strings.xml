@@ -281,4 +281,5 @@
     <string name="address">Адрес:</string>
     <string name="comment_address">Комментарий к адресу:</string>
     <string name="name_dialog_address_and_comment">Адрес и комментарий к нему</string>
+    <string name="address_header">Адрес</string>
 </resources>

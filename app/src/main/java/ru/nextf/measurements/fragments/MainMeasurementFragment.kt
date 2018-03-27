@@ -20,6 +20,12 @@ import kotlinx.android.synthetic.main.dialog_address_comment.view.*
 import kotlinx.android.synthetic.main.dialog_description.view.*
 import kotlinx.android.synthetic.main.dialog_time.view.*
 import kotlinx.android.synthetic.main.main_measurement_fragment.view.*
+import ru.nextf.measurements.network.NetworkController
+import android.content.Intent
+import android.content.pm.ResolveInfo
+import android.content.pm.PackageManager
+import android.net.Uri
+
 
 /**
  * Created by addd on 30.01.2018.
@@ -97,9 +103,28 @@ class MainMeasurementFragment : Fragment() {
             false
         }
 
+        mView.fabResponsible.setOnClickListener {
+            becomeResponsible()
+        }
+
         setDialogs()
 
         return mView
+    }
+
+    private fun becomeResponsible() {
+        val ad = android.app.AlertDialog.Builder(context)
+        ad.setTitle(ru.nextf.measurements.R.string.become_response)  // заголовок
+        var id = measurement.id
+        ad.setPositiveButton(ru.nextf.measurements.R.string.yes) { _, _ ->
+            if (id != null) {
+                NetworkController.becomeResponsible(id)
+            }
+        }
+        ad.setNegativeButton(ru.nextf.measurements.R.string.cancel) { _, _ -> }
+
+        ad.setCancelable(true)
+        ad.show()
     }
 
     private fun setDialogs() {
@@ -138,6 +163,12 @@ class MainMeasurementFragment : Fragment() {
             } else {
                 view.textViewAddressComment.text = measurement.addressComment
             }
+            view.textViewAddress.setOnClickListener {
+                openNavigator()
+            }
+            view.open_navigator.setOnClickListener {
+                openNavigator()
+            }
             builder.setView(view)
                     .setCancelable(true)
                     .setPositiveButton(ru.nextf.measurements.R.string.okay)
@@ -149,10 +180,33 @@ class MainMeasurementFragment : Fragment() {
         }
     }
 
+    fun openNavigator() {
+        val uri = Uri.parse("yandexnavi://map_search?text=${measurement.address}")
+        var intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.`package` = "ru.yandex.yandexnavi"
+
+        // Проверяет, установлено ли приложение.
+        val packageManager = activity.packageManager
+        val activities = packageManager.queryIntentActivities(intent, 0)
+        val isIntentSafe = activities.size > 0
+        if (isIntentSafe) {
+
+            //Запускает Яндекс.Навигатор.
+            startActivity(intent)
+        } else {
+
+            // Открывает страницу Яндекс.Навигатора в Google Play.
+            intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("market://details?id=ru.yandex.yandexnavi")
+            startActivity(intent)
+        }
+    }
+
 
     private fun displayMeasurement(measurement: Measurement) {
         if (measurement.color != 2) {
             mView.fabMain.hide()
+            mView.fabResponsible.visibility = View.VISIBLE
         }
 
         if (measurement.description == null || measurement.description == "") {

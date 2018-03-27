@@ -1,7 +1,9 @@
 package ru.nextf.measurements.fragments
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -46,6 +48,12 @@ class MainDealFragment : Fragment() {
             val builder = AlertDialog.Builder(context)
             val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_address_comment, null)
             view.textViewAddress.text = deal.address
+            view.textViewAddress.setOnClickListener {
+                openNavigator()
+            }
+            view.open_navigator.setOnClickListener {
+                openNavigator()
+            }
             if (deal.addressComment == null || deal.addressComment == "") {
                 view.textView10.text = "Комментарий отсутствует"
             } else {
@@ -75,6 +83,28 @@ class MainDealFragment : Fragment() {
             alert.show()
         }
 
+    }
+
+    fun openNavigator() {
+        val uri = Uri.parse("yandexnavi://map_search?text=${deal.address}")
+        var intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.`package` = "ru.yandex.yandexnavi"
+
+        // Проверяет, установлено ли приложение.
+        val packageManager = activity.packageManager
+        val activities = packageManager.queryIntentActivities(intent, 0)
+        val isIntentSafe = activities.size > 0
+        if (isIntentSafe) {
+
+            //Запускает Яндекс.Навигатор.
+            startActivity(intent)
+        } else {
+
+            // Открывает страницу Яндекс.Навигатора в Google Play.
+            intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("market://details?id=ru.yandex.yandexnavi")
+            startActivity(intent)
+        }
     }
 
     private fun displayDeal(view: View) {

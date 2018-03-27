@@ -222,6 +222,22 @@
         android:layout_marginRight="36dp"
         tools:ignore="VectorDrawableCompat" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabResponsible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        android:layout_marginEnd="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/person_white"
+        android:layout_marginRight="36dp"
+        tools:ignore="VectorDrawableCompat" />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayoutHide"
         android:layout_width="match_parent"

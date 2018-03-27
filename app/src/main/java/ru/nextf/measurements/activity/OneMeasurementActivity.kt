@@ -19,9 +19,15 @@ import ru.nextf.measurements.modelAPI.*
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import ru.nextf.measurements.network.NetworkControllerPicture
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import android.media.ExifInterface
+import android.R.attr.path
+import java.io.*
+import android.provider.MediaStore
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+import android.R.attr.data
+import android.graphics.Matrix
+import android.util.Log
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
@@ -36,6 +42,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     private lateinit var file: File
     private var isCommentPage = false
     private var isPicturePage = false
+    private val matrix = Matrix()
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkController.registerUpdateOneMeasurementCallback(this)
         NetworkControllerPicture.registerUpdateCallback(this)
@@ -184,7 +191,13 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
         if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
-            println("результат - ${data} + file ${file}")
+            try {
+                matrix.postRotate(getImageOrientation(data ?: Intent()).toFloat())
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
             postPictureUri(file, uri)
         }
         if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
@@ -205,7 +218,8 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                 fos = FileOutputStream(file)
                 val inputStream = ru.nextf.measurements.MyApp.instance.contentResolver.openInputStream(uri)
                 val selectedImage = BitmapFactory.decodeStream(inputStream)
-                selectedImage.compress(Bitmap.CompressFormat.JPEG, 20, fos)
+                val rotatedBitmap = Bitmap.createBitmap(selectedImage, 0, 0, selectedImage.width, selectedImage.height, matrix, true)
+                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 20, fos)
             } finally {
                 if (fos != null) fos.close()
             }
@@ -216,7 +230,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun resultPictureAdd(result: Boolean) {
-        file.delete()
+//        file.delete()
         if (result) {
             toast(ru.nextf.measurements.R.string.photo_added)
             NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
@@ -233,6 +247,22 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             this.measurement = measurement
             fragmentPicture.displayPictures(measurement)
         }
+    }
+
+    private fun getImageOrientation(data: Intent): Int {
+        println(data)
+        val imageUri = data.data
+        val orientationColumn = arrayOf(MediaStore.Images.Media.ORIENTATION)
+        val cur = contentResolver.query(imageUri, orientationColumn, null, null, null)
+        var orientation = -1
+        if (cur != null && cur!!.moveToFirst()) {
+            orientation = cur!!.getInt(cur!!.getColumnIndex(orientationColumn[0]))
+        } else {
+            Log.d("orientation", "Wrong picture orientation: " + orientation)
+        }
+        if (cur != null) cur!!.close()
+
+        return orientation
     }
     //конец работы с картинкой
 

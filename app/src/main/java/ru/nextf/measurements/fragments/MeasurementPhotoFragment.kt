@@ -1,15 +1,15 @@
 package ru.nextf.measurements.fragments
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -25,11 +25,7 @@ import ru.nextf.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.measurement_photo_fragment.view.*
 import ru.nextf.measurements.modelAPI.*
-import ru.nextf.measurements.network.NetworkController
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,7 +39,8 @@ class MeasurementPhotoFragment : Fragment() {
     private val REQUEST_GALERY = 2
     private lateinit var file: File
     private lateinit var mView: View
-
+    private val matrix = Matrix()
+    private var uriPhotoFile: Uri? = null
     var photoFile: File? = null
     var mCurrentPhotoPath = ""
     private lateinit var measurement: Measurement
@@ -91,6 +88,7 @@ class MeasurementPhotoFragment : Fragment() {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+                uriPhotoFile = Uri.fromFile(photoFile)
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile))
                 activity.startActivityForResult(takePictureIntent, REQUEST_CAMERA)
@@ -154,7 +152,7 @@ class MeasurementPhotoFragment : Fragment() {
                 fos = FileOutputStream(file)
                 val inputStream = FileInputStream(photoFile)
                 val selectedImage = BitmapFactory.decodeStream(inputStream)
-                selectedImage.compress(Bitmap.CompressFormat.JPEG, 20, fos)
+                rotateOrientation(selectedImage).compress(Bitmap.CompressFormat.JPEG, 20, fos)
             } finally {
                 if (fos != null) fos.close()
             }
@@ -162,6 +160,32 @@ class MeasurementPhotoFragment : Fragment() {
             toast(ru.nextf.measurements.R.string.error)
         }
         NetworkControllerPicture.addPictureFile(measurement.id.toString(), file)
+    }
+
+
+    private fun rotateOrientation(srcBitmap: Bitmap): Bitmap {
+        var exif: ExifInterface? = null
+        try {
+            exif = ExifInterface(uriPhotoFile?.path)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val orientation = exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
+        exif?.setAttribute(ExifInterface.TAG_ORIENTATION, 0.toString())
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> {
+                matrix.postRotate(90f)
+            }
+            ExifInterface.ORIENTATION_ROTATE_180 -> {
+                matrix.postRotate(180f)
+            }
+            ExifInterface.ORIENTATION_ROTATE_270 -> {
+                matrix.postRotate(270f)
+            }
+        }
+        return Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.width,
+                srcBitmap.height, matrix, true)
     }
 
 
