@@ -24,6 +24,6 @@ class Close(
         var mountDate: String?,
         @SerializedName("non_cash")
         @Expose
-        var nonCash: Boolean?
+        var nonCash: Int?
 
 )

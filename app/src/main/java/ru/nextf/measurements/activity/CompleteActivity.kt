@@ -1,9 +1,12 @@
 package ru.nextf.measurements.activity
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -11,13 +14,19 @@ import com.google.gson.reflect.TypeToken
 import ru.nextf.measurements.modelAPI.Close
 import ru.nextf.measurements.network.NetworkController
 import kotlinx.android.synthetic.main.activity_complete.*
-import kotlinx.android.synthetic.main.dialog_address_comment.view.*
 import ru.nextf.measurements.*
 import java.util.*
 import ru.nextf.measurements.modelAPI.Measurement
+import android.support.v7.widget.LinearLayoutManager
+import ru.nextf.measurements.adapters.HorizontalAdapter
+import ru.nextf.measurements.modelAPI.MeasurementPhoto
+import ru.nextf.measurements.modelAPI.Picture
+import android.widget.Spinner
 
 
 class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
+    private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val REQUEST_EXTERNAL_STORAGE = 1
     private var id: String = ""
     private var deal: Int = 0
     private lateinit var alert: AlertDialog
@@ -28,6 +37,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     private var monthSave = -1
     private var yearSave = -1
     private var canRequest = false
+    private var arrayPhoto = ArrayList<MeasurementPhoto>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +87,53 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         }
         editTextSum.addTextChangedListener(NumberTextWatcherForThousand(editTextSum))
         canRequest = measurement.pictures?.size != 0
+
+        getPermission()
+        displayPictures(measurement)
+    }
+
+    private fun displayPictures(measurement: Measurement) {
+        measurement.pictures.let {
+            arrayPhoto = ArrayList()
+            var strBuilder = StringBuilder()
+            var count = 0
+            var index = 0
+            for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
+                strBuilder.append(photo.url)
+                strBuilder.reverse()
+                for (char in strBuilder) {
+                    index++
+                    if (char == '/') count++
+                    if (count == 3) {
+                        index--
+                        break
+                    }
+                }
+                strBuilder.delete(index, strBuilder.length)
+                strBuilder.reverse()
+                arrayPhoto.add(MeasurementPhoto(BASE_URL + strBuilder.toString(), photo.id.toString()))
+                count = 0
+                index = 0
+                strBuilder.delete(0, strBuilder.length)
+            }
+        }
+
+        val adapter = HorizontalAdapter(this, arrayPhoto)
+        val thirdManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        images.layoutManager = thirdManager
+        images.adapter = adapter
+        images.adapter.notifyDataSetChanged()
+    }
+
+    private fun getPermission() {
+        val permission = ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            )
+        }
     }
 
     private fun getSavedMeasurement() {
@@ -119,10 +176,19 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
     }
 
     private fun doCompleteRequest(): Boolean {
+        if (editTextSum.text.isEmpty() && spinner.selectedItemPosition == 0) {
+            toast(ru.nextf.measurements.R.string.enter_sum_payment)
+            return false
+        }
         if (editTextSum.text.isEmpty()) {
             toast(ru.nextf.measurements.R.string.enter_sum)
             return false
         }
+        if (spinner.selectedItemPosition == 0) {
+            toast(ru.nextf.measurements.R.string.enter_payment)
+            return false
+        }
+
         if (!canRequest) {
             val builder = android.app.AlertDialog.Builder(this)
             builder.setCancelable(true)
@@ -154,9 +220,10 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback {
         }
         val sum: Float = q.toFloat()
 
+        var payment = spinner.selectedItemPosition
         val close = Close(if (editTextComment.text.isEmpty()) null else editTextComment.text.toString(),
                 if (editTextPrepayment.text.isEmpty()) null else editTextPrepayment.text.toString().toFloat(),
-                sum, checkBoxOffer.isChecked, serverDate, checkBoxCash.isChecked)
+                sum, checkBoxOffer.isChecked, serverDate, payment)
         showDialog()
         NetworkController.closeMeasurement(close, id)
     }

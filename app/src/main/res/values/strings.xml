@@ -45,7 +45,9 @@
     <string name="id">id</string>
     <string name="okay">OK</string>
     <string name="deal">deal</string>
-    <string name="enter_sum_comment">Введите сумму и комментарий</string>
+    <string name="enter_sum_payment">Введите сумму и выберите способ оплаты</string>
+    <string name="enter_sum_comment">Введите сумму и введите комментарий</string>
+    <string name="enter_payment">Выберите способ оплаты</string>
     <string name="enter_sum">Введите сумму</string>
     <string name="enter_comment">Введите комментарий</string>
     <string name="empty"></string>
@@ -282,4 +284,10 @@
     <string name="comment_address">Комментарий к адресу:</string>
     <string name="name_dialog_address_and_comment">Адрес и комментарий к нему</string>
     <string name="address_header">Адрес</string>
+    <string-array name="paylist">
+        <item>Не выбрано</item>
+        <item>Безналичные</item>
+        <item>Наличные</item>
+        <item>Терминал</item>
+    </string-array>
 </resources>

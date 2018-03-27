@@ -37,9 +37,7 @@ class MeasurementPhotoFragment : Fragment() {
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALERY = 2
-    private lateinit var file: File
     private lateinit var mView: View
-    private val matrix = Matrix()
     private var uriPhotoFile: Uri? = null
     var photoFile: File? = null
     var mCurrentPhotoPath = ""
