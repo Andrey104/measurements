@@ -244,8 +244,8 @@ class MainMeasurementFragment : Fragment() {
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mView.recycleClient.layoutManager = layoutManager
 
-        mView.address.text = measurement.address.toString()
-        mView.time.text = measurement.time.toString()
+        mView.address.text = measurement.address
+        mView.time.text = measurement.time
         mView.date.text = formatDate(measurement.date ?: "2000-20-20")
         if (measurement.worker == null) {
             mView.worker_name.text = getString(ru.nextf.measurements.R.string.not_distributed)

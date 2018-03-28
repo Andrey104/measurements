@@ -1,10 +1,13 @@
 package ru.nextf.measurements
 
+import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.gson.Gson
+import ru.nextf.measurements.fragments.CommentsMountFragment
+import ru.nextf.measurements.fragments.InstallersMountFragment
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,6 +24,7 @@ val PROBLEM_KEY = "problem"
 val MEASUREMENT_PHOTO = "MEASUREMENT_PHOTO"
 val FROM_DEAL = "fromDeal"
 val DEAL_ID = "dealId"
+val MOUNT_KEY = "MOUNT_KEY"
 val RECALCULATION_NAME = "recalculation"
 val COMMENT_DEAL = "commentDeal"
 val MOUNT_NAME = "mount"
@@ -122,3 +126,19 @@ val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefau
 val currentLocalTime = calendar.time
 val dateZ = SimpleDateFormat("Z")
 val localTime = dateZ.format(currentLocalTime)
+
+fun newInstanceComment(mountString: String): CommentsMountFragment {
+    val args = Bundle()
+    args.putString(MOUNT_KEY, mountString)
+    val fragment = CommentsMountFragment()
+    fragment.arguments = args
+    return fragment
+}
+
+fun newInstanceMount(mountString: String): InstallersMountFragment {
+    val args = Bundle()
+    args.putString(MOUNT_KEY, mountString)
+    val fragment = InstallersMountFragment()
+    fragment.arguments = args
+    return fragment
+}

@@ -22,8 +22,8 @@ class MountAdapter(notesList: List<Mount>, private val listener: CustomAdapterCa
 
 
         when (mount.status) {
-            0 -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.not_processed)
-            1 -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.stage_added)
+            0 -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.added)
+            1 -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.in_progress)
             2 -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.closed_successful)
             3 -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.closed_not_successful)
             else -> viewHolder.textViewMountStatus.text = ru.nextf.measurements.MyApp.instance.getString(ru.nextf.measurements.R.string.not_processed)

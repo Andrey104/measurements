@@ -134,5 +134,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView27"
         app:srcCompat="@drawable/ic_chat_bubble_gray_24dp"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:layout_marginLeft="8dp" />
 </android.support.constraint.ConstraintLayout>

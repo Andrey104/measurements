@@ -1,21 +1,24 @@
 package ru.nextf.measurements.activity
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.text.method.ScrollingMovementMethod
-import ru.nextf.measurements.adapters.StageAdapter
-import ru.nextf.measurements.modelAPI.Mount
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_mount.*
 import kotlinx.android.synthetic.main.dialog_description.view.*
-import ru.nextf.measurements.*
+import ru.nextf.measurements.MOUNT_NAME
+import ru.nextf.measurements.adapters.FragmentPagerAdapter
+import ru.nextf.measurements.adapters.StageAdapter
+import ru.nextf.measurements.formatDate
+import ru.nextf.measurements.gson
+import ru.nextf.measurements.modelAPI.Event
+import ru.nextf.measurements.modelAPI.Mount
+import ru.nextf.measurements.modelAPI.NewCommentMount
+import ru.nextf.measurements.toast
 
-class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback {
+
+class OneMountActivity : AppCompatActivity() {
     private lateinit var mount: Mount
-    private var adapter: StageAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +31,12 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         getSaveMount()
         supportActionBar?.title = String.format("Монтаж %05d", mount.deal)
         displayMount()
+
+        viewPager.adapter = FragmentPagerAdapter(supportFragmentManager, gson.toJson(mount))
+        tabLayout.setupWithViewPager(viewPager)
     }
 
     private fun displayMount() {
-        textViewCommentStage.movementMethod = ScrollingMovementMethod()
-        adapter = mount.stages?.let { StageAdapter(it, this) }
 
         if (mount.date == null) {
             textViewDateStage.text = getString(ru.nextf.measurements.R.string.mount_for_phone)
@@ -41,15 +45,15 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
         }
 
         when (mount.status) {
-            0 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.not_processed)
-            1 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.stage_added)
+            0 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.added)
+            1 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.in_progress)
             2 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.closed_successful)
             3 -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.closed_not_successful)
             else -> textViewStatusMount.text = getString(ru.nextf.measurements.R.string.not_processed)
         }
         if (!mount.description.isNullOrEmpty()) {
-            textViewCommentStage.text = mount.description
-            textViewCommentStage.setOnClickListener {
+            textViewCommentMount.text = mount.description
+            textViewCommentMount.setOnClickListener {
                 val builder = AlertDialog.Builder(this)
                 val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_description, null)
                 view.textViewDescription.text = mount.description
@@ -63,21 +67,11 @@ class OneMountActivity : AppCompatActivity(), StageAdapter.CustomAdapterCallback
                 alert.show()
             }
         } else {
-            textViewCommentStage.text = getString(ru.nextf.measurements.R.string.comment_empty)
+            textViewCommentMount.text = getString(ru.nextf.measurements.R.string.comment_empty)
         }
 
-        recyclerViewInstallers.adapter = adapter
-        val layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-        recyclerViewInstallers.layoutManager = layoutManager
     }
 
-    override fun onItemClick(pos: Int) {
-        val intent = Intent(applicationContext, OneStageActivity::class.java)
-        val json = gson.toJson(mount.stages?.get(pos))
-        intent.putExtra(STAGE_KEY, json)
-        intent.putExtra(STAGE_COUNT, (pos + 1).toString())
-        startActivityForResult(intent, 1)
-    }
 
     private fun getSaveMount() {
         if (intent.hasExtra(MOUNT_NAME)) {

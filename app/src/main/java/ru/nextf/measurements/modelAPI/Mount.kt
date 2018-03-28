@@ -14,6 +14,9 @@ class Mount {
     @SerializedName("actions")
     @Expose
     val actions: List<Action>? = null
+    @SerializedName("comments")
+    @Expose
+    val comments: List<Comment>? = null
     @SerializedName("stages")
     @Expose
     val stages: List<Stage>? = null

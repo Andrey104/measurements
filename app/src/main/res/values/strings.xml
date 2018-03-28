@@ -261,7 +261,8 @@
     <string name="new_photo">Новое фото</string>
     <string name="from_gallery">Из галереи..</string>
     <string name="not_processed">Не обработан</string>
-    <string name="stage_added">Стадия добавлена</string>
+    <string name="added">Добавлен</string>
+    <string name="in_progress">В процессе</string>
     <string name="closed_successful">Закрыт успешно</string>
     <string name="closed_not_successful">Закрыт не успешно</string>
     <string name="mount_for_phone">Монтаж по звонку</string>

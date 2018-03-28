@@ -25,6 +25,7 @@ object NetworkControllerDeals {
     var callbackOneDeal: OneDealCallback? = null
     var addDiscountCallback: DiscountCallback? = null
     var callbackMountsDeal: MountsDealCallback? = null
+    var callbackMount: MountCallback? = null
 
 
     private val BASE_URL = "http://natcom-crm.nextf.ru/api/"
@@ -116,6 +117,22 @@ object NetworkControllerDeals {
 
             override fun onFailure(call: Call<MyResultDeals>?, t: Throwable?) {
                 callbackListDeals?.resultList(emptyList(), 1, date, 0)
+            }
+
+        })
+    }
+
+    fun getMount(id: String) {
+        val call = api.getMount(id)
+        call.enqueue(object : retrofit2.Callback<Mount> {
+            override fun onResponse(call: Call<Mount>?, response: Response<Mount>?) {
+                response?.body()?.let {
+                    callbackMount?.resultMount(it, true)
+                }
+            }
+
+            override fun onFailure(call: Call<Mount>?, t: Throwable?) {
+                callbackMount?.resultMount(Mount(), false)
             }
 
         })
@@ -364,5 +381,12 @@ object NetworkControllerDeals {
         callbackMountsDeal = callback
     }
 
+    interface MountCallback {
+        fun resultMount(mount: Mount, boolean: Boolean)
+    }
+
+    fun registerMountCallback(callback: MountCallback?) {
+        callbackMount = callback
+    }
 
 }

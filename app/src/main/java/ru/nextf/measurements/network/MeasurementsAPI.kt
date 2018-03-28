@@ -47,6 +47,11 @@ interface MeasurementsAPI {
     @POST("deals/{id}/comment/")
     fun addCommentDeal(@Body text: CommentRequest, @Path("id") id: String): Call<Comment>
 
+    @POST("mounts/{id}/comment/")
+    fun addCommentMount(@Body text: CommentRequest, @Path("id") id: String): Call<Comment>
+
+    @GET("mounts/{id}")
+    fun getMount(@Path("id") id: String): Call<Mount>
 
     @Multipart
     @POST("measurements/{id}/image_upload/")
