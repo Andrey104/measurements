@@ -22,8 +22,8 @@ class Close(
         @SerializedName("mount_date")
         @Expose
         var mountDate: String?,
-        @SerializedName("non_cash")
+        @SerializedName("payment_type")
         @Expose
-        var nonCash: Int?
+        var paymentType: Int?
 
 )

@@ -51,8 +51,9 @@
         android:hint="@string/sum"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxOffer" />
 
     <EditText
         android:id="@+id/editTextComment"
@@ -65,20 +66,19 @@
         android:hint="@string/enter_comment"
         android:maxLines="3"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPrepayment" />
 
     <EditText
         android:id="@+id/editTextPrepayment"
-        android:layout_width="match_parent"
+        android:layout_width="153dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="@string/prepayment"
         android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextSum" />
 
@@ -138,12 +138,10 @@
         android:layout_width="match_parent"
         android:layout_height="103dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
         android:background="@color/backgroundAdmin"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateButton"
         app:msrv_gravity="start"
         app:msrv_snap_count="2" />
         <!--app:msrv_ms_per_inch="@dimen/normal_speed"-->
@@ -184,22 +182,21 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="192dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="24dp"
+        android:layout_width="178dp"
+        android:layout_height="35dp"
         android:layout_marginTop="8dp"
         android:entries="@array/paylist"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
         android:text="Способ оплаты"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBoxOffer" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSum" />
 
 </android.support.constraint.ConstraintLayout>

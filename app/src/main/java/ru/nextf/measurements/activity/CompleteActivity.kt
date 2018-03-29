@@ -389,7 +389,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
     }
 
     private fun doCompleteRequest(): Boolean {
-        if (editTextSum.text.isEmpty() && spinner.selectedItemPosition == 0) {
+        if (editTextSum.text.isEmpty() && !editTextPrepayment.text.isEmpty() && spinner.selectedItemPosition == 0) {
             toast(ru.nextf.measurements.R.string.enter_sum_payment)
             return false
         }
@@ -397,7 +397,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
             toast(ru.nextf.measurements.R.string.enter_sum)
             return false
         }
-        if (spinner.selectedItemPosition == 0) {
+        if (!editTextPrepayment.text.isEmpty() && spinner.selectedItemPosition == 0) {
             toast(ru.nextf.measurements.R.string.enter_payment)
             return false
         }
@@ -434,14 +434,19 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
         val sum: Float = q.toFloat()
 
         var prepayment = NumberTextWatcherForThousand.trimCommaOfString(editTextPrepayment.text.toString())
-        if (prepayment[prepayment.length - 1] == '.') {
-            prepayment = prepayment.substring(0, prepayment.length - 1)
+        var prepaymentClose: Float?
+        if (prepayment.isNotEmpty()) {
+            if (prepayment[prepayment.length - 1] == '.') {
+                prepayment = prepayment.substring(0, prepayment.length - 1)
+            }
+            prepaymentClose = prepayment.toFloat()
+        } else {
+            prepaymentClose = null
         }
-        val prepaymentClose: Float = prepayment.toFloat()
 
         var paymentMethod = spinner.selectedItemPosition
         val close = Close(if (editTextComment.text.isEmpty()) null else editTextComment.text.toString(),
-                if (editTextPrepayment.text.isEmpty()) null else prepaymentClose,
+                prepaymentClose,
                 sum, checkBoxOffer.isChecked, serverDate, paymentMethod)
         showDialog()
         NetworkController.closeMeasurement(close, id)
