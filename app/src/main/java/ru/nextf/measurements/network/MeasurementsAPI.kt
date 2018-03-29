@@ -79,7 +79,7 @@ interface MeasurementsAPI {
     fun getMeasurementsDeal(@Path("id") id: String): Call<List<Measurement>>
 
 
-    @GET("deals/{id}/mounts")
+    @GET("deals/{id}/mounts/")
     fun getMountsDeal(@Path("id") id: String): Call<List<Mount>>
 
     @POST("deals/{id}/discount/")
