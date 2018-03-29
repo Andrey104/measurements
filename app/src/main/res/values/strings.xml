@@ -52,6 +52,7 @@
     <string name="enter_comment">Введите комментарий</string>
     <string name="empty"></string>
     <string name="measurement_closed">Замер завершен</string>
+    <string name="measurement_closed_success">Замер успешно завершен</string>
     <string name="measurement_added">Замер добавлен</string>
     <string name="mount_added">Монтаж добавлен</string>
     <string name="successful_reject">Успешное завершение</string>

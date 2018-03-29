@@ -35,8 +35,7 @@ class InstallersMountFragment : Fragment() {
         mView = inflater?.inflate(ru.nextf.measurements.R.layout.installers_mount_fragment, container, false)
                 ?: View(context)
         println(mountStr)
-        //исправить, когда Саня сделает
-        adapter = InstallerAdapter(mount.stages!![0].installers ?: emptyList)
+        adapter = InstallerAdapter(mount.installers ?: emptyList)
         mView.recyclerViewInstallers.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mView.recyclerViewInstallers.layoutManager = layoutManager

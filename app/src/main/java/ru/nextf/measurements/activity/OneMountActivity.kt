@@ -8,12 +8,9 @@ import kotlinx.android.synthetic.main.activity_one_mount.*
 import kotlinx.android.synthetic.main.dialog_description.view.*
 import ru.nextf.measurements.MOUNT_NAME
 import ru.nextf.measurements.adapters.FragmentPagerAdapter
-import ru.nextf.measurements.adapters.StageAdapter
 import ru.nextf.measurements.formatDate
 import ru.nextf.measurements.gson
-import ru.nextf.measurements.modelAPI.Event
 import ru.nextf.measurements.modelAPI.Mount
-import ru.nextf.measurements.modelAPI.NewCommentMount
 import ru.nextf.measurements.toast
 
 

@@ -237,7 +237,7 @@ class MainMeasurementFragment : Fragment() {
             }
         }
 
-        setStatus(measurement)
+
 
         mView.recycleClient.adapter = ClientAdapter(measurement.clients
                 ?: emptyList(), layoutInflater, activity)
@@ -253,6 +253,7 @@ class MainMeasurementFragment : Fragment() {
             mView.worker_name.text = measurement.worker.firstName + " " + measurement.worker.lastName
         }
         setColorWorker(measurement)
+        setStatus(measurement)
         if (measurement.addressComment.isNullOrEmpty()) {
             mView.comment.visibility = View.GONE
         } else {
@@ -286,8 +287,14 @@ class MainMeasurementFragment : Fragment() {
             }
             2, 3 -> {
                 ONLY_DEAL = true
-                mView.textViewStatus.text = getString(ru.nextf.measurements.R.string.measurement_closed)
-                selectColorVersion(mView.textViewStatus, ru.nextf.measurements.R.color.red)
+                if (measurement.status == 2) {
+                    mView.textViewStatus.text = getString(ru.nextf.measurements.R.string.not_contract)
+                    selectColorVersion(mView.textViewStatus, ru.nextf.measurements.R.color.red)
+                }
+                if (measurement.status == 3) {
+                    mView.textViewStatus.text = getString(ru.nextf.measurements.R.string.measurement_closed_success)
+                    selectColorVersion(mView.textViewStatus, ru.nextf.measurements.R.color.green)
+                }
                 mView.fabMain.setOnClickListener {
                     isFabOpen = true
                     mView.fabMainClose.startAnimation(fabOpen)
