@@ -3,6 +3,7 @@ package ru.nextf.measurements.activity
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_add_recalculation.*
 import ru.nextf.measurements.DEAL_ID
@@ -14,7 +15,7 @@ import ru.nextf.measurements.toast
 
 
 class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.DiscountCallback {
-      private var dealId = ""
+    private var dealId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NetworkControllerDeals.registerDiscountCallback(this)
@@ -53,10 +54,12 @@ class AddRecalculationActivity : AppCompatActivity(), NetworkControllerDeals.Dis
         buttonOk.isEnabled = false
         val discount = RecalculationRequest(close, editTextDescription.text.toString())
         NetworkControllerDeals.addDiscount(discount, dealId)
+        progressBar7.visibility = View.VISIBLE
         return true
     }
 
     override fun resultAddDiscount(boolean: Boolean) {
+        progressBar7.visibility = View.GONE
         if (boolean) {
             toast(ru.nextf.measurements.R.string.discount_added_successful)
             setResult(200)
