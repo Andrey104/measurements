@@ -413,7 +413,27 @@ object NetworkController {
     }
 
     fun addMount(idDeal: String, mountAdd: MountAdd) {
-        val call = api.addMout(idDeal, mountAdd)
+        val call = api.addMount(idDeal, mountAdd)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                response?.let {
+                    if (response.code() == 200) {
+                        addMountCallback?.resultMountAdd(true)
+                    } else {
+                        addMountCallback?.resultMountAdd(false)
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                addMountCallback?.resultMountAdd(false)
+            }
+        })
+    }
+
+    fun editMount(idMount: String, mountAdd: MountAdd) {
+        val call = api.editMount(idMount, mountAdd)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {

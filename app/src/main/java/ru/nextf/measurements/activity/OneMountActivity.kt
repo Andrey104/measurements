@@ -1,17 +1,18 @@
 package ru.nextf.measurements.activity
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_mount.*
 import kotlinx.android.synthetic.main.dialog_description.view.*
-import ru.nextf.measurements.MOUNT_NAME
+import ru.nextf.measurements.*
 import ru.nextf.measurements.adapters.FragmentPagerAdapter
-import ru.nextf.measurements.formatDate
-import ru.nextf.measurements.gson
 import ru.nextf.measurements.modelAPI.Mount
-import ru.nextf.measurements.toast
+import ru.nextf.measurements.network.NetworkControllerPicture
 
 
 class OneMountActivity : AppCompatActivity() {
@@ -31,6 +32,32 @@ class OneMountActivity : AppCompatActivity() {
 
         viewPager.adapter = FragmentPagerAdapter(supportFragmentManager, gson.toJson(mount))
         tabLayout.setupWithViewPager(viewPager)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.edit_mount, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val intent = Intent(this, AddMountActivity::class.java)
+        intent.putExtra(EDIT_MOUNT, true)
+        intent.putExtra(DEAL_ID, mount.deal.toString())
+        intent.putExtra(MOUNT_NAME, gson.toJson(mount))
+        if (mount.date != null) {
+            intent.putExtra(EDIT_MOUNT_DATE, mount.date)
+        }
+        if (mount.description != null) {
+            intent.putExtra(EDIT_MOUNT_DESCRIPTION, mount.description)
+        }
+        startActivityForResult(intent, 12)
+        return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == 200) {
+
+        }
     }
 
     private fun displayMount() {

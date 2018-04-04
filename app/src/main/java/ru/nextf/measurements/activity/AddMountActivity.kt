@@ -4,17 +4,18 @@ import android.app.DatePickerDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_add_mount.*
-import ru.nextf.measurements.DEAL_ID
-import ru.nextf.measurements.R
+import ru.nextf.measurements.*
+import ru.nextf.measurements.modelAPI.Mount
 import ru.nextf.measurements.modelAPI.MountAdd
 import ru.nextf.measurements.network.NetworkController
-import ru.nextf.measurements.network.NetworkControllerDeals
-import ru.nextf.measurements.toast
 import java.util.*
 
 class AddMountActivity : AppCompatActivity(), NetworkController.MountAddCallback {
     private var serverDate = ""
+    private var description = ""
+    private lateinit var mount: Mount
     private lateinit var dealId: String
     private var months = emptyArray<String>()
 
@@ -30,6 +31,17 @@ class AddMountActivity : AppCompatActivity(), NetworkController.MountAddCallback
         imageButton3.setOnClickListener {
             deleteDateMount()
             imageButton3.visibility = View.GONE
+        }
+        if (intent.hasExtra(EDIT_MOUNT)) {
+            getSaveMount()
+            if (intent.hasExtra(EDIT_MOUNT_DATE)) {
+                serverDate = intent.getStringExtra(EDIT_MOUNT_DATE)
+                textViewDate2.text = "$serverDate"
+            }
+            if (intent.hasExtra(EDIT_MOUNT_DESCRIPTION)) {
+                description = intent.getStringExtra(EDIT_MOUNT_DESCRIPTION)
+                editComment2.setText(description)
+            }
         }
     }
 
@@ -53,9 +65,15 @@ class AddMountActivity : AppCompatActivity(), NetworkController.MountAddCallback
     private fun addMount() {
         buttonOk.isEnabled = false
         progressBar8.visibility = View.VISIBLE
-        NetworkController.addMount(dealId,
-                MountAdd(if (serverDate.isEmpty()) null else serverDate,
-                        if (editComment2.text.isNullOrEmpty()) null else editComment2.text.toString()))
+        if (intent.hasExtra(EDIT_MOUNT)) {
+            NetworkController.editMount(mount.id.toString(),
+                    MountAdd(if (serverDate.isEmpty()) null else serverDate,
+                    if (editComment2.text.isNullOrEmpty()) null else editComment2.text.toString()))
+        } else {
+            NetworkController.addMount(dealId,
+                    MountAdd(if (serverDate.isEmpty()) null else serverDate,
+                            if (editComment2.text.isNullOrEmpty()) null else editComment2.text.toString()))
+        }
     }
 
     override fun resultMountAdd(result: Boolean) {
@@ -67,6 +85,22 @@ class AddMountActivity : AppCompatActivity(), NetworkController.MountAddCallback
             finish()
         } else {
             toast(R.string.error)
+        }
+    }
+
+    private fun getSaveMount() {
+        if (intent.hasExtra(MOUNT_NAME)) {
+            val json = intent.getStringExtra(MOUNT_NAME)
+            mount = if (json.isNullOrEmpty()) {
+                Mount()
+            } else {
+                val type = object : TypeToken<Mount>() {
+                }.type
+                gson.fromJson(json, type)
+            }
+        } else {
+            toast(ru.nextf.measurements.R.string.error)
+            finish()
         }
     }
 }
