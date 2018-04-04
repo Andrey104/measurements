@@ -6,6 +6,7 @@ import ru.nextf.measurements.modelAPI.Authorization
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.nextf.measurements.MY_ID_USER
 
 /**
  * Created by addd on 16.12.2017.
@@ -30,6 +31,7 @@ object NetworkAuthorization {
                                 val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(ru.nextf.measurements.MyApp.instance)
                                 val editor: SharedPreferences.Editor = mSettings.edit()
                                 editor.putString(APP_TOKEN, response.body()?.token)
+                                editor.putInt(MY_ID_USER, response.body()?.id ?: 0)
                                 editor.apply()
                                 callback?.resultAuth(200)
                             }

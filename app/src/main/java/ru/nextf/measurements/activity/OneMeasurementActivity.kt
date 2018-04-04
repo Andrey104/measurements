@@ -26,13 +26,16 @@ import android.provider.MediaStore
 import android.opengl.ETC1.getHeight
 import android.opengl.ETC1.getWidth
 import android.R.attr.data
+import android.content.SharedPreferences
 import android.graphics.Matrix
+import android.preference.PreferenceManager
 import android.util.Log
+import ru.nextf.measurements.network.NetworkControllerComment
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
         MainMeasurementFragment.MainMF, MyWebSocket.SocketCallback, NetworkControllerPicture.PictureCallback,
-        NetworkControllerPicture.UpdatePicturesCallback {
+        NetworkControllerPicture.UpdatePicturesCallback, NetworkControllerComment.AddCommentCallback {
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALERY = 2
     lateinit var measurement: Measurement
@@ -47,6 +50,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         NetworkController.registerUpdateOneMeasurementCallback(this)
         NetworkControllerPicture.registerUpdateCallback(this)
         NetworkControllerPicture.registerPictureCallback(this)
+        NetworkControllerComment.registerCommentCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.activity_one_measurement)
         setSupportActionBar(toolbarAst)
@@ -336,7 +340,8 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             "on_comment_measurement" -> {
                 val type = object : TypeToken<NewCommentMeasurement>() {}.type
                 val newComment = gson.fromJson<NewCommentMeasurement>(gson.toJson(event.data), type)
-                if (measurement.id == newComment.id) {
+                val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                if ((measurement.id == newComment.id) && (newComment.comment.user.id != mSettings.getInt(MY_ID_USER, 0))) {
                     (measurement.comments as ArrayList).add(newComment.comment)
                     if (bottomNavigation.selectedItemId == R.id.commentsMeasurement) {
                         fragmentComment.refreshComments(measurement)
@@ -344,6 +349,20 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
                 }
                 setResult(200)
             }
+        }
+    }
+
+    override fun addCommentResult(result: Boolean, comment: Comment?) {
+        if (result) {
+            if (comment != null) {
+                (measurement.comments as ArrayList).add(comment)
+            }
+            if (bottomNavigation.selectedItemId == R.id.commentsMeasurement) {
+                fragmentComment.refreshComments(measurement)
+            }
+            setResult(200)
+        } else {
+            toast(R.string.error_add_comment)
         }
     }
 }

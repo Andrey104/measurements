@@ -1,28 +1,29 @@
 package ru.nextf.measurements.fragments
 
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.nextf.measurements.adapters.CommentAdapter
 import ru.nextf.measurements.network.NetworkControllerComment
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.activity_one_measurement.*
 import kotlinx.android.synthetic.main.comments_measurement_fragment.view.*
 import ru.nextf.measurements.*
 import ru.nextf.measurements.modelAPI.*
-import ru.nextf.measurements.network.NetworkController
 import ru.nextf.measurements.network.NetworkControllerDeals
 
 /**
  * Created by addd on 08.02.2018.
  */
-class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
+class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback, NetworkControllerComment.AddCommentCallback {
     private lateinit var mView: View
     private lateinit var deal: Deal
     private lateinit var bundle: Bundle
@@ -33,6 +34,7 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
     private val handler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        NetworkControllerComment.registerCommentCallback(this)
         mView = inflater?.inflate(ru.nextf.measurements.R.layout.comments_measurement_fragment, container, false) ?: View(context)
         bundle = this.arguments
         myWebSocket.registerSocketCallback(this)
@@ -69,6 +71,20 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
         return mView
     }
 
+    private fun refreshComments() {
+        handler.post {
+            adapter = CommentAdapter(deal.comments as ArrayList<Comment>)
+            recycler = mView.recyclerViewComments
+            mView.recyclerViewComments.adapter = adapter
+            adapter.notifyDataSetChanged()
+
+            val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            mView.recyclerViewComments.layoutManager = layoutManager
+            recycler.scrollToPosition(adapter.itemCount - 1)
+        }
+    }
+
+
     override fun onResume() {
         super.onResume()
         myWebSocket.registerSocketCallback(this)
@@ -80,7 +96,9 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
         if (event.event == "on_comment_deal") {
             val type = object : TypeToken<NewCommentDeal>() {}.type
             val newComment = gson.fromJson<NewCommentDeal>(gson.toJson(event.data), type)
-            if (deal.id == newComment.id) {
+            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            if ((deal.id == newComment.id) &&
+                    (newComment.comment.user.id != mSettings.getInt(MY_ID_USER, 0))) {
                 handler.post {
                     adapter.add(newComment.comment)
                     recycler.smoothScrollToPosition(adapter.itemCount - 1)
@@ -89,6 +107,18 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
             }
         }
     }
+
+    override fun addCommentResult(result: Boolean, comment: Comment?) {
+        if (result) {
+            if (comment != null) {
+                (deal.comments as ArrayList).add(comment)
+            }
+            refreshComments()
+        } else {
+            toast(R.string.error_add_comment)
+        }
+    }
+
 
     private fun displayComments() {
         adapter = CommentAdapter(deal.comments as ArrayList<Comment>)
@@ -104,9 +134,9 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
         if (mView.editTextCommentProblem.text.isEmpty()) {
             toast(ru.nextf.measurements.R.string.enter_comment)
         } else {
-                commentRequest = CommentRequest(mView.editTextCommentProblem.text.toString())
-                NetworkControllerComment.addCommentDeal(commentRequest, deal.id.toString())
-                mView.editTextCommentProblem.setText(ru.nextf.measurements.R.string.empty)
+            commentRequest = CommentRequest(mView.editTextCommentProblem.text.toString())
+            NetworkControllerComment.addCommentDeal(commentRequest, deal.id.toString())
+            mView.editTextCommentProblem.setText(ru.nextf.measurements.R.string.empty)
         }
     }
 
@@ -124,7 +154,7 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback {
 
 
     override fun onDestroyView() {
-        NetworkControllerComment.registerProblemPagination(null)
+        NetworkControllerComment.registerCommentCallback(null)
         super.onDestroyView()
     }
 

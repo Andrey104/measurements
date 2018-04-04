@@ -31,6 +31,7 @@ val MOUNT_NAME = "mount"
 val MAIN_NAME = "main"
 val ID_KEY = "id"
 val APP_TOKEN = "token"
+val MY_ID_USER = "MY_ID_USER"
 val STATUS_CURRENT = 0
 val STATUS_REJECT = 1
 val STATUS_CLOSE = 2

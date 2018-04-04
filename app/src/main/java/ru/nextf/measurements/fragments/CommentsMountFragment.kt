@@ -1,8 +1,10 @@
 package ru.nextf.measurements.fragments
 
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -21,7 +23,7 @@ import ru.nextf.measurements.network.NetworkControllerDeals
  * Created by addd on 02.02.2018.
  */
 class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
-        NetworkControllerDeals.MountCallback {
+        NetworkControllerDeals.MountCallback, NetworkControllerComment.AddCommentCallback {
     private var mountStr = ""
     private lateinit var mount: Mount
     private lateinit var mView: View
@@ -38,6 +40,7 @@ class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         NetworkControllerDeals.registerMountCallback(this)
+        NetworkControllerComment.registerCommentCallback(this)
         mView = inflater.inflate(R.layout.comments_mount_fragment, container, false)
         displayComments()
         if (mount.comments?.isNotEmpty() == true) {
@@ -91,7 +94,9 @@ class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
         if (event.event == "on_comment_mount") {
             val type = object : TypeToken<NewCommentMount>() {}.type
             val newComment = gson.fromJson<NewCommentMount>(gson.toJson(event.data), type)
-            if (mount.id == newComment.id) {
+            val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            if ((mount.id == newComment.id) &&
+                    (newComment.comment.user.id != mSettings.getInt(MY_ID_USER, 0))) {
                 handler.post {
                     adapter.add(newComment.comment)
                     mView.recyclerViewComments.smoothScrollToPosition(adapter.itemCount - 1)
@@ -116,6 +121,29 @@ class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
             commentRequest = CommentRequest(mView.editTextCommentProblem.text.toString())
             NetworkControllerComment.addCommentMount(commentRequest, mount.id.toString())
             mView.editTextCommentProblem.setText(ru.nextf.measurements.R.string.empty)
+        }
+    }
+
+    private fun refreshComments() {
+        handler.post {
+            adapter = CommentAdapter(mount.comments as ArrayList<Comment>)
+            mView.recyclerViewComments.adapter = adapter
+            adapter.notifyDataSetChanged()
+
+            val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            mView.recyclerViewComments.layoutManager = layoutManager
+            mView.recyclerViewComments.scrollToPosition(adapter.itemCount - 1)
+        }
+    }
+
+    override fun addCommentResult(result: Boolean, comment: Comment?) {
+        if (result) {
+            if (comment != null) {
+                (mount.comments as ArrayList).add(comment)
+            }
+            refreshComments()
+        } else {
+            toast(R.string.error_add_comment)
         }
     }
 
