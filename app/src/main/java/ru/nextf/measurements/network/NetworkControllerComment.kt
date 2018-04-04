@@ -87,7 +87,7 @@ object NetworkControllerComment {
         fun addCommentResult(result: Boolean, comment: Comment?)
     }
 
-    fun registerProblemPagination(callback: AddCommentCallback?) {
+    fun registerCommentCallback(callback: AddCommentCallback?) {
         addCommentCallback = callback
 
     }
