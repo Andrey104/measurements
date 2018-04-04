@@ -307,26 +307,9 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
     private fun displayPictures(measurement: Measurement) {
         measurement.pictures.let {
             arrayPhoto = LinkedList()
-            var strBuilder = StringBuilder()
-            var count = 0
-            var index = 0
+
             for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
-                strBuilder.append(photo.url)
-                strBuilder.reverse()
-                for (char in strBuilder) {
-                    index++
-                    if (char == '/') count++
-                    if (count == 3) {
-                        index--
-                        break
-                    }
-                }
-                strBuilder.delete(index, strBuilder.length)
-                strBuilder.reverse()
-                arrayPhoto.add(MeasurementPhoto(BASE_URL + strBuilder.toString(), photo.id.toString()))
-                count = 0
-                index = 0
-                strBuilder.delete(0, strBuilder.length)
+                arrayPhoto.add(MeasurementPhoto(photo.url.toString(), photo.id.toString()))
             }
         }
         arrayPhoto.addFirst(MeasurementPhoto(BASE_URL, "id"))

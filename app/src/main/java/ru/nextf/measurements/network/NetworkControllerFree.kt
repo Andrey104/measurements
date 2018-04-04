@@ -22,7 +22,7 @@ object NetworkControllerFree {
     private var paginationCallbackFree: CallbackPaginationFree? = null
 
 
-    private val BASE_URL = "http://natcom-crm.nextf.ru/api/"
+    private val BASE_URL = "http://188.225.46.31/api/"
     private val api: MeasurementsAPI by lazy { init(ru.nextf.measurements.MyApp.instance) }
     private fun init(context: Context): MeasurementsAPI {
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
