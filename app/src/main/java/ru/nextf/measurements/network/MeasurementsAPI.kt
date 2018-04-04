@@ -100,5 +100,5 @@ interface MeasurementsAPI {
 
 
     @POST("deals/{id}/mount/")
-    fun addMout(@Path("id") id: String): Call<Void>
+    fun addMout(@Path("id") id: String, @Body mountAdd: MountAdd): Call<Void>
 }

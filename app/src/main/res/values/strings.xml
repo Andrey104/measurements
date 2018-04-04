@@ -288,6 +288,7 @@
     <string name="address_header">Адрес</string>
     <string name="delete_photo">Удаление фотографии</string>
     <string name="method_prepayment">Способ оплаты</string>
+    <string name="mount_added_successful">Монтаж успешно добавлен</string>
     <string-array name="paylist">
         <item>Не выбрано</item>
         <item>Безналичные</item>

@@ -2,6 +2,7 @@ package ru.nextf.measurements.fragments
 
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,6 +11,7 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -60,6 +62,10 @@ class MeasurementPhotoFragment : Fragment(), ImageGalleryAdapter.CustomAdapterCa
         getPermission()
 
         displayPictures(measurement)
+        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        if (measurement.worker?.id != mSettings.getInt(MY_ID_USER, 0)) {
+            mView.fabMain.visibility = View.GONE
+        }
 
         mView.fabMain.setOnClickListener {
             val builder = AlertDialog.Builder(context)

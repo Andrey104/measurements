@@ -3,6 +3,7 @@ package ru.nextf.measurements.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import ru.nextf.measurements.modelAPI.Mount
 import ru.nextf.measurements.*
 import ru.nextf.measurements.network.NetworkControllerDeals
 import kotlinx.android.synthetic.main.mount_fragment.view.*
+import ru.nextf.measurements.activity.AddMountActivity
 
 /**
  * Created by addd on 10.01.2018.
@@ -23,6 +25,7 @@ class MountFragment : Fragment(), NetworkControllerDeals.MountsDealCallback, Mou
     private lateinit var mView: View
     private lateinit var bundle: Bundle
     private lateinit var idDeal: String
+    private var statusDeal: Int = 0
     private lateinit var mounts: List<Mount>
     var emptyList: ArrayList<Mount> = ArrayList(emptyList())
 
@@ -41,7 +44,27 @@ class MountFragment : Fragment(), NetworkControllerDeals.MountsDealCallback, Mou
             toast(ru.nextf.measurements.R.string.error)
         }
 
+        if (bundle.containsKey(DEAL_STATUS)) {
+            statusDeal = bundle.getInt(DEAL_STATUS)
+        }
+        if (statusDeal == 2 || statusDeal == 3) {
+            mView.fabAddMount.visibility = View.VISIBLE
+        }
+        mView.fabAddMount.setOnClickListener({
+            addMount()
+        })
         return view
+    }
+
+    private fun addMount() {
+        val intent = Intent(context, AddMountActivity::class.java)
+        intent.putExtra(DEAL_ID, idDeal)
+        startActivityForResult(intent, 1)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        mView.progressBarMount.visibility = View.VISIBLE
+        NetworkControllerDeals.getMountsDeal(idDeal)
     }
 
     private fun displayMounts(mounts: List<Mount>) {

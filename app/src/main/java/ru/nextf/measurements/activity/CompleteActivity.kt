@@ -394,7 +394,6 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
             DatePickerDialog(this, myCallBack, yearSave, monthSave, daySave)
         }
         datePicker.show()
-        datePicker.show()
     }
 
     private fun doCompleteRequest(): Boolean {

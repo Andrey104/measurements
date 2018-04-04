@@ -412,8 +412,8 @@ object NetworkController {
         })
     }
 
-    fun addMount(idDeal: String) {
-        val call = api.addMout(idDeal)
+    fun addMount(idDeal: String, mountAdd: MountAdd) {
+        val call = api.addMout(idDeal, mountAdd)
         call.enqueue(object : retrofit2.Callback<Void> {
             override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                 response?.let {

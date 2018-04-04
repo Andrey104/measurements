@@ -72,6 +72,7 @@ class OneDealActivity : AppCompatActivity(), NetworkControllerDeals.OneDealCallb
                         val fragment = MountFragment()
                         fragment.arguments = bundle
                         bundle.putString(DEAL_ID, dealID)
+                        bundle.putInt(DEAL_STATUS, deal.status ?: 0)
                         val fragmentManager = supportFragmentManager
                         fragmentManager.beginTransaction().replace(ru.nextf.measurements.R.id.containerDeal, fragment).commit()
                     }
