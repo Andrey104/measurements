@@ -38,6 +38,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         NetworkControllerPicture.UpdatePicturesCallback, NetworkControllerComment.AddCommentCallback {
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALERY = 2
+    private val DELETE_PHOTO = 1212
     lateinit var measurement: Measurement
     lateinit var fragmentComment: CommentsMeasurementFragment
     lateinit var fragmentPicture: MeasurementPhotoFragment
@@ -194,6 +195,12 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == DELETE_PHOTO) {
+            if (resultCode == 200) {
+                NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
+            }
+            return
+        }
         file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
         if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
@@ -210,13 +217,13 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
             fragmentPicture.galleryAddPic()
             fragmentPicture.postPictureFile(file)
         }
-        super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == 200) {
             setResult(200)
         }
         if (requestCode == 33) {
             NetworkController.getOneMeasurement(measurement.id.toString())
         }
+        super.onActivityResult(requestCode, resultCode, intent)
     }
 
     //берем картинку из глаерии/еще  откуда-либо. И отправляем из активити, так как в фрагменте приходит пустой uri, а это тупо((

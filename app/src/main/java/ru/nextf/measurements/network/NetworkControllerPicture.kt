@@ -18,6 +18,7 @@ import java.io.File
 object NetworkControllerPicture {
     var callbackPictureAdd: PictureCallback? = null
     var updatePicturesOneMeasurement: UpdatePicturesCallback? = null
+    var callbackPictureDelete: UpdatePicturesDelete? = null
     private val BASE_URL = "http://188.225.46.31/api/"
     private val api: MeasurementsAPI by lazy { init(ru.nextf.measurements.MyApp.instance) }
     private fun init(context: Context): MeasurementsAPI {
@@ -45,7 +46,7 @@ object NetworkControllerPicture {
                     if (response?.code() == 413) {
                         //слишком большой
                     }
-                    if (response?.code() == 200) {
+                    if (response?.code() == 201) {
                         callbackPictureAdd?.resultPictureAdd(true)
                     } else {
                         callbackPictureAdd?.resultPictureAdd(false)
@@ -79,6 +80,23 @@ object NetworkControllerPicture {
         })
     }
 
+    fun deletePictureFile(id: String, idImage: String) {
+            val call = api.deletePicture(id, idImage)
+            call.enqueue(object : retrofit2.Callback<Void> {
+                override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                    if (response?.code() == 204) {
+                        callbackPictureDelete?.resultUpdatePicDelete(true)
+                    } else {
+                        callbackPictureDelete?.resultUpdatePicDelete(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                    callbackPictureDelete?.resultUpdatePicDelete(false)
+                }
+            })
+    }
+
     interface PictureCallback {
         fun resultPictureAdd(result: Boolean)
     }
@@ -93,5 +111,13 @@ object NetworkControllerPicture {
 
     fun registerUpdateCallback(picturesCallback: UpdatePicturesCallback?) {
         updatePicturesOneMeasurement = picturesCallback
+    }
+
+    interface UpdatePicturesDelete {
+        fun resultUpdatePicDelete(result: Boolean)
+    }
+
+    fun registerUpdateDeleteCallback(picturesCallback: UpdatePicturesDelete?) {
+        callbackPictureDelete = picturesCallback
     }
 }

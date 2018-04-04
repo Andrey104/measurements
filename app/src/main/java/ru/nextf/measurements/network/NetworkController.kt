@@ -30,6 +30,7 @@ object NetworkController {
     var responsible: ResponsibleCallback? = null
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
+    var addMountCallback: MountAddCallback? = null
     var fragmentOneCallback: CallbackUpdateOneMeasurementFragment? = null
     var callbackMeasurementsDealCallback: MeasurementsDealCallback? = null
     var callbackPaginationListMeasurements: PaginationCallback? = null
@@ -411,6 +412,26 @@ object NetworkController {
         })
     }
 
+    fun addMount(idDeal: String) {
+        val call = api.addMout(idDeal)
+        call.enqueue(object : retrofit2.Callback<Void> {
+            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                response?.let {
+                    if (response.code() == 200) {
+                        addMountCallback?.resultMountAdd(true)
+                    } else {
+                        addMountCallback?.resultMountAdd(false)
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                addMountCallback?.resultMountAdd(false)
+            }
+        })
+    }
+
 
 //----------------------------------внутренние функции класса------------------------------------------
 
@@ -565,5 +586,13 @@ object NetworkController {
 
     fun registerMeasurementsDealCallback(callback: MeasurementsDealCallback?) {
         NetworkController.callbackMeasurementsDealCallback = callback
+    }
+
+    interface MountAddCallback {
+        fun resultMountAdd(result: Boolean)
+    }
+
+    fun registerMountAddCallback(callback: MountAddCallback?) {
+        NetworkController.addMountCallback = callback
     }
 }
