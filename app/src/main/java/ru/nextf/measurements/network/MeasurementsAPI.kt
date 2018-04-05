@@ -102,6 +102,9 @@ interface MeasurementsAPI {
     @POST("deals/{id}/mount/")
     fun addMount(@Path("id") id: String, @Body mountAdd: MountAdd): Call<Void>
 
+    @GET("mounts/{id}/")
+    fun getOneMount(@Path("id") id: String): Call<Mount>
+
     @PUT("mounts/{id}/")
     fun editMount(@Path("id") id: String, @Body mountEdit: MountEdit): Call<Mount>
 }

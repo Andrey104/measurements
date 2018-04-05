@@ -6,19 +6,22 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_one_mount.*
 import kotlinx.android.synthetic.main.dialog_description.view.*
 import ru.nextf.measurements.*
 import ru.nextf.measurements.adapters.FragmentPagerAdapter
 import ru.nextf.measurements.modelAPI.Mount
-import ru.nextf.measurements.network.NetworkControllerPicture
+import ru.nextf.measurements.network.NetworkController
+import ru.nextf.measurements.network.NetworkControllerDeals
 
 
-class OneMountActivity : AppCompatActivity() {
+class OneMountActivity : AppCompatActivity(), NetworkControllerDeals.OneMountCallback {
     private lateinit var mount: Mount
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        NetworkControllerDeals.registerOneMountCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.activity_one_mount)
         setSupportActionBar(toolbarAst)
@@ -30,8 +33,7 @@ class OneMountActivity : AppCompatActivity() {
         supportActionBar?.title = String.format("Монтаж %05d", mount.deal)
         displayMount()
 
-        viewPager.adapter = FragmentPagerAdapter(supportFragmentManager, gson.toJson(mount))
-        tabLayout.setupWithViewPager(viewPager)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -56,7 +58,18 @@ class OneMountActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 200) {
+            NetworkControllerDeals.getOneMount(mount.id.toString())
+            progressBar9.visibility = View.VISIBLE
+        }
+    }
 
+    override fun resultOneMount(mount: Mount?, result: Boolean) {
+        progressBar9.visibility = View.GONE
+        if (result && mount != null) {
+            this.mount = mount
+            displayMount()
+        } else {
+            toast(R.string.update_error)
         }
     }
 
@@ -94,6 +107,8 @@ class OneMountActivity : AppCompatActivity() {
             textViewCommentMount.text = getString(ru.nextf.measurements.R.string.comment_empty)
         }
 
+        viewPager.adapter = FragmentPagerAdapter(supportFragmentManager, gson.toJson(mount))
+        tabLayout.setupWithViewPager(viewPager)
     }
 
 

@@ -26,6 +26,7 @@ object NetworkControllerDeals {
     var addDiscountCallback: DiscountCallback? = null
     var callbackMountsDeal: MountsDealCallback? = null
     var callbackMount: MountCallback? = null
+    var callbackOneMount: OneMountCallback? = null
 
 
     private val BASE_URL = "http://188.225.46.31/api/"
@@ -339,6 +340,28 @@ object NetworkControllerDeals {
         })
     }
 
+    fun getOneMount(id: String) {
+        val call = api.getOneMount(id)
+        call.enqueue(object : retrofit2.Callback<Mount> {
+            override fun onResponse(call: Call<Mount>?, response: Response<Mount>?) {
+                var mount: Mount? = null
+                response?.body().let {
+                    if (response?.code() == 200) {
+                        mount = response.body()
+                        callbackOneMount?.resultOneMount(mount, true)
+                    } else {
+                        callbackOneMount?.resultOneMount(null, false)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Mount>?, t: Throwable?) {
+                callbackOneMount?.resultOneMount(null, false)
+            }
+
+        })
+    }
+
     //----------------------------------callbacks-----------------------------------
 
     interface CallbackListDeals {
@@ -387,6 +410,14 @@ object NetworkControllerDeals {
 
     fun registerMountCallback(callback: MountCallback?) {
         callbackMount = callback
+    }
+
+    interface OneMountCallback {
+        fun resultOneMount(mount: Mount?, boolean: Boolean)
+    }
+
+    fun registerOneMountCallback(callback: OneMountCallback?) {
+        callbackOneMount = callback
     }
 
 }
