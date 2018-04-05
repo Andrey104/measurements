@@ -42,7 +42,7 @@ class EditMountActivity : AppCompatActivity(), NetworkController.MountEditCallba
             oldDate = intent.getStringExtra(EDIT_MOUNT_DATE)
             imageButton3.visibility = View.VISIBLE
             serverDate = intent.getStringExtra(EDIT_MOUNT_DATE)
-            textViewDate2.text = "$serverDate"
+            textViewDate2.text = formatDateMount(intent.getStringExtra(EDIT_MOUNT_DATE))
         }
         if (intent.hasExtra(EDIT_MOUNT_DESCRIPTION)) {
             description = intent.getStringExtra(EDIT_MOUNT_DESCRIPTION)

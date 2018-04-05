@@ -89,6 +89,23 @@ fun formatDate(date: String): String {
     }
 }
 
+fun formatDateMount(date: String): String {
+    var months: Array<String> = MyApp.instance.resources.getStringArray(ru.nextf.measurements.R.array.months)
+    val month = SimpleDateFormat("MM", Locale.US)
+    var m = ""
+    try {
+        m = month.format(backendDateFormat.parse(date))
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    val normalFormat = SimpleDateFormat("dd ${months[m.toInt() - 1]} yyyy года", Locale.US)
+    return try {
+        normalFormat.format(backendDateFormat.parse(date))
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        "8888.88.88"
+    }
+}
 
 val ONE_MINUTE_IN_MILLIS = 60000
 val backendDateFormatTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.US)
