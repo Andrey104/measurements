@@ -32,17 +32,6 @@ class AddMountActivity : AppCompatActivity(), NetworkController.MountAddCallback
             deleteDateMount()
             imageButton3.visibility = View.GONE
         }
-        if (intent.hasExtra(EDIT_MOUNT)) {
-            getSaveMount()
-            if (intent.hasExtra(EDIT_MOUNT_DATE)) {
-                serverDate = intent.getStringExtra(EDIT_MOUNT_DATE)
-                textViewDate2.text = "$serverDate"
-            }
-            if (intent.hasExtra(EDIT_MOUNT_DESCRIPTION)) {
-                description = intent.getStringExtra(EDIT_MOUNT_DESCRIPTION)
-                editComment2.setText(description)
-            }
-        }
     }
 
     private fun deleteDateMount() {
@@ -65,15 +54,9 @@ class AddMountActivity : AppCompatActivity(), NetworkController.MountAddCallback
     private fun addMount() {
         buttonOk.isEnabled = false
         progressBar8.visibility = View.VISIBLE
-        if (intent.hasExtra(EDIT_MOUNT)) {
-            NetworkController.editMount(mount.id.toString(),
-                    MountAdd(if (serverDate.isEmpty()) null else serverDate,
-                    if (editComment2.text.isNullOrEmpty()) null else editComment2.text.toString()))
-        } else {
             NetworkController.addMount(dealId,
                     MountAdd(if (serverDate.isEmpty()) null else serverDate,
                             if (editComment2.text.isNullOrEmpty()) null else editComment2.text.toString()))
-        }
     }
 
     override fun resultMountAdd(result: Boolean) {

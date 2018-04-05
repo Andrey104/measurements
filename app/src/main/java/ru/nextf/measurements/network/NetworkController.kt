@@ -31,6 +31,7 @@ object NetworkController {
     var rejectCallback: RejectCallback? = null
     var closeCallback: CloseCallback? = null
     var addMountCallback: MountAddCallback? = null
+    var editMountCallback: MountEditCallback? = null
     var fragmentOneCallback: CallbackUpdateOneMeasurementFragment? = null
     var callbackMeasurementsDealCallback: MeasurementsDealCallback? = null
     var callbackPaginationListMeasurements: PaginationCallback? = null
@@ -432,22 +433,21 @@ object NetworkController {
         })
     }
 
-    fun editMount(idMount: String, mountAdd: MountAdd) {
-        val call = api.editMount(idMount, mountAdd)
-        call.enqueue(object : retrofit2.Callback<Void> {
-            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+    fun editMount(idMount: String, mountEdit: MountEdit) {
+        val call = api.editMount(idMount, mountEdit)
+        call.enqueue(object : retrofit2.Callback<Mount> {
+            override fun onResponse(call: Call<Mount>?, response: Response<Mount>?) {
                 response?.let {
                     if (response.code() == 200) {
-                        addMountCallback?.resultMountAdd(true)
+                        editMountCallback?.resultMountEdit(true, it.body())
                     } else {
-                        addMountCallback?.resultMountAdd(false)
+                        editMountCallback?.resultMountEdit(false, null)
                     }
                 }
 
             }
-
-            override fun onFailure(call: Call<Void>?, t: Throwable?) {
-                addMountCallback?.resultMountAdd(false)
+            override fun onFailure(call: Call<Mount>?, t: Throwable?) {
+                editMountCallback?.resultMountEdit(false, null)
             }
         })
     }
@@ -614,5 +614,13 @@ object NetworkController {
 
     fun registerMountAddCallback(callback: MountAddCallback?) {
         NetworkController.addMountCallback = callback
+    }
+
+    interface MountEditCallback {
+        fun resultMountEdit(result: Boolean, mount: Mount?)
+    }
+
+    fun registerMountEditCallback(callback: MountEditCallback?) {
+        NetworkController.editMountCallback = callback
     }
 }

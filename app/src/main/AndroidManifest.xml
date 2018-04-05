@@ -64,7 +64,8 @@
         <activity
             android:name=".activity.SearchDealsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.AddMountActivity"></activity>
+        <activity android:name=".activity.AddMountActivity" />
+        <activity android:name=".activity.EditMountActivity"></activity>
     </application>
 
 </manifest>

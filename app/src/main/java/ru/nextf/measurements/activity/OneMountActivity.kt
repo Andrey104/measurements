@@ -40,7 +40,7 @@ class OneMountActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val intent = Intent(this, AddMountActivity::class.java)
+        val intent = Intent(this, EditMountActivity::class.java)
         intent.putExtra(EDIT_MOUNT, true)
         intent.putExtra(DEAL_ID, mount.deal.toString())
         intent.putExtra(MOUNT_NAME, gson.toJson(mount))
