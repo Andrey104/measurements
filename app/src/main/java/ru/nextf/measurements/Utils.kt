@@ -30,8 +30,14 @@ val COMMENT_DEAL = "commentDeal"
 val MOUNT_NAME = "mount"
 val MAIN_NAME = "main"
 val ID_KEY = "id"
+val DEAL_STATUS = "DEAL_STATUS"
+val EDIT_MOUNT = "EDIT_MOUNT"
+val EDIT_MOUNT_DATE = "EDIT_MOUNT_DATE"
+val EDIT_MOUNT_DESCRIPTION = "EDIT_MOUNT_DESCRIPTION"
 val APP_TOKEN = "token"
 val MY_ID_USER = "MY_ID_USER"
+val PHOTO_ID_DELETE = "PHOTO_ID_DELETE"
+val MEASUREMENT_ID_DELETE = "MEASUREMENT_ID_DELETE"
 val STATUS_CURRENT = 0
 val STATUS_REJECT = 1
 val STATUS_CLOSE = 2
@@ -83,6 +89,23 @@ fun formatDate(date: String): String {
     }
 }
 
+fun formatDateMount(date: String): String {
+    var months: Array<String> = MyApp.instance.resources.getStringArray(ru.nextf.measurements.R.array.months)
+    val month = SimpleDateFormat("MM", Locale.US)
+    var m = ""
+    try {
+        m = month.format(backendDateFormat.parse(date))
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    val normalFormat = SimpleDateFormat("dd ${months[m.toInt() - 1]} yyyy года", Locale.US)
+    return try {
+        normalFormat.format(backendDateFormat.parse(date))
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        "8888.88.88"
+    }
+}
 
 val ONE_MINUTE_IN_MILLIS = 60000
 val backendDateFormatTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.US)

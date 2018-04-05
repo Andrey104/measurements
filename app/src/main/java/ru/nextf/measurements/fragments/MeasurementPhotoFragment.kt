@@ -2,6 +2,7 @@ package ru.nextf.measurements.fragments
 
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,9 +11,11 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -24,6 +27,7 @@ import ru.nextf.measurements.*
 import ru.nextf.measurements.network.NetworkControllerPicture
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.measurement_photo_fragment.view.*
+import ru.nextf.measurements.activity.OnePhotoActivity
 import ru.nextf.measurements.modelAPI.*
 import java.io.*
 import java.text.SimpleDateFormat
@@ -32,7 +36,8 @@ import java.util.*
 /**
  * Created by addd on 01.02.2018.
  */
-class MeasurementPhotoFragment : Fragment() {
+class MeasurementPhotoFragment : Fragment(), ImageGalleryAdapter.CustomAdapterCallback {
+    private val DELETE_PHOTO = 1212
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
@@ -57,6 +62,10 @@ class MeasurementPhotoFragment : Fragment() {
         getPermission()
 
         displayPictures(measurement)
+        val mSettings: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        if (measurement.worker?.id != mSettings.getInt(MY_ID_USER, 0)) {
+            mView.fabMain.visibility = View.GONE
+        }
 
         mView.fabMain.setOnClickListener {
             val builder = AlertDialog.Builder(context)
@@ -72,6 +81,21 @@ class MeasurementPhotoFragment : Fragment() {
         }
 
         return mView
+    }
+
+    override fun onItemClick(pos: Int) {
+        if (pos != RecyclerView.NO_POSITION) {
+            val spacePhoto = arrayPhoto[pos]
+            val intent = Intent(context, OnePhotoActivity::class.java)
+            intent.putExtra(MEASUREMENT_ID_DELETE, measurement.id)
+            intent.putExtra(PHOTO_ID_DELETE, arrayPhoto[pos].getId())
+            intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
+            intent.putExtra(CHECK, pos + 1)
+            activity.startActivityForResult(intent, DELETE_PHOTO)
+        }
+    }
+
+    override fun onItemLongClick(pos: Int) {
     }
 
     private fun getPhotoFromCamera() {
@@ -115,11 +139,11 @@ class MeasurementPhotoFragment : Fragment() {
         measurement.pictures.let {
             arrayPhoto = ArrayList()
             for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
-                arrayPhoto.add(MeasurementPhoto(photo.url.toString(), photo.id.toString()))
+                arrayPhoto.add(MeasurementPhoto(photo.url.toString(), photo.id))
             }
         }
 
-        val adapter = ImageGalleryAdapter(context, arrayPhoto)
+        val adapter = ImageGalleryAdapter(context, arrayPhoto, this)
         recyclerPhotoList.adapter = adapter
         recyclerPhotoList.adapter.notifyDataSetChanged()
     }

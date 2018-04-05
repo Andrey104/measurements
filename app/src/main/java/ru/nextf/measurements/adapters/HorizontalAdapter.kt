@@ -3,15 +3,13 @@ package ru.nextf.measurements.adapters
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat
-import ru.nextf.measurements.R
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import ru.nextf.measurements.CHECK
-import ru.nextf.measurements.MEASUREMENT_PHOTO
+import ru.nextf.measurements.*
 import ru.nextf.measurements.activity.OnePhotoActivity
 import ru.nextf.measurements.modelAPI.MeasurementPhoto
 import java.util.*
@@ -20,7 +18,9 @@ import java.util.*
 /**
  * Created by left0ver on 27.03.18.
  */
-class HorizontalAdapter(context: Context, measurementPhotos: LinkedList<MeasurementPhoto>, private val listener: CustomAdapterCallback) : RecyclerView.Adapter<HorizontalAdapter.MyViewHolder>() {
+class HorizontalAdapter(context: Context,
+                        measurementPhotos: LinkedList<MeasurementPhoto>,
+                        private val listener: CustomAdapterCallback) : RecyclerView.Adapter<HorizontalAdapter.MyViewHolder>() {
     private var mMeasurementPhotos: LinkedList<MeasurementPhoto>? = measurementPhotos
     private var mContext: Context? = context
 
@@ -65,11 +65,7 @@ class HorizontalAdapter(context: Context, measurementPhotos: LinkedList<Measurem
         override fun onClick(view: View) {
                         val position = adapterPosition
             if (position != RecyclerView.NO_POSITION && position > 0) {
-                val spacePhoto = mMeasurementPhotos?.get(position)
-                val intent = Intent(mContext, OnePhotoActivity::class.java)
-                intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
-                intent.putExtra(CHECK, position + 1)
-                ContextCompat.startActivity(mContext, intent, null)
+                listener.OnPhotoCLick(adapterPosition)
             }
             if (position != RecyclerView.NO_POSITION && position == 0) {
                 listener.onFirstItemClick(adapterPosition)
@@ -78,6 +74,7 @@ class HorizontalAdapter(context: Context, measurementPhotos: LinkedList<Measurem
     }
 
     interface CustomAdapterCallback {
+        fun OnPhotoCLick(pos: Int)
         fun onFirstItemClick(pos: Int)
     }
 }

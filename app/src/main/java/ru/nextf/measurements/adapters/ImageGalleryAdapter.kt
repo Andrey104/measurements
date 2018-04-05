@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
 /**
  * Created by addd on 26.12.2017.
  */
-class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<MeasurementPhoto>) : RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder>() {
+class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<MeasurementPhoto>, private val listener: CustomAdapterCallback) : RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder>() {
     private var mMeasurementPhotos: ArrayList<MeasurementPhoto>? = measurementPhotos
     private var mContext: Context? = context
 
@@ -26,7 +26,7 @@ class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<Measure
         val context = parent.context
         val inflater = LayoutInflater.from(context)
         val photoView = inflater.inflate(ru.nextf.measurements.R.layout.list_item_photo, parent, false)
-        return MyViewHolder(photoView)
+        return MyViewHolder(photoView, listener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -44,25 +44,31 @@ class ImageGalleryAdapter(context: Context, measurementPhotos: ArrayList<Measure
         return mMeasurementPhotos?.size ?: 0
     }
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class MyViewHolder : RecyclerView.ViewHolder,
+            View.OnClickListener, View.OnLongClickListener {
+
+        override fun onLongClick(v: View?): Boolean {
+            listener.onItemLongClick(adapterPosition)
+            return true
+        }
 
         var mPhotoImageView: ImageView
+        private val listener: CustomAdapterCallback
 
-        init {
+        constructor(itemView: View, listener: CustomAdapterCallback) : super(itemView) {
+            this.listener = listener
             mPhotoImageView = itemView.findViewById(ru.nextf.measurements.R.id.iv_photo) as ImageView
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(view: View) {
-
-            val position = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
-                val spacePhoto = mMeasurementPhotos?.get(position)
-                val intent = Intent(mContext, OnePhotoActivity::class.java)
-                intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
-                intent.putExtra(CHECK, position + 1)
-                ContextCompat.startActivity(mContext, intent, null)
-            }
+            listener.onItemClick(adapterPosition)
         }
+
+    }
+
+    interface CustomAdapterCallback {
+        fun onItemClick(pos: Int)
+        fun onItemLongClick(pos: Int)
     }
 }

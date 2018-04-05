@@ -28,7 +28,8 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
     private lateinit var mView: View
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater?.inflate(ru.nextf.measurements.R.layout.measurements_list_fragment, container, false) ?: View(context)
+        val view = inflater?.inflate(ru.nextf.measurements.R.layout.measurements_list_fragment, container, false)
+                ?: View(context)
         mView = view
         mView.progressBar4.visibility = View.VISIBLE
         NetworkController.registerMeasurementsDealCallback(this)
@@ -66,7 +67,6 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
     }
 
 
-
     override fun resultMeasurementsDeal(listMeasurements: List<Measurement>, result: Boolean) {
         if (listMeasurements.isEmpty() || !result) {
             toast(ru.nextf.measurements.R.string.error)
@@ -77,7 +77,7 @@ class ListMeasurementsFragment : Fragment(), DataAdapter.CustomAdapterCallback, 
             val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             mView.recyclerListMeasurements.layoutManager = layoutManager
         }
-            mView.progressBar4.visibility = View.GONE
+        mView.progressBar4.visibility = View.GONE
     }
 
     override fun onDestroy() {

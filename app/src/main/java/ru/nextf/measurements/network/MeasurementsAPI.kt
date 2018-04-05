@@ -54,7 +54,7 @@ interface MeasurementsAPI {
     fun getMount(@Path("id") id: String): Call<Mount>
 
     @Multipart
-    @POST("measurements/{id}/image_upload/")
+    @POST("measurements/{id}/images/")
     fun addPicture(@Path("id") id: String, @Part file: MultipartBody.Part): Call<Void>
 
     @GET("deals/current")
@@ -94,5 +94,17 @@ interface MeasurementsAPI {
     @GET("measurements/current")
     fun getCurrentMeasurement(@Query("date") date: String, @Query("page") page: Int, @Query("owner") owner: String): Call<MyResultMeasurements>
 
+    @DELETE("measurements/{id}/images/{idImage}/")
+    fun deletePicture(@Path("id") id: String, @Path("idImage") idImage: String): Call<Void>
 
+
+
+    @POST("deals/{id}/mount/")
+    fun addMount(@Path("id") id: String, @Body mountAdd: MountAdd): Call<Void>
+
+    @GET("mounts/{id}/")
+    fun getOneMount(@Path("id") id: String): Call<Mount>
+
+    @PUT("mounts/{id}/")
+    fun editMount(@Path("id") id: String, @Body mountEdit: MountEdit): Call<Mount>
 }

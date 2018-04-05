@@ -43,6 +43,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val REQUEST_CAMERA = 1
+    private val DELETE_PHOTO = 1212
     private val REQUEST_GALERY = 2
     private var uriPhotoFile: Uri? = null
     var photoFile: File? = null
@@ -88,12 +89,20 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
                 textViewDateInstallation.visibility = View.VISIBLE
                 dateButton.visibility = View.VISIBLE
                 textViewDate.visibility = View.VISIBLE
+                editTextPrepayment.visibility = View.VISIBLE
+                spinner.visibility = View.VISIBLE
+                textView9.visibility = View.VISIBLE
             } else {
+                editTextPrepayment.visibility = View.GONE
+                spinner.visibility = View.GONE
+                textView9.visibility = View.GONE
                 textViewDateInstallation.visibility = View.GONE
                 dateButton.visibility = View.GONE
                 textViewDate.visibility = View.GONE
                 imageButton.visibility = View.GONE
                 deleteDateMount()
+                editTextPrepayment.text = null
+                spinner.setSelection(0)
             }
         }
 
@@ -119,6 +128,12 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
 
     // начало рабоыт с картинками
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == DELETE_PHOTO) {
+            if (resultCode == 200) {
+                NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
+            }
+            return
+        }
         file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "savedBitmapADDDpicture.jpeg")
         if (requestCode == REQUEST_GALERY && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
@@ -308,10 +323,10 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
         measurement.pictures.let {
             arrayPhoto = LinkedList()
             for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
-                arrayPhoto.add(MeasurementPhoto(photo.url.toString(), photo.id.toString()))
+                arrayPhoto.add(MeasurementPhoto(photo.url.toString(), photo.id))
             }
         }
-        arrayPhoto.addFirst(MeasurementPhoto(BASE_URL, "id"))
+        arrayPhoto.addFirst(MeasurementPhoto(BASE_URL, -2))
         val adapter = HorizontalAdapter(this, arrayPhoto, this)
         val thirdManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         images.layoutManager = thirdManager
@@ -329,6 +344,17 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
             )
         }
     }
+
+    override fun OnPhotoCLick(pos: Int) {
+        val spacePhoto = arrayPhoto.get(pos)
+        val intent = Intent(applicationContext, OnePhotoActivity::class.java)
+        intent.putExtra(MEASUREMENT_ID_DELETE, measurement.id)
+        intent.putExtra(PHOTO_ID_DELETE, spacePhoto.getId())
+        intent.putExtra(MEASUREMENT_PHOTO, spacePhoto)
+        intent.putExtra(CHECK, pos)
+        startActivityForResult(intent, DELETE_PHOTO)
+    }
+
 
     //конец работы с картинками
     private fun getSavedMeasurement() {
@@ -366,7 +392,6 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
         } else {
             DatePickerDialog(this, myCallBack, yearSave, monthSave, daySave)
         }
-        datePicker.show()
         datePicker.show()
     }
 

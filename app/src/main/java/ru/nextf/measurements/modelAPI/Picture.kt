@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName
 class Picture {
     @SerializedName("id")
     @Expose
-    val id: Int? = null
+    val id: Int = -1
     @SerializedName("user")
     @Expose
     val user: User? = null

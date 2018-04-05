@@ -8,16 +8,16 @@ import android.os.Parcelable
  */
 class MeasurementPhoto : Parcelable {
     private var mUrl: String? = null
-    private var mTitle: String? = null
+    private var idPhoto: Int? = null
 
-    constructor(url: String, title: String){
+    constructor(url: String, id: Int){
         mUrl = url
-        mTitle = title
+        idPhoto = id
     }
 
     constructor(inp: Parcel){
         mUrl = inp.readString()
-        mTitle = inp.readString()
+        idPhoto = inp.readInt()
     }
 
     fun getUrl(): String? {
@@ -28,14 +28,9 @@ class MeasurementPhoto : Parcelable {
         mUrl = url
     }
 
-    fun getTitle(): String? {
-        return mTitle
+    fun getId(): Int? {
+        return idPhoto
     }
-
-    fun setTitle(title: String) {
-        mTitle = title
-    }
-
 
 
     override fun describeContents(): Int {
@@ -44,7 +39,7 @@ class MeasurementPhoto : Parcelable {
 
     override fun writeToParcel(parcel: Parcel, i: Int) {
         parcel.writeString(mUrl)
-        parcel.writeString(mTitle)
+        parcel.writeInt(idPhoto ?: -1)
     }
 
     companion object CREATOR : Parcelable.Creator<MeasurementPhoto> {

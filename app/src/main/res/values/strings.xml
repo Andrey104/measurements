@@ -286,6 +286,13 @@
     <string name="comment_address">Комментарий к адресу:</string>
     <string name="name_dialog_address_and_comment">Адрес и комментарий к нему</string>
     <string name="address_header">Адрес</string>
+    <string name="delete_photo">Удаление фотографии</string>
+    <string name="method_prepayment">Способ оплаты</string>
+    <string name="mount_added_successful">Монтаж успешно добавлен</string>
+    <string name="comment_mount">Комментарий к монтажу:</string>
+    <string name="mount_edited_successful">Монтаж изменен успешно</string>
+    <string name="client_wish">По инициативе клиента</string>
+    <string name="company_wish">По инициативе компании</string>
     <string-array name="paylist">
         <item>Не выбрано</item>
         <item>Безналичные</item>
