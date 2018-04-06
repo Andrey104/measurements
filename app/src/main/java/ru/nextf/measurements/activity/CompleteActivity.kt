@@ -130,6 +130,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == DELETE_PHOTO) {
             if (resultCode == 200) {
+                canRequest = measurement.pictures?.size != 0
                 NetworkControllerPicture.getOneMeasurement(measurement.id.toString())
             }
             return
@@ -188,6 +189,7 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
             toast(ru.nextf.measurements.R.string.error_add_photo)
         } else {
             this.measurement = measurement
+            canRequest = measurement.pictures?.size != 0
             displayPictures(measurement)
         }
     }
