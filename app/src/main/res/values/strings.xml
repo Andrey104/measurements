@@ -9,7 +9,7 @@
     <string name="tomorrow">Завтра</string>
     <string name="date">Дата</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="server_address">http://natcom-crm.nextf.ru/api/</string>
+    <string name="server_address">http://188.225.46.31/api/</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

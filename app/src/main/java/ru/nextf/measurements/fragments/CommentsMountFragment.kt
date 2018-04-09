@@ -58,7 +58,7 @@ class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
         mView.imageButtonSend.setOnClickListener { sendComment() }
         mView.refresh.setOnRefreshListener {
             mView.refresh.isRefreshing = true
-            adapter = CommentAdapter(emptyList())
+            adapter = CommentAdapter(emptyList(), activity)
             mView.recyclerViewComments.adapter = adapter
             NetworkControllerDeals.getMount(mount.id.toString())
         }
@@ -107,7 +107,7 @@ class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
     }
 
     private fun displayComments() {
-        adapter = CommentAdapter(mount.comments as ArrayList<Comment>)
+        adapter = CommentAdapter(mount.comments as ArrayList<Comment>, activity)
         mView.recyclerViewComments.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mView.recyclerViewComments.layoutManager = layoutManager
@@ -126,7 +126,7 @@ class CommentsMountFragment : Fragment(), MyWebSocket.SocketCallback,
 
     private fun refreshComments() {
         handler.post {
-            adapter = CommentAdapter(mount.comments as ArrayList<Comment>)
+            adapter = CommentAdapter(mount.comments as ArrayList<Comment>, activity)
             mView.recyclerViewComments.adapter = adapter
             adapter.notifyDataSetChanged()
 

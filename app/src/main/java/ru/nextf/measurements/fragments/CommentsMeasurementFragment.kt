@@ -52,7 +52,7 @@ class CommentsMeasurementFragment : Fragment(),
         mView.imageButtonSend.setOnClickListener { sendComment() }
         mView.refresh.setOnRefreshListener {
             mView.refresh.isRefreshing = true
-            adapter = CommentAdapter(emptyList())
+            adapter = CommentAdapter(emptyList(), activity)
             mView.recyclerViewComments.adapter = adapter
             NetworkController.getOneMeasurementFragment(measurement.id.toString())
         }
@@ -77,7 +77,7 @@ class CommentsMeasurementFragment : Fragment(),
     }
 
     private fun displayComments() {
-        adapter = CommentAdapter(measurement.comments as ArrayList<Comment>)
+        adapter = CommentAdapter(measurement.comments as ArrayList<Comment>, activity)
         recycler = mView.recyclerViewComments
         mView.recyclerViewComments.adapter = adapter
 
@@ -110,7 +110,8 @@ class CommentsMeasurementFragment : Fragment(),
 
     fun refreshComments(measurement: Measurement) {
         handler.post {
-            adapter = CommentAdapter(measurement.comments as ArrayList<Comment>)
+            adapter.closePlayer()
+            adapter = CommentAdapter(measurement.comments as ArrayList<Comment>, activity)
             recycler = mView.recyclerViewComments
             mView.recyclerViewComments.adapter = adapter
             adapter.notifyDataSetChanged()
@@ -123,6 +124,7 @@ class CommentsMeasurementFragment : Fragment(),
 
     override fun onDestroyView() {
         NetworkControllerComment.registerCommentCallback(null)
+        adapter.closePlayer()
         super.onDestroyView()
     }
 

@@ -55,7 +55,7 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback, NetworkCont
         mView.imageButtonSend.setOnClickListener { sendComment() }
         mView.refresh.setOnRefreshListener {
             mView.refresh.isRefreshing = true
-            adapter = CommentAdapter(emptyList())
+            adapter = CommentAdapter(emptyList(), activity)
             mView.recyclerViewComments.adapter = adapter
             NetworkControllerDeals.getOneDeal(deal.id.toString())
         }
@@ -73,7 +73,7 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback, NetworkCont
 
     private fun refreshComments() {
         handler.post {
-            adapter = CommentAdapter(deal.comments as ArrayList<Comment>)
+            adapter = CommentAdapter(deal.comments as ArrayList<Comment>, activity)
             recycler = mView.recyclerViewComments
             mView.recyclerViewComments.adapter = adapter
             adapter.notifyDataSetChanged()
@@ -121,7 +121,7 @@ class CommentsDealFragment : Fragment(), MyWebSocket.SocketCallback, NetworkCont
 
 
     private fun displayComments() {
-        adapter = CommentAdapter(deal.comments as ArrayList<Comment>)
+        adapter = CommentAdapter(deal.comments as ArrayList<Comment>, activity)
         recycler = mView.recyclerViewComments
         mView.recyclerViewComments.adapter = adapter
 

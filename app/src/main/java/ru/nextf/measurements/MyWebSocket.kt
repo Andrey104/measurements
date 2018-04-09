@@ -32,7 +32,7 @@ class MyWebSocket : WebSocketListener() {
                 .build()
 
         val request = Request.Builder()
-                .url("http://natcom-crm.nextf.ru/ws/connect")
+                .url("http://188.225.46.31/ws/connect")
                 .build()
         val websocket = client.newWebSocket(request, this)
         // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
