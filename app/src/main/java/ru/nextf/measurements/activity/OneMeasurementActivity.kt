@@ -31,11 +31,13 @@ import android.graphics.Matrix
 import android.preference.PreferenceManager
 import android.util.Log
 import ru.nextf.measurements.network.NetworkControllerComment
+import ru.nextf.measurements.network.NetworkControllerVoice
 
 
 class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUpdateOneMeasurement,
         MainMeasurementFragment.MainMF, MyWebSocket.SocketCallback, NetworkControllerPicture.PictureCallback,
-        NetworkControllerPicture.UpdatePicturesCallback, NetworkControllerComment.AddCommentCallback {
+        NetworkControllerPicture.UpdatePicturesCallback, NetworkControllerComment.AddCommentCallback,
+        NetworkControllerVoice.VoiceCallback {
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALERY = 2
     private val DELETE_PHOTO = 1212
@@ -51,6 +53,7 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         NetworkController.registerUpdateOneMeasurementCallback(this)
         NetworkControllerPicture.registerUpdateCallback(this)
         NetworkControllerPicture.registerPictureCallback(this)
+        NetworkControllerVoice.registerVoiceCallback(this)
         NetworkControllerComment.registerCommentCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.activity_one_measurement)
@@ -360,6 +363,20 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun addCommentResult(result: Boolean, comment: Comment?) {
+        if (result) {
+            if (comment != null) {
+                (measurement.comments as ArrayList).add(comment)
+            }
+            if (bottomNavigation.selectedItemId == R.id.commentsMeasurement) {
+                fragmentComment.refreshComments(measurement)
+            }
+            setResult(200)
+        } else {
+            toast(R.string.error_add_comment)
+        }
+    }
+
+    override fun resultVoiceAdd(result: Boolean, comment: Comment?) {
         if (result) {
             if (comment != null) {
                 (measurement.comments as ArrayList).add(comment)

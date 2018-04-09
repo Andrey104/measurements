@@ -9,5 +9,8 @@ import com.google.gson.annotations.SerializedName
 class CommentRequest(
         @SerializedName("text")
         @Expose
-        val text: String
+        val text: String,
+        @SerializedName("comment_type")
+        @Expose
+        val commentType: Int
 )

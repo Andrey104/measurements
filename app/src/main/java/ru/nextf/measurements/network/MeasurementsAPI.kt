@@ -57,6 +57,19 @@ interface MeasurementsAPI {
     @POST("measurements/{id}/images/")
     fun addPicture(@Path("id") id: String, @Part file: MultipartBody.Part): Call<Void>
 
+    @Multipart
+    @POST("measurements/{id}/comment/")
+    fun addVoiceMeasurement(@Path("id") id: String, @Part file: MultipartBody.Part, @Part("comment_type") commentType: Int): Call<Comment>
+
+    @Multipart
+    @POST("deals/{id}/comment/")
+    fun addVoiceDeal(@Path("id") id: String, @Part file: MultipartBody.Part, @Part("comment_type") commentType: Int): Call<Comment>
+
+    @Multipart
+    @POST("mounts/{id}/comment/")
+    fun addVoiceMount(@Path("id") id: String, @Part file: MultipartBody.Part, @Part("comment_type") commentType: Int): Call<Comment>
+
+
     @GET("deals/current")
     fun getCurrentDeals(@Query("date") date: String, @Query("page") page: Int): Call<MyResultDeals>
 

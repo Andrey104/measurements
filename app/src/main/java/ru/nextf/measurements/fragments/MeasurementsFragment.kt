@@ -1,5 +1,6 @@
 package ru.nextf.measurements.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
@@ -32,6 +33,8 @@ import java.util.Calendar
 import kotlin.collections.ArrayList
 import ru.nextf.measurements.R.mipmap.ic_launcher
 import android.app.PendingIntent
+import android.content.pm.PackageManager
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationManagerCompat
 import ru.nextf.measurements.activity.MainActivity
 
@@ -63,6 +66,8 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
     private lateinit var fabOpen08: Animation
     private lateinit var fabClose: Animation
     private lateinit var textOpen: Animation
+    private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val REQUEST_EXTERNAL_STORAGE = 1
     private lateinit var textClose: Animation
     private var isFabOpen = false
 
@@ -74,6 +79,7 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         NetworkController.registerPaginationCallback(this)
         NetworkControllerFree.registerCallbackFree(this)
         NetworkControllerFree.registerPaginationFree(this)
+        getPermission()
         val view: View = inflater.inflate(ru.nextf.measurements.R.layout.measurements_fragment, container, false)
                 ?: View(context)
         fabOpen = AnimationUtils.loadAnimation(context, ru.nextf.measurements.R.anim.fab_open)
@@ -146,6 +152,17 @@ class MeasurementsFragment : Fragment(), NetworkController.CallbackListMeasureme
         }
         myWebSocket.registerSocketCallback(this)
         return view
+    }
+
+    private fun getPermission() {
+        val permission = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            )
+        }
     }
 
     private fun hideFub() {
