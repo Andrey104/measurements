@@ -18,8 +18,8 @@ android {
         applicationId "ru.nextf.measurements"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 23
-        versionName "3.1.1"
+        versionCode 24
+        versionName "3.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

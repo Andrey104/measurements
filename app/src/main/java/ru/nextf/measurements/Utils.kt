@@ -49,7 +49,7 @@ val APP_LIST_TOMORROW_CLOSED = "listTomorrowClosed"
 val APP_LIST_TODAY_REJECTED = "listTodayRejected"
 val APP_LIST_TOMORROW_REJECTED = "listTomorrowRejected"
 val APP_USER_INFO = "userInfo"
-val BASE_URL = "http://188.225.46.31/"
+val BASE_URL = "http://natcom-crm.nextf.ru/"
 var myWebSocket = MyWebSocket()
 
 fun getTodayDate(): String {
