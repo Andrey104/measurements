@@ -141,13 +141,13 @@ class CommentsMeasurementFragment : Fragment(),
 
     private fun startRecording() {
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         if (mAudioFile == null) {
             val sampleDir = Environment.getExternalStorageDirectory()
 
             try {
-                mAudioFile = File.createTempFile("meow", ".mpeg4", sampleDir)
+                mAudioFile = File.createTempFile("meow", ".aac", sampleDir)
             } catch (e: IOException) {
                 toast(R.string.error)
                 return
