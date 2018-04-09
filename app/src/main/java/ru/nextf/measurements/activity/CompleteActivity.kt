@@ -324,7 +324,6 @@ class CompleteActivity : AppCompatActivity(), NetworkController.CloseCallback, H
     private fun displayPictures(measurement: Measurement) {
         measurement.pictures.let {
             arrayPhoto = LinkedList()
-
             for (photo in measurement.pictures?.iterator() ?: emptyList<Picture>().iterator()) {
                 arrayPhoto.add(MeasurementPhoto(photo.url.toString(), photo.id))
             }

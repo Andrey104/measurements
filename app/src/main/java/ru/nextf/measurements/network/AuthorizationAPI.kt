@@ -21,7 +21,7 @@ interface AuthorizationAPI {
         fun create(): AuthorizationAPI {
             val retrofit = Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl("http://188.225.46.31/api/")
+                    .baseUrl("http://natcom-crm.nextf.ru/api/")
                     .build()
 
             return retrofit.create(AuthorizationAPI::class.java)
