@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import ru.nextf.measurements.formatDateTime
 import ru.nextf.measurements.modelAPI.Comment
-import ru.nextf.measurements.modelAPI.User
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.widget.Button
 
 
 /**
@@ -20,7 +21,7 @@ import ru.nextf.measurements.modelAPI.User
 class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mCommentsList: List<Comment> = notesList
     private val ITEM = 0
-    private val LOADING = 1
+    private val MUSIC = 1
     private var isLoadingAdded = false
 
     @SuppressLint("SetTextI18n")
@@ -39,7 +40,18 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
                 viewHolder.date.text = fullDate.substring(6, fullDate.length)
                 viewHolder.text.text = mCommentsList[position].text
             }
-            LOADING -> {
+            MUSIC -> {
+                val viewHolder = holder as MusicComment
+                viewHolder.button.setOnClickListener {
+                    val daytonPolice = mCommentsList[position].file
+                    val mp = MediaPlayer()
+
+                    mp.setOnPreparedListener { mp -> mp.start() }
+
+                    mp.setAudioStreamType(AudioManager.STREAM_MUSIC)
+                    mp.setDataSource(daytonPolice) // It will not take the string of my url
+                    mp.prepareAsync()
+                }
             }
         }
 
@@ -57,8 +69,8 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
             v = LayoutInflater.from(parent?.context).inflate(ru.nextf.measurements.R.layout.list_item_comment_problem, parent, false)
             return CommentAdapter.ViewHolder(v)
         } else {
-            v = LayoutInflater.from(parent.context).inflate(ru.nextf.measurements.R.layout.progressbar_item, parent, false)
-            LoadingVH(v)
+            v = LayoutInflater.from(parent.context).inflate(ru.nextf.measurements.R.layout.music_comment, parent, false)
+            MusicComment(v)
         }
     }
 
@@ -67,32 +79,21 @@ class CommentAdapter(notesList: List<Comment>) : RecyclerView.Adapter<RecyclerVi
         notifyItemInserted(mCommentsList.size - 1)
     }
 
-    fun addLoadingFooter() {
-        isLoadingAdded = true
-        add(Comment(0, User(), "", "", false))
-    }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == mCommentsList.size - 1 && isLoadingAdded) LOADING else ITEM
-    }
-
-    fun removeLoadingFooter() {
-        isLoadingAdded = false
-
-        val position = mCommentsList.size - 1
-        val item = getItem(position)
-
-        if (item != null) {
-            (mCommentsList as ArrayList<Comment>).removeAt(position)
-            notifyItemRemoved(position)
+        return if (mCommentsList[position].commentType == 1) {
+            ITEM
+        } else {
+            MUSIC
         }
     }
 
-    protected inner class LoadingVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val proressBar: ProgressBar
+
+    protected inner class MusicComment(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val button: Button
 
         init {
-            proressBar = itemView.findViewById(ru.nextf.measurements.R.id.progressBar1)
+            button = itemView.findViewById(ru.nextf.measurements.R.id.buttonPlay)
         }
     }
 

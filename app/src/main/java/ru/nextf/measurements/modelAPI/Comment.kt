@@ -21,5 +21,11 @@ class Comment(
         val text: String,
         @SerializedName("read")
         @Expose
-        val read: Boolean
+        val read: Boolean,
+        @SerializedName("comment_type")
+        @Expose
+        val commentType: Int?,
+        @SerializedName("file")
+        @Expose
+        val file: String?
 )
