@@ -1,6 +1,8 @@
 package ru.nextf.measurements.fragments
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,19 +14,17 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import ru.nextf.measurements.*
-import ru.nextf.measurements.adapters.ClientAdapter
-import ru.nextf.measurements.modelAPI.Measurement
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.dialog_address_comment.view.*
 import kotlinx.android.synthetic.main.dialog_description.view.*
 import kotlinx.android.synthetic.main.dialog_time.view.*
 import kotlinx.android.synthetic.main.main_measurement_fragment.view.*
+import ru.nextf.measurements.MEASUREMENT_KEY
+import ru.nextf.measurements.adapters.ClientAdapter
+import ru.nextf.measurements.formatDate
+import ru.nextf.measurements.gson
+import ru.nextf.measurements.modelAPI.Measurement
 import ru.nextf.measurements.network.NetworkController
-import android.content.Intent
-import android.content.pm.ResolveInfo
-import android.content.pm.PackageManager
-import android.net.Uri
 
 
 /**
@@ -74,6 +74,11 @@ class MainMeasurementFragment : Fragment() {
         mView.fabTransfer.setOnClickListener {
             hideFub()
             mainMF?.transfer()
+        }
+
+        mView.floatingActionButtonNote.setOnClickListener {
+            hideFub()
+            mainMF?.addNote()
         }
 
         mView.fabGoDeal.setOnClickListener {
@@ -204,6 +209,26 @@ class MainMeasurementFragment : Fragment() {
 
 
     private fun displayMeasurement(measurement: Measurement) {
+        if (measurement.color == 2 && measurement.note != null && measurement.note != "") {
+            mView.constraint_note.visibility = View.VISIBLE
+            mView.note_text.text = measurement.note
+            mView.constraint_note.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                val view = layoutInflater.inflate(ru.nextf.measurements.R.layout.dialog_description, null)
+                view.textViewDescription.text = measurement.note
+                builder.setView(view)
+                        .setCancelable(true)
+                        .setPositiveButton(ru.nextf.measurements.R.string.okay)
+                        { dialog, _ ->
+                            dialog.cancel()
+                        }
+                val alert = builder.create()
+                alert.show()
+            }
+
+        } else {
+            mView.constraint_note.visibility = View.GONE
+        }
         if (measurement.color != 2) {
             mView.fabMain.hide()
             mView.fabResponsible.visibility = View.VISIBLE
@@ -338,9 +363,11 @@ class MainMeasurementFragment : Fragment() {
             mView.fabMainClose.startAnimation(fabClose)
             mView.fabReject.startAnimation(fabClose)
             mView.fabTransfer.startAnimation(fabClose)
+            mView.floatingActionButtonNote.startAnimation(fabClose)
             mView.fabMain.startAnimation(fabOpen)
             mView.textViewComplete.startAnimation(textClose)
             mView.textViewReject.startAnimation(textClose)
+            mView.textViewNote.startAnimation(textClose)
             mView.textViewTransfer.startAnimation(textClose)
             mView.fabComplete.isClickable = false
             mView.fabMainClose.isClickable = false
@@ -358,8 +385,10 @@ class MainMeasurementFragment : Fragment() {
         mView.fabTransfer.startAnimation(fabOpen08)
         mView.fabReject.startAnimation(fabOpen08)
         mView.fabComplete.startAnimation(fabOpen08)
+        mView.floatingActionButtonNote.startAnimation(fabOpen08)
         mView.textViewComplete.startAnimation(textOpen)
         mView.textViewReject.startAnimation(textOpen)
+        mView.textViewNote.startAnimation(textOpen)
         mView.textViewTransfer.startAnimation(textOpen)
         mView.fabReject.isClickable = true
         mView.fabMainClose.isClickable = true
@@ -382,6 +411,7 @@ class MainMeasurementFragment : Fragment() {
     }
 
     interface MainMF {
+        fun addNote()
         fun complete()
         fun reject()
         fun transfer()

@@ -38,7 +38,15 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
         MainMeasurementFragment.MainMF, MyWebSocket.SocketCallback, NetworkControllerPicture.PictureCallback,
         NetworkControllerPicture.UpdatePicturesCallback, NetworkControllerComment.AddCommentCallback,
         NetworkControllerVoice.VoiceCallback {
+    override fun addNote() {
+        var json = gson.toJson(measurement)
+        val intent = Intent(applicationContext, AddNoteActivity::class.java)
+        intent.putExtra(MEASUREMENT_KEY, json)
+        startActivityForResult(intent, NOTE_ACTIVITY)
+    }
+
     private val REQUEST_CAMERA = 1
+    private val NOTE_ACTIVITY = 99
     private val REQUEST_GALERY = 2
     private val DELETE_PHOTO = 1212
     lateinit var measurement: Measurement
@@ -198,6 +206,11 @@ class OneMeasurementActivity : AppCompatActivity(), NetworkController.CallbackUp
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == NOTE_ACTIVITY) {
+            if (resultCode == 200) {
+                NetworkController.getOneMeasurement(measurement.id.toString())
+            }
+        }
         if (requestCode == DELETE_PHOTO) {
             if (resultCode == 200) {
                 NetworkControllerPicture.getOneMeasurement(measurement.id.toString())

@@ -120,4 +120,7 @@ interface MeasurementsAPI {
 
     @PUT("mounts/{id}/")
     fun editMount(@Path("id") id: String, @Body mountEdit: MountEdit): Call<Mount>
+
+    @PATCH("measurements/{id}/")
+    fun editNote(@Path("id") id: String, @Body measurementNote: MeasurementNote): Call<Void>
 }

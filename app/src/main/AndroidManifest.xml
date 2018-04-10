@@ -5,7 +5,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -64,8 +65,15 @@
         <activity
             android:name=".activity.SearchDealsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.AddMountActivity" />
-        <activity android:name=".activity.EditMountActivity"></activity>
+        <activity
+            android:name=".activity.AddMountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.EditMountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddNoteActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
