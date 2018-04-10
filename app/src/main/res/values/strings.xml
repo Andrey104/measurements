@@ -293,6 +293,8 @@
     <string name="mount_edited_successful">Монтаж изменен успешно</string>
     <string name="client_wish">По инициативе клиента</string>
     <string name="company_wish">По инициативе компании</string>
+    <string name="note">Заметка</string>
+    <string name="note_added">Заметка добавлена</string>
     <string-array name="paylist">
         <item>Не выбрано</item>
         <item>Безналичные</item>

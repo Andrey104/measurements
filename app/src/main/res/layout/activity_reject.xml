@@ -65,6 +65,14 @@
             android:onClick="onRadioButtonClick"
             android:text="@string/wrong_manager" />
 
+        <RadioButton
+            android:id="@+id/radioButtonClientReject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onRadioButtonClick"
+            android:text="Отказ клиента" />
+
 
 
 
