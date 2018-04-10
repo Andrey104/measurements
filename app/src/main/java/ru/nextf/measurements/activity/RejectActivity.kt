@@ -60,6 +60,7 @@ class RejectActivity : AppCompatActivity(), NetworkController.RejectCallback {
                 ru.nextf.measurements.R.id.radioButtonAnother -> cause = 1
                 ru.nextf.measurements.R.id.radioButtonWrongGauger -> cause = 2
                 ru.nextf.measurements.R.id.radioButtonWrongManager -> cause = 3
+                ru.nextf.measurements.R.id.radioButtonClientReject -> cause = 4
 
             }
         }

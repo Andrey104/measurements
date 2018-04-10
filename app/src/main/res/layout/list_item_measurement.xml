@@ -1,5 +1,6 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="2dp"
@@ -10,21 +11,21 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageViewSymbol"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:background="@drawable/b"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            android:layout_marginLeft="8dp" />
+            card_view:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/deal"
@@ -41,29 +42,42 @@
 
         <TextView
             android:id="@+id/address"
-            android:layout_width="270dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp"
-            card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toEndOf="@+id/imageViewSymbol"
             card_view:layout_constraintTop_toBottomOf="@+id/worker_name" />
 
         <TextView
+            android:id="@+id/note"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            android:visibility="gone"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/imageViewNote"
+            card_view:layout_constraintTop_toBottomOf="@+id/address" />
+
+        <TextView
             android:id="@+id/time"
-            android:layout_width="270dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toEndOf="@+id/imageViewSymbol"
-            card_view:layout_constraintTop_toBottomOf="@+id/deal" />
+            card_view:layout_constraintTop_toBottomOf="@+id/statusContract" />
 
         <TextView
             android:id="@+id/worker_name"
@@ -75,6 +89,29 @@
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toEndOf="@+id/imageViewSymbol"
             card_view:layout_constraintTop_toBottomOf="@+id/time" />
+
+        <ImageView
+            android:id="@+id/imageViewNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            card_view:layout_constraintStart_toEndOf="@+id/imageViewSymbol"
+            card_view:layout_constraintTop_toBottomOf="@+id/address"
+            card_view:srcCompat="@drawable/ic_textsms_gray_24dp" />
+
+        <TextView
+            android:id="@+id/statusContract"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            android:visibility="gone"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/imageViewSymbol"
+            card_view:layout_constraintTop_toBottomOf="@+id/deal" />
 
     </android.support.constraint.ConstraintLayout>
 

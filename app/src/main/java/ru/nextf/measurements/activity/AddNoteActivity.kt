@@ -30,11 +30,17 @@ class AddNoteActivity : AppCompatActivity(), NetworkNote.NoteEditCallback {
         NetworkNote.registerNoteEditCallback(this)
         super.onCreate(savedInstanceState)
         setContentView(ru.nextf.measurements.R.layout.add_note_activity)
+
+        toolbarAst.setNavigationIcon(ru.nextf.measurements.R.drawable.ic_arrow_back_white_24dp)
+        toolbarAst.setNavigationOnClickListener {
+            finish()
+        }
         getSavedMeasurement()
         if (measurement.note != null) {
             editComment.setText(measurement.note)
         }
         buttonOk.setOnClickListener { editComment() }
+        buttonCancel.setOnClickListener { finish() }
 
     }
 

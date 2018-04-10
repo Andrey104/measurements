@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import ru.nextf.measurements.MyApp
+import ru.nextf.measurements.R
 import ru.nextf.measurements.modelAPI.Measurement
 
 
@@ -34,6 +36,23 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
                 viewHolder.deal.text = String.format("%05d", measurement.deal)
                 viewHolder.address.text = measurement.address
                 viewHolder.time.text = measurement.time
+                // 2 yt pfrk.xty
+                if (measurement.status == 2 || measurement.status == 3) {
+                    viewHolder.statusContract.visibility = View.VISIBLE
+                    if (measurement.status == 2) {
+                        viewHolder.statusContract.text = "Контракт не заключен"
+                        selectColorVersion(viewHolder.statusContract, R.color.red, MyApp.instance)
+                    } else if (measurement.status == 3) {
+                        viewHolder.statusContract.text = "Контракт заключен"
+                        selectColorVersion(viewHolder.statusContract, R.color.green, MyApp.instance)
+                    }
+                }
+
+                if (measurement.note != null && measurement.note != "" && measurement.color == 2) {
+                    viewHolder.note.visibility = View.VISIBLE
+                    viewHolder.imageViewNote.visibility = View.VISIBLE
+                    viewHolder.note.text = measurement.note
+                }
 
                 if (measurement.worker == null) {
                     viewHolder.workerName.text = "Не распределено"
@@ -58,6 +77,7 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
             }
         }
     }
+
     /**
      * Создание новых View и ViewHolder элемента списка, которые впоследствии могут переиспользоваться.
      */
@@ -154,13 +174,19 @@ class DataAdapter(notesList: ArrayList<Measurement>, private val listener: Custo
         var address: TextView
         var time: TextView
         var workerName: TextView
+        var note: TextView
+        var statusContract: TextView
+        var imageViewNote: ImageView
 
         constructor(itemView: View, listener: CustomAdapterCallback) : super(itemView) {
             deal = itemView.findViewById(ru.nextf.measurements.R.id.deal)
             address = itemView.findViewById(ru.nextf.measurements.R.id.address)
             time = itemView.findViewById(ru.nextf.measurements.R.id.time)
             workerName = itemView.findViewById(ru.nextf.measurements.R.id.worker_name)
+            statusContract = itemView.findViewById(ru.nextf.measurements.R.id.statusContract)
             symbol = itemView.findViewById(ru.nextf.measurements.R.id.imageViewSymbol)
+            imageViewNote = itemView.findViewById(ru.nextf.measurements.R.id.imageViewNote)
+            note = itemView.findViewById(ru.nextf.measurements.R.id.note)
             this.listener = listener
             this.itemView.setOnClickListener(this)
             this.itemView.setOnLongClickListener(this)

@@ -225,7 +225,6 @@ class MainMeasurementFragment : Fragment() {
                 val alert = builder.create()
                 alert.show()
             }
-
         } else {
             mView.constraint_note.visibility = View.GONE
         }
